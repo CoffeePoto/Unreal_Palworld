@@ -20,6 +20,12 @@ public:
 	// Sets default values for this character's properties
 	APokemonBase();
 
+public:	
+	virtual void UsingSkill() override;
+
+	// Called to bind functionality to input
+	// virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
 protected:
 
 	virtual void PostInitializeComponents() override;
@@ -37,11 +43,6 @@ protected:
 		class AController* EventInstigator,
 		AActor* DamageCauser) override;
 
-public:	
-	virtual void UsingSkill() override;
-
-	// Called to bind functionality to input
-	// virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 protected:
 

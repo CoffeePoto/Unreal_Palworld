@@ -15,6 +15,12 @@ APokemonBase::APokemonBase()
 	
 	// 모두 AIController에 빙의되도록 설정.
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+	static ConstructorHelpers::FClassFinder<UAnimInstance> PokemonAnimRef(TEXT(""));
+	if (PokemonAnimRef.Succeeded())
+	{
+		GetMesh()->SetAnimInstanceClass(PokemonAnimRef.Class);
+	}
 }
 
 void APokemonBase::PostInitializeComponents()
