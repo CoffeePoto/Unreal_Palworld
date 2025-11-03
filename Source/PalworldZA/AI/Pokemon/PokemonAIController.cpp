@@ -39,6 +39,7 @@ void APokemonAIController::StopAI()
 
 	if (BTComponent)
 	{
+		// 행동 트리 중지
 		BTComponent->StopTree();
 	}
 }

@@ -21,8 +21,12 @@ public:
 	APokemonBase();
 
 protected:
+
+	virtual void PostInitializeComponents() override;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -44,6 +48,10 @@ protected:
 	// 자신을 소유한 트레이너 
 	UPROPERTY()
 	TObjectPtr<class APawn> Trainer;
+
+	// BT를 제어하기 위한 BB컴포넌트
+	UPROPERTY()
+	TObjectPtr<class UBlackboardComponent> BBComponent;
 
 	// Todo : PokemonBase 예상 추가 요소 
 	// 기본 포켓몬 정보 Struct 
