@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "PokemonBase.h"
@@ -6,7 +6,6 @@
 // Sets default values
 APokemonBase::APokemonBase()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 }
@@ -25,10 +24,19 @@ void APokemonBase::Tick(float DeltaTime)
 
 }
 
-// Called to bind functionality to input
-void APokemonBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+float APokemonBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	return 0.0f;
+}
+
+void APokemonBase::UsingSkill()
+{
 
 }
+
+// Called to bind functionality to input
+//void APokemonBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+//{
+//	Super::SetupPlayerInputComponent(PlayerInputComponent);
+//}
 
