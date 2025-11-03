@@ -2,19 +2,31 @@
 
 
 #include "PokemonBase.h"
+#include "AI/Pokemon/PokemonAIController.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 // Sets default values
 APokemonBase::APokemonBase()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	//PrimaryActorTick.bCanEverTick = true;
 
+	// 포켓몬 AI 컨트롤러 생성
+	AIControllerClass = APokemonAIController::StaticClass();
+	
+	// 모두 AIController에 빙의되도록 설정.
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+}
+
+void APokemonBase::PostInitializeComponents()
+{
 }
 
 // Called when the game starts or when spawned
 void APokemonBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	BBComponent = Cast<APokemonAIController>(GetController())->GetBlackboardComponent();
 }
 
 // Called every frame
