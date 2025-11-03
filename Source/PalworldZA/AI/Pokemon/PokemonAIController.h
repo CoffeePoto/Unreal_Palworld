@@ -24,6 +24,8 @@ public:
 	void StopAI();
 
 protected:
+
+	// 빙의
 	virtual void OnPossess(APawn* InPawn) override;
 
 private:
