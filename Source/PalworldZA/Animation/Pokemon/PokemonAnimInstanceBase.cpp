@@ -9,10 +9,22 @@ UPokemonAnimInstanceBase::UPokemonAnimInstanceBase()
 {
 }
 
-bool UPokemonAnimInstanceBase::SetAnimSequence()
+bool UPokemonAnimInstanceBase::SetAnimSequence(const UPokemonAnimSequenceData* AnimData)
 {
+	if (!AnimData)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SetAnimSequence: AnimData is null."));
+		return false;
+	}
 
-	return false;
+	IdleAnim		=	AnimData->IdleAnim;
+	MovementAnim	=	AnimData->MovementAnim;
+	SkillStartAnim	=	AnimData->SkillStartAnim;
+	SkillLoopAnim	=	AnimData->SkillLoopAnim;
+	SKillEndAnim	=	AnimData->SkillEndAnim;
+	HitAnim			=	AnimData->HitAnim;
+
+	return true;
 }
 
 void UPokemonAnimInstanceBase::NativeInitializeAnimation()
@@ -30,4 +42,9 @@ void UPokemonAnimInstanceBase::NativeInitializeAnimation()
 void UPokemonAnimInstanceBase::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
+
+	if (Movement)
+	{
+		MovementSpeed = Movement->Velocity.Size2D();
+	}
 }

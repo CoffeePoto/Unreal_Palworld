@@ -52,4 +52,5 @@ void APokemonAIController::OnPossess(APawn* InPawn)
 
 	// 빙의 완료후 실행 
 	//RunAI();
+
 }

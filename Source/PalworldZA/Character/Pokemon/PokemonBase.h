@@ -16,24 +16,25 @@ class PALWORLDZA_API APokemonBase :
 {
 	GENERATED_BODY()
 
-public:
-	// Sets default values for this character's properties
+public: // 공개 함수
+
 	APokemonBase();
 
-public:	
+	// 스킬 사용중인지 여부를 반환하는 함수
+	uint8 GetIsOnSkill() { return bIsOnSkill; }
+
+public:	// 인터페이스 구현부
 	virtual void UsingSkill() override;
 
 	// Called to bind functionality to input
 	// virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-protected:
+protected: // 오버라이딩 구현부 
 
 	virtual void PostInitializeComponents() override;
 
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// 대미지 처리 함수 오버라이드.
@@ -43,8 +44,9 @@ protected:
 		class AController* EventInstigator,
 		AActor* DamageCauser) override;
 
+protected: // 자체 함수 구현부
 
-protected:
+protected: // Has 변수 
 
 	// 자신을 소유한 트레이너 
 	UPROPERTY()
@@ -54,8 +56,18 @@ protected:
 	UPROPERTY()
 	TObjectPtr<class UBlackboardComponent> BBComponent;
 
+	UPROPERTY()
+	TObjectPtr<class UPokemonAnimSequenceData> AnimData;
+
+	UPROPERTY()
+	TObjectPtr<class UObject> SkillTarget;
+
 	// Todo : PokemonBase 예상 추가 요소 
 	// 기본 포켓몬 정보 Struct 
 	// 노출 포켓몬 정보 Sturct (UI를 위함)
 	// 현재 정보 
+
+protected: // 파라미터 변수
+
+	uint8 bIsOnSkill : 1;
 };
