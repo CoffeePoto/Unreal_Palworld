@@ -15,12 +15,12 @@ class PALWORLDZA_API ATestPokemon : public APokemonBase
 	GENERATED_BODY()
 
 public:
-//	ATestPokemon();
-//
-//protected:
-//
-//	virtual void BeginPlay() override;
-//	virtual void Tick(float DeltaTime) override;
-//	virtual void UsingSkill() override;
+	ATestPokemon();
+
+protected:
+
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+	virtual void UsingSkill() override;
 
 };
