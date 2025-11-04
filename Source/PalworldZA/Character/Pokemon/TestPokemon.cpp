@@ -2,21 +2,13 @@
 
 
 #include "Character/Pokemon/TestPokemon.h"
+#include "AI/Pokemon/PokemonAIController.h"
 
 ATestPokemon::ATestPokemon()
 {
-	// 메시 세팅
-	//ConstructorHelpers::FObjectFinder<USkeletalMesh> TestMeshRef(TEXT(
-	//	"/Game/PalAsset/Model/BluePlatypus/BluePlatypus.BluePlatypus"
-	//));
-	//if (TestMeshRef.Succeeded())
-	//{
-	//	// 메시 적용.
-	//	GetMesh()->SetSkeletalMesh(TestMeshRef.Object);
-	//
-	//	// 메시 위치 설정.
-	//	GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
-	//}
+	// 포켓몬 AIController 설정.
+	AIControllerClass = APokemonAIController::StaticClass();
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
 void ATestPokemon::BeginPlay()
@@ -32,4 +24,7 @@ void ATestPokemon::Tick(float DeltaTime)
 void ATestPokemon::UsingSkill()
 {
 	Super::UsingSkill();
+
+	// 나중에 포켓몬의 스킬 로직 구현
+	UE_LOG(LogTemp, Warning, TEXT("TestPokemon 스킬 사용"));
 }
