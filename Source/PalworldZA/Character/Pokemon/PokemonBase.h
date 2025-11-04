@@ -23,8 +23,21 @@ public: // 공개 함수
 	// 스킬 사용중인지 여부를 반환하는 함수
 	uint8 GetIsOnSkill() { return bIsOnSkill; }
 
+	void EndSkill();
+
 public:	// 인터페이스 구현부
-	virtual void UsingSkill() override;
+
+	// 스킬 사용
+	virtual void UsingSkill(int SkillNumber) override;
+
+	// 포켓몬 활성화
+	virtual void SetActive(FVector Location) override;
+
+	// 포켓몬 비활성화 
+	virtual void Deactive() override;
+
+	// 포켓몬 쓰러졌을 때 호출할 델리게이트 등록
+	virtual void BindOnPokemonDown(const FOnPokemonDown& InDelegate) override;
 
 	// Called to bind functionality to input
 	// virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -46,6 +59,9 @@ protected: // 오버라이딩 구현부
 
 protected: // 자체 함수 구현부
 
+	// 스킬 쿨타임 감소 함수
+	void SkillCoolDown(float DeltaTime);
+
 protected: // Has 변수 
 
 	// 자신을 소유한 트레이너 
@@ -56,11 +72,17 @@ protected: // Has 변수
 	UPROPERTY()
 	TObjectPtr<class UBlackboardComponent> BBComponent;
 
+	// 애니메이션 시퀀스 정보를 가진 데이터 에셋
 	UPROPERTY()
 	TObjectPtr<class UPokemonAnimSequenceData> AnimData;
 
+	// 스킬을 사용할 타겟 
 	UPROPERTY()
 	TObjectPtr<class UObject> SkillTarget;
+
+	// 스킬 쿨타임 관리 맵
+	UPROPERTY()
+	TMap<FName, float> SkillCoolTimes;
 
 	// Todo : PokemonBase 예상 추가 요소 
 	// 기본 포켓몬 정보 Struct 
@@ -68,6 +90,8 @@ protected: // Has 변수
 	// 현재 정보 
 
 protected: // 파라미터 변수
+
+	FOnPokemonDown PokemonDownEvents;
 
 	uint8 bIsOnSkill : 1;
 };

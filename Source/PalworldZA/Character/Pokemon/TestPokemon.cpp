@@ -7,8 +7,8 @@
 ATestPokemon::ATestPokemon()
 {
 	// 포켓몬 AIController 설정.
-	AIControllerClass = APokemonAIController::StaticClass();
-	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+	//AIControllerClass = APokemonAIController::StaticClass();
+	//AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
 void ATestPokemon::BeginPlay()
@@ -21,9 +21,9 @@ void ATestPokemon::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ATestPokemon::UsingSkill()
+void ATestPokemon::UsingSkill(int SkillNumber)
 {
-	Super::UsingSkill();
+	Super::UsingSkill(SkillNumber);
 
 	// 나중에 포켓몬의 스킬 로직 구현
 	UE_LOG(LogTemp, Warning, TEXT("TestPokemon 스킬 사용"));

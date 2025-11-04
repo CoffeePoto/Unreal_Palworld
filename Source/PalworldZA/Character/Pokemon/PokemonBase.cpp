@@ -4,9 +4,9 @@
 #include "PokemonBase.h"
 #include "AI/Pokemon/PokemonAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "BrainComponent.h"
 #include "Animation/Pokemon/PokemonAnimInstanceBase.h"
-#include "TimerManager.h"
-#include "GameFramework/CharacterMovementComponent.h"
+
 
 APokemonBase::APokemonBase()
 {
@@ -56,6 +56,19 @@ void APokemonBase::BeginPlay()
 void APokemonBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	SkillCoolDown(DeltaTime);
+}
+
+void APokemonBase::SkillCoolDown(float DeltaTime)
+{
+	for (TPair<FName, float>& Skill : SkillCoolTimes)
+	{
+		if (Skill.Value > 0.0f)
+		{
+			Skill.Value = FMath::Max(Skill.Value - DeltaTime, 0.0f);
+		}
+	}
 }
 
 float APokemonBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -63,10 +76,70 @@ float APokemonBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 	return 0.0f;
 }
 
-void APokemonBase::UsingSkill()
+void APokemonBase::UsingSkill(int SkillNumber)
 {
 	UE_LOG(LogTemp, Log, TEXT("포켓몬이 트레이너의 지시를 듣고 있습니다."));
 }
+
+void APokemonBase::SetActive(FVector Location)
+{
+	// 지정 위치로 이동
+	SetActorLocation(Location);
+
+	// 캐릭터 가시화
+	SetActorHiddenInGame(false);
+
+	// 충돌 활성화
+	SetActorEnableCollision(true);
+
+	// 틱 활성화 
+	SetActorTickEnabled(true);
+
+	// AI 활성 
+	if (AAIController* AI = Cast<AAIController>(GetController()))
+	{
+		UBrainComponent* Brain = AI->GetBrainComponent();
+
+		if (Brain)
+		{
+			Brain->RestartLogic();
+		}
+	}
+}
+
+void APokemonBase::Deactive()
+{
+	// 캐릭터 비가시화
+	SetActorHiddenInGame(true);
+
+	// 충돌 비활성화
+	SetActorEnableCollision(false);
+
+	// 틱 비활성화 
+	SetActorTickEnabled(false);
+
+	// AI 비활성
+	if (AAIController* AI = Cast<AAIController>(GetController()))
+	{
+		UBrainComponent* Brain = AI->GetBrainComponent();
+
+		if (Brain)
+		{
+			Brain->StopLogic(TEXT("Pokemon Deactive"));
+		}
+	}
+}
+
+void APokemonBase::BindOnPokemonDown(const FOnPokemonDown& InDelegate)
+{
+	PokemonDownEvents = InDelegate;
+}
+
+void APokemonBase::EndSkill()
+{
+	bIsOnSkill = false;
+}
+
 
 // Called to bind functionality to input
 //void APokemonBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
