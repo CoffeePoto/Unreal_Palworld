@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+#include "Data/Pokemon/PokemonAnimSequenceData.h"
 #include "PokemonAnimInstanceBase.generated.h"
 
 /**
@@ -11,7 +12,7 @@
  */
 
 USTRUCT()
-struct FAnimSequencePath : public FTableRowBase
+struct FAnimSequencePath 
 {
 	GENERATED_BODY()
 
@@ -33,7 +34,8 @@ class PALWORLDZA_API UPokemonAnimInstanceBase : public UAnimInstance
 public:
 	UPokemonAnimInstanceBase();
 	
-	bool SetAnimSequence(FAnimSequencePath Paths);
+	// 애니메이션 시퀀스를 설정하는 함수
+	bool SetAnimSequence(const UPokemonAnimSequenceData* AnimData);
 
 protected:
 

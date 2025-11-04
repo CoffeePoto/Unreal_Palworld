@@ -7,12 +7,14 @@
 
 APokemonAIController::APokemonAIController()
 {
+	// BBAsset
 	static ConstructorHelpers::FObjectFinder<UBlackboardData> BBAssetRef(TEXT(""));
 	if (BBAssetRef.Succeeded())
 	{
 		BBAsset = BBAssetRef.Object;
 	}
 
+	// BTAsset
 	static ConstructorHelpers::FObjectFinder<UBehaviorTree> BTAssetRef(TEXT(""));
 	if (BTAssetRef.Succeeded())
 	{
@@ -50,4 +52,5 @@ void APokemonAIController::OnPossess(APawn* InPawn)
 
 	// 빙의 완료후 실행 
 	//RunAI();
+
 }
