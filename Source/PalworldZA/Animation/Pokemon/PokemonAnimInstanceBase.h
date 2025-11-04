@@ -11,7 +11,7 @@
  */
 
 USTRUCT()
-struct FAnimSequencePath : public FTableRowBase
+struct FAnimSequencePath 
 {
 	GENERATED_BODY()
 
@@ -33,7 +33,7 @@ class PALWORLDZA_API UPokemonAnimInstanceBase : public UAnimInstance
 public:
 	UPokemonAnimInstanceBase();
 	
-	bool SetAnimSequence(FAnimSequencePath Paths);
+	bool SetAnimSequence();
 
 protected:
 

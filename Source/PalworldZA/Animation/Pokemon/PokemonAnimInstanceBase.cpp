@@ -9,7 +9,7 @@ UPokemonAnimInstanceBase::UPokemonAnimInstanceBase()
 {
 }
 
-bool UPokemonAnimInstanceBase::SetAnimSequence(FAnimSequencePath Paths)
+bool UPokemonAnimInstanceBase::SetAnimSequence()
 {
 
 	return false;
@@ -30,5 +30,4 @@ void UPokemonAnimInstanceBase::NativeInitializeAnimation()
 void UPokemonAnimInstanceBase::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
-
 }

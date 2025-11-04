@@ -25,6 +25,7 @@ APokemonBase::APokemonBase()
 
 void APokemonBase::PostInitializeComponents()
 {
+	Super::PostInitializeComponents();
 }
 
 // Called when the game starts or when spawned
