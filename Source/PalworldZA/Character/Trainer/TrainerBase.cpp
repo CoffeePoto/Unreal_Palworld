@@ -4,6 +4,8 @@
 #include "Character/Trainer/TrainerBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+#include "Character/Pokemon/PokemonBase.h"
+
 // Sets default values
 ATrainerBase::ATrainerBase()
 {
@@ -44,5 +46,17 @@ void ATrainerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void ATrainerBase::SummonPokemon()
+{
+	//Todo : Pokemons 배열에 담긴 포켓몬 객체 생성
+
+	//플레이어 위치 기준 오른쪽 위에 소환
+}
+
+void ATrainerBase::CommandSkills()
+{
+	//스킬 사용
 }
 

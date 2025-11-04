@@ -62,6 +62,10 @@ void APlayerTrainer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	}
 }
 
+void APlayerTrainer::FocusOn()
+{
+}
+
 void APlayerTrainer::Move(const FInputActionValue& value)
 {
 	// 입력 값 읽어오기.

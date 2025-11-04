@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -26,4 +26,14 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+protected:
+	//포켓몬 소환
+	void SummonPokemon();
+	//포켓몬에게 명령 하달
+	void CommandSkills(/*어떤 스킬을 사용할지 결정하는 매개변수*/);
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Possess)
+	//트레이너가 소유하고 있는 포켓몬 list
+	TArray<class APokemonBase*> Pokemons;
 };
