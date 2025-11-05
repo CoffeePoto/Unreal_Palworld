@@ -8,16 +8,16 @@ APAGameMode::APAGameMode()
 {
 	// Search a blueprint character asset.
 	static ConstructorHelpers::FClassFinder<APawn> TrainerClassRef(
-		TEXT("/Game/BluePrint/BP_PlayerTrainer.BP_PlayerTrainer_C")
+		TEXT("/Game/BluePrint/BP_PlayerTrainer2.BP_PlayerTrainer2_C")
 	);
-
+	
 	if (TrainerClassRef.Succeeded())
 	{
 		// Set Default Pawn Class.
 		DefaultPawnClass = TrainerClassRef.Class;
 	}
 
-	static ConstructorHelpers::FClassFinder<APlayerController> PlayerControllerClassRef(
+	static ConstructorHelpers::FClassFinder<APawn> PlayerControllerClassRef(
 		TEXT("/Script/PalworldZA.TrainerController")
 	);
 	if (PlayerControllerClassRef.Succeeded())
