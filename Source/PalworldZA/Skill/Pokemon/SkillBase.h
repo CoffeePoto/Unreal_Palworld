@@ -30,7 +30,7 @@ public:
 	virtual void OnEndSkill() override;
 
 	// 스킬 정보 반환 (Todo : 데이터 구조 잡은뒤 반환값 조정)
-	virtual void GetSkillData() override;
+	virtual const FPokemonSkillData& GetSkillData() override;
 
 protected:
 	

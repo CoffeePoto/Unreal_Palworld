@@ -21,6 +21,6 @@ protected:
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
-	virtual void UsingSkill(int SkillNumber) override;
+	virtual bool UsingSkill(int SkillNumber) override;
 
 };

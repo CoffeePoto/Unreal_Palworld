@@ -15,9 +15,7 @@ class UCommandReceiver : public UInterface
 	GENERATED_BODY()
 };
 
-/**
- * 
- */
+
 class PALWORLDZA_API ICommandReceiver
 {
 	GENERATED_BODY()
@@ -28,16 +26,19 @@ class PALWORLDZA_API ICommandReceiver
 public:
 
 	// 스킬 사용
-	virtual void UsingSkill(int SkillNumber) = 0;
+	virtual bool UsingSkill(int SkillNumber) = 0;
 
 	// 포켓몬 활성화 
-	virtual void SetActive(FVector Location) = 0;
+	virtual bool SetActive(FVector Location) = 0;
 
 	// 포켓몬 비활성화 
-	virtual void Deactive() = 0;
+	virtual bool Deactive() = 0;
 
 	// 포켓몬 쓰러졌을 때 호출할 델리게이트 등록 
 	virtual void BindOnPokemonDown(const FOnPokemonDown& InDelegate) = 0;
+
+	// 포켓몬 타겟 설정
+	virtual void SetTarget(AActor* NewTarget) = 0;
 
 	//virtual void UsingItem() = 0;
 };

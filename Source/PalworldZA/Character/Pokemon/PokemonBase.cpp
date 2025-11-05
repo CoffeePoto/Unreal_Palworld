@@ -6,6 +6,8 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BrainComponent.h"
 #include "Animation/Pokemon/PokemonAnimInstanceBase.h"
+#include "Interface/PokemonInterface/PokemonSkill.h"
+#include "Skill/Pokemon/SkillBase.h"
 
 
 APokemonBase::APokemonBase()
@@ -23,12 +25,6 @@ APokemonBase::APokemonBase()
 	{
 		GetMesh()->SetAnimInstanceClass(PokemonAnimRef.Class);
 	}
-
-	static ConstructorHelpers::FObjectFinder<UPokemonAnimSequenceData> AnimSequenceRef(TEXT("/Game/Data/Pokemon/DA_DarkCrowAnimSequence.DA_DarkCrowAnimSequence"));
-	if (AnimSequenceRef.Succeeded())
-	{
-		AnimData = AnimSequenceRef.Object;
-	}
 }
 
 void APokemonBase::PostInitializeComponents()
@@ -44,10 +40,7 @@ void APokemonBase::BeginPlay()
 		Cast<UPokemonAnimInstanceBase>(GetMesh()->GetAnimInstance());
 
 	// 애니메이션 시퀀스 전달
-	if (AnimData)
-	{
-		animInstance->SetAnimSequence(AnimData);
-	}
+	if (AnimData) { animInstance->SetAnimSequence(AnimData); }
 	
 	// 블랙 보드 연결
 	BBComponent = Cast<APokemonAIController>(GetController())->GetBlackboardComponent();		
@@ -58,17 +51,51 @@ void APokemonBase::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	SkillCoolDown(DeltaTime);
+	UpdateSkillTarget();
 }
 
 void APokemonBase::SkillCoolDown(float DeltaTime)
 {
-	for (TPair<FName, float>& Skill : SkillCoolTimes)
+	for (FSkillContainer& Skill : PokemonSkills)
 	{
-		if (Skill.Value > 0.0f)
+		if (Skill.CoolDown > 0.0f)
 		{
-			Skill.Value = FMath::Max(Skill.Value - DeltaTime, 0.0f);
+			Skill.CoolDown = FMath::Max(Skill.CoolDown - DeltaTime, 0.0f);
 		}
 	}
+}
+
+void APokemonBase::UpdateSkillTarget()
+{
+	if (ActionState != EPokemonAction::NonCommand) { return; }
+	if (CurrentSkillTarget == NewSkillTarget) { return; }
+
+	CurrentSkillTarget = NewSkillTarget;
+}
+
+void APokemonBase::LoadAnimSequenceData(FString Path)
+{
+	AnimData = LoadObject<UPokemonAnimSequenceData>(nullptr, *Path);
+}
+
+ASkillBase* APokemonBase::SpawnSkill(int SkillIndex)
+{
+	UClass* SkillType = PokemonSkills[SkillIndex].Skill.Get();
+
+	FActorSpawnParameters SpawnParams;
+
+	SpawnParams.Owner = this;
+	SpawnParams.Instigator = GetInstigator();
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+	ASkillBase* SpawnSk = GetWorld()->SpawnActor<ASkillBase>(
+		SkillType,
+		GetActorLocation(),
+		GetActorRotation(),
+		SpawnParams
+	);
+
+	return SpawnSk;
 }
 
 float APokemonBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -76,13 +103,25 @@ float APokemonBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 	return 0.0f;
 }
 
-void APokemonBase::UsingSkill(int SkillNumber)
+bool APokemonBase::UsingSkill(int SkillNumber)
 {
+	if (ActionState != EPokemonAction::NonCommand) { return false; }
+
 	UE_LOG(LogTemp, Log, TEXT("포켓몬이 트레이너의 지시를 듣고 있습니다."));
+	
+	IPokemonSkill* SkillController = Cast<IPokemonSkill>(PokemonSkills[SkillNumber].Skill);
+	ASkillBase* SpawnSk = SpawnSkill(SkillNumber);
+
+	SkillController->ExecuteSkill();
+	ActionState = EPokemonAction::OnSkill;
+
+	return true;
 }
 
-void APokemonBase::SetActive(FVector Location)
+bool APokemonBase::SetActive(FVector Location)
 {
+	if (ActionState != EPokemonAction::NonCommand) { return false; }
+
 	// 지정 위치로 이동
 	SetActorLocation(Location);
 
@@ -105,10 +144,14 @@ void APokemonBase::SetActive(FVector Location)
 			Brain->RestartLogic();
 		}
 	}
+
+	return true;
 }
 
-void APokemonBase::Deactive()
+bool APokemonBase::Deactive()
 {
+	if (ActionState != EPokemonAction::NonCommand) { return false; }
+
 	// 캐릭터 비가시화
 	SetActorHiddenInGame(true);
 
@@ -128,6 +171,8 @@ void APokemonBase::Deactive()
 			Brain->StopLogic(TEXT("Pokemon Deactive"));
 		}
 	}
+
+	return true;
 }
 
 void APokemonBase::BindOnPokemonDown(const FOnPokemonDown& InDelegate)
@@ -135,9 +180,14 @@ void APokemonBase::BindOnPokemonDown(const FOnPokemonDown& InDelegate)
 	PokemonDownEvents = InDelegate;
 }
 
+void APokemonBase::SetTarget(AActor* NewTarget)
+{
+	NewSkillTarget = NewTarget;
+}
+
 void APokemonBase::EndSkill()
 {
-	bIsOnSkill = false;
+	ActionState = EPokemonAction::NonCommand;
 }
 
 

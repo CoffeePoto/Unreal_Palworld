@@ -25,6 +25,7 @@ void ASkillBase::OnEndSkill()
 {
 }
 
-void ASkillBase::GetSkillData()
+const FPokemonSkillData& ASkillBase::GetSkillData()
 {
+	return Data;
 }

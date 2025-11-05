@@ -6,22 +6,22 @@
 #include "UObject/Interface.h"
 #include "PokemonDataGetter.generated.h"
 
-// This class does not need to be modified.
+
 UINTERFACE(MinimalAPI)
 class UPokemonDataGetter : public UInterface
 {
 	GENERATED_BODY()
 };
 
-/**
- * 
- */
+
 class PALWORLDZA_API IPokemonDataGetter
 {
 	GENERATED_BODY()
 
 	// Todo : 내용 채우기 
 	
+	virtual AActor* GetTarget() = 0;
+
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 };
