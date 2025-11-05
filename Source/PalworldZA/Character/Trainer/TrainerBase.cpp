@@ -11,6 +11,9 @@ ATrainerBase::ATrainerBase()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	
+	//변수 초기화
+	SelectedPokemon = 0;
 
 	//Pawn
 	bUseControllerRotationPitch = false;
@@ -27,36 +30,21 @@ ATrainerBase::ATrainerBase()
 	//에셋 설정은 에디터에서 진행
 }
 
-// Called when the game starts or when spawned
-void ATrainerBase::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-// Called every frame
-void ATrainerBase::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
-// Called to bind functionality to input
-void ATrainerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-}
-
 void ATrainerBase::SummonPokemon()
 {
 	//Todo : Pokemons 배열에 담긴 포켓몬 객체 생성
 
-	//플레이어 위치 기준 오른쪽 위에 소환
+	//플레이어 위치 + 조정값을 포켓몬 객체에 넘겨준다.
+	
 }
 
-void ATrainerBase::CommandSkills()
+void ATrainerBase::CommandSkills(uint8 SkillIndex)
 {
 	//스킬 사용
+	//유효성 검사
+	if (Pokemons.IsValidIndex(SelectedPokemon))
+	{
+		Pokemons[SelectedPokemon]->UsingSkill();
+	}
 }
 
