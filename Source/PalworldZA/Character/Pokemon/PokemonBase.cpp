@@ -4,9 +4,11 @@
 #include "PokemonBase.h"
 #include "AI/Pokemon/PokemonAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "BrainComponent.h"
 #include "Animation/Pokemon/PokemonAnimInstanceBase.h"
-#include "TimerManager.h"
-#include "GameFramework/CharacterMovementComponent.h"
+#include "Interface/PokemonInterface/PokemonSkill.h"
+#include "Skill/Pokemon/SkillBase.h"
+
 
 APokemonBase::APokemonBase()
 {
@@ -23,12 +25,6 @@ APokemonBase::APokemonBase()
 	{
 		GetMesh()->SetAnimInstanceClass(PokemonAnimRef.Class);
 	}
-
-	static ConstructorHelpers::FObjectFinder<UPokemonAnimSequenceData> AnimSequenceRef(TEXT("/Game/Data/Pokemon/DA_DarkCrowAnimSequence.DA_DarkCrowAnimSequence"));
-	if (AnimSequenceRef.Succeeded())
-	{
-		AnimData = AnimSequenceRef.Object;
-	}
 }
 
 void APokemonBase::PostInitializeComponents()
@@ -44,10 +40,7 @@ void APokemonBase::BeginPlay()
 		Cast<UPokemonAnimInstanceBase>(GetMesh()->GetAnimInstance());
 
 	// 애니메이션 시퀀스 전달
-	if (AnimData)
-	{
-		animInstance->SetAnimSequence(AnimData);
-	}
+	if (AnimData) { animInstance->SetAnimSequence(AnimData); }
 	
 	// 블랙 보드 연결
 	BBComponent = Cast<APokemonAIController>(GetController())->GetBlackboardComponent();		
@@ -56,6 +49,53 @@ void APokemonBase::BeginPlay()
 void APokemonBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	SkillCoolDown(DeltaTime);
+	UpdateSkillTarget();
+}
+
+void APokemonBase::SkillCoolDown(float DeltaTime)
+{
+	for (FSkillContainer& Skill : PokemonSkills)
+	{
+		if (Skill.CoolDown > 0.0f)
+		{
+			Skill.CoolDown = FMath::Max(Skill.CoolDown - DeltaTime, 0.0f);
+		}
+	}
+}
+
+void APokemonBase::UpdateSkillTarget()
+{
+	if (ActionState != EPokemonAction::NonCommand) { return; }
+	if (CurrentSkillTarget == NewSkillTarget) { return; }
+
+	CurrentSkillTarget = NewSkillTarget;
+}
+
+void APokemonBase::LoadAnimSequenceData(FString Path)
+{
+	AnimData = LoadObject<UPokemonAnimSequenceData>(nullptr, *Path);
+}
+
+ASkillBase* APokemonBase::SpawnSkill(int SkillIndex)
+{
+	UClass* SkillType = PokemonSkills[SkillIndex].Skill.Get();
+
+	FActorSpawnParameters SpawnParams;
+
+	SpawnParams.Owner = this;
+	SpawnParams.Instigator = GetInstigator();
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+	ASkillBase* SpawnSk = GetWorld()->SpawnActor<ASkillBase>(
+		SkillType,
+		GetActorLocation(),
+		GetActorRotation(),
+		SpawnParams
+	);
+
+	return SpawnSk;
 }
 
 float APokemonBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -63,10 +103,93 @@ float APokemonBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 	return 0.0f;
 }
 
-void APokemonBase::UsingSkill()
+bool APokemonBase::UsingSkill(int SkillNumber)
 {
+	if (ActionState != EPokemonAction::NonCommand) { return false; }
+
 	UE_LOG(LogTemp, Log, TEXT("포켓몬이 트레이너의 지시를 듣고 있습니다."));
+	
+	IPokemonSkill* SkillController = Cast<IPokemonSkill>(PokemonSkills[SkillNumber].Skill);
+	ASkillBase* SpawnSk = SpawnSkill(SkillNumber);
+
+	SkillController->ExecuteSkill();
+	ActionState = EPokemonAction::OnSkill;
+
+	return true;
 }
+
+bool APokemonBase::SetActive(FVector Location)
+{
+	if (ActionState != EPokemonAction::NonCommand) { return false; }
+
+	// 지정 위치로 이동
+	SetActorLocation(Location);
+
+	// 캐릭터 가시화
+	SetActorHiddenInGame(false);
+
+	// 충돌 활성화
+	SetActorEnableCollision(true);
+
+	// 틱 활성화 
+	SetActorTickEnabled(true);
+
+	// AI 활성 
+	if (AAIController* AI = Cast<AAIController>(GetController()))
+	{
+		UBrainComponent* Brain = AI->GetBrainComponent();
+
+		if (Brain)
+		{
+			Brain->RestartLogic();
+		}
+	}
+
+	return true;
+}
+
+bool APokemonBase::Deactive()
+{
+	if (ActionState != EPokemonAction::NonCommand) { return false; }
+
+	// 캐릭터 비가시화
+	SetActorHiddenInGame(true);
+
+	// 충돌 비활성화
+	SetActorEnableCollision(false);
+
+	// 틱 비활성화 
+	SetActorTickEnabled(false);
+
+	// AI 비활성
+	if (AAIController* AI = Cast<AAIController>(GetController()))
+	{
+		UBrainComponent* Brain = AI->GetBrainComponent();
+
+		if (Brain)
+		{
+			Brain->StopLogic(TEXT("Pokemon Deactive"));
+		}
+	}
+
+	return true;
+}
+
+void APokemonBase::BindOnPokemonDown(const FOnPokemonDown& InDelegate)
+{
+	PokemonDownEvents = InDelegate;
+}
+
+void APokemonBase::SetTarget(AActor* NewTarget)
+{
+	NewSkillTarget = NewTarget;
+}
+
+void APokemonBase::EndSkill()
+{
+	ActionState = EPokemonAction::NonCommand;
+}
+
 
 // Called to bind functionality to input
 //void APokemonBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

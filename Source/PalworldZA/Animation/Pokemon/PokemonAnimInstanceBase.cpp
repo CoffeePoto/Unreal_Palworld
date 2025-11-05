@@ -23,6 +23,7 @@ bool UPokemonAnimInstanceBase::SetAnimSequence(const UPokemonAnimSequenceData* A
 	SkillLoopAnim	=	AnimData->SkillLoopAnim;
 	SKillEndAnim	=	AnimData->SkillEndAnim;
 	HitAnim			=	AnimData->HitAnim;
+	EncountAnim		=	AnimData->EncountAnim;
 
 	return true;
 }

@@ -16,21 +16,31 @@ class PALWORLDZA_API UPokemonAnimSequenceData : public UDataAsset
 	GENERATED_BODY()
 	
 public:
+	// 대기 모션
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
 	UAnimSequence* IdleAnim;
 
+	// 움직임 모션
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
 	UAnimSequence* MovementAnim;
 
+	// 스킬 사용 (시작) 모션
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
 	UAnimSequence* SkillStartAnim;
 
+	// 스킬 사용 (중간) 모션
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
 	UAnimSequence* SkillLoopAnim;
 
+	// 스킬 사용 (종료) 모션
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
 	UAnimSequence* SkillEndAnim;
 
+	// 피격 모션
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
 	UAnimSequence* HitAnim;
+
+	// 조우 모션
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
+	UAnimSequence* EncountAnim;
 };

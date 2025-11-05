@@ -2,21 +2,12 @@
 
 
 #include "Character/Pokemon/TestPokemon.h"
+#include "AI/Pokemon/PokemonAIController.h"
+
 
 ATestPokemon::ATestPokemon()
 {
-	// 메시 세팅
-	//ConstructorHelpers::FObjectFinder<USkeletalMesh> TestMeshRef(TEXT(
-	//	"/Game/PalAsset/Model/BluePlatypus/BluePlatypus.BluePlatypus"
-	//));
-	//if (TestMeshRef.Succeeded())
-	//{
-	//	// 메시 적용.
-	//	GetMesh()->SetSkeletalMesh(TestMeshRef.Object);
-	//
-	//	// 메시 위치 설정.
-	//	GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
-	//}
+	LoadAnimSequenceData(TEXT("/Game/Data/Pokemon/DA_DarkCrowAnimSequence.DA_DarkCrowAnimSequence"));
 }
 
 void ATestPokemon::BeginPlay()
@@ -29,7 +20,11 @@ void ATestPokemon::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ATestPokemon::UsingSkill()
+bool ATestPokemon::UsingSkill(int SkillNumber)
 {
-	Super::UsingSkill();
+	bool Value = Super::UsingSkill(SkillNumber);
+
+	// 나중에 포켓몬의 스킬 로직 구현
+	UE_LOG(LogTemp, Warning, TEXT("TestPokemon 스킬 사용"));
+	return Value;
 }

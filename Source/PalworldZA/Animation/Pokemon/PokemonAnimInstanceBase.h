@@ -82,6 +82,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
 	UAnimSequence* HitAnim;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
+	UAnimSequence* EncountAnim;
+
 	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
 	//UAnimSequence* DeadAnim;
 };
