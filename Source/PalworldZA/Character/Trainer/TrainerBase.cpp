@@ -45,7 +45,7 @@ void ATrainerBase::CommandSkills(uint8 SkillIndex)
 	//유효성 검사
 	if (Pokemons.IsValidIndex(SelectedPokemon))
 	{
-		Pokemons[SelectedPokemon]->UsingSkill();
+		Pokemons[SelectedPokemon]->UsingSkill(SkillIndex);
 	}
 }
 
