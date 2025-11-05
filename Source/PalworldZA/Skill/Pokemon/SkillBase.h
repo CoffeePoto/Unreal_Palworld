@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Character/Pokemon/PokemonBase.h"
 #include "Interface/PokemonInterface/PokemonSkill.h"
 #include "Data/Pokemon/PokemonSkillData.h"
 #include "SkillBase.generated.h"

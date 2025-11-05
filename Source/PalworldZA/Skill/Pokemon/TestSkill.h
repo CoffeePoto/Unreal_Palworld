@@ -14,4 +14,16 @@ class PALWORLDZA_API ATestSkill : public ASkillBase
 {
 	GENERATED_BODY()
 	
+public:
+	ATestSkill();
+
+	// 스킬 실행
+	virtual void ExecuteSkill() override;
+
+	// 스킬 종료 시
+	virtual void OnEndSkill() override;
+
+	
+protected:
+
 };
