@@ -11,7 +11,6 @@
 #include "EnhancedInputComponent.h"
 
 APlayerTrainer::APlayerTrainer()
-	:isFocusing(false)
 {
 	//Camera
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
@@ -22,6 +21,9 @@ APlayerTrainer::APlayerTrainer()
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
 	Camera->bUsePawnControlRotation = false;
+
+	//Mesh
+
 }
 
 void APlayerTrainer::BeginPlay()
@@ -46,8 +48,6 @@ void APlayerTrainer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerTrainer::Move);
 		EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Triggered, this, &APlayerTrainer::Run);
 		EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Completed, this, &APlayerTrainer::RunEnd);
-		EnhancedInputComponent->BindAction(FocusAction, ETriggerEvent::Triggered, this, &APlayerTrainer::FocusOn);
-		EnhancedInputComponent->BindAction(FocusAction, ETriggerEvent::Completed, this, &APlayerTrainer::FocusEnd);
 	}
 
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
@@ -60,20 +60,6 @@ void APlayerTrainer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 			InputSystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
-}
-
-void APlayerTrainer::FocusOn()
-{
-	//키입력 F가 입력되고 있으면 FocusOn 함수 호출
-	//Test
-	UE_LOG(LogTemp, Log, TEXT("FocusOn 함수 호출"));
-
-	//주시할 포켓몬을 찾았을 경우에만 isFocusing 변수를 true로 만들 것.
-}
-
-void APlayerTrainer::FocusEnd()
-{
-	isFocusing = false;
 }
 
 void APlayerTrainer::Move(const FInputActionValue& value)
@@ -104,23 +90,21 @@ void APlayerTrainer::Look(const FInputActionValue& value)
 {
 	// 입력 값 읽어오기.
 	FVector2D LookValue = value.Get<FVector2D>();
-	//카메라 속도 조절을 위한 float 값 배정
-	double CameraSpeed = 0.7f;
 
 	// 컨트롤러에 회전 적용.
 	// 마우스 좌우 드래그 입력을 컨트롤러의 Z축 회전(요, Yaw)에 적용.
-	AddControllerYawInput(LookValue.X * CameraSpeed);
+	AddControllerYawInput(LookValue.X);
 
 	// 마우스 좌우 드래그 입력을 컨트롤러의 Y축 회전(피치, Pitch)에 적용.
-	AddControllerPitchInput(LookValue.Y * CameraSpeed);
+	AddControllerPitchInput(LookValue.Y);
 }
 
-void APlayerTrainer::Run()
+void APlayerTrainer::Run(const FInputActionValue& value)
 {
 	GetCharacterMovement()->MaxWalkSpeed = 700.0f;
 }
 
-void APlayerTrainer::RunEnd()
+void APlayerTrainer::RunEnd(const FInputActionValue& value)
 {
 	GetCharacterMovement()->MaxWalkSpeed = 500.0f;
 }
