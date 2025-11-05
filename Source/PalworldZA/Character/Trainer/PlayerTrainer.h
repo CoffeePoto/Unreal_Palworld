@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -21,6 +21,16 @@ public:
 	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	//플레이어가 상대 포켓몬을 주시한다.
+	void FocusOn();
+	void FocusEnd();
+
+	//이동 로직
+	void Move(const FInputActionValue& value);
+	void Look(const FInputActionValue& value);
+	void Run();
+	void RunEnd();
+
 protected:
 	//Camera Section
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -37,10 +47,9 @@ protected:
 	TObjectPtr<class UInputAction> MoveAction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> RunAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UInputAction> FocusAction;
 
-	void Move(const FInputActionValue& value);  
-	void Look(const FInputActionValue& value);  
-	void Run(const FInputActionValue& value);  
-	void RunEnd(const FInputActionValue& value);
-
+	//focus 여부 판단 
+	bool isFocusing;
 };
