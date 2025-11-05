@@ -54,7 +54,7 @@ public: // 공개 함수
 	// 스킬 종료시 호출
 	void EndSkill();
 
-public:	// 인터페이스 구현부 (ICommandReceiver)
+public:	// 인터페이스 구현부 (ICommandReceiver) - 포켓몬이 받는
 
 	// 스킬 사용
 	virtual bool UsingSkill(int SkillNumber) override;
@@ -71,7 +71,7 @@ public:	// 인터페이스 구현부 (ICommandReceiver)
 	// 새 타겟 설정
 	virtual void SetTarget(AActor* NewTarget) override;
 
-public:	// 인터페이스 구현부 (IPokemonDataGetter)
+public:	// 인터페이스 구현부 (IPokemonDataGetter) - 포켓몬이 주는
 
 	FORCEINLINE virtual AActor* GetTarget() { return CurrentSkillTarget; }
 
