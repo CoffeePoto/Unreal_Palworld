@@ -23,6 +23,7 @@ ATrainerBase::ATrainerBase()
 	//Mesh 설정
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -80.0f), FRotator(0.0f, -90.0f, 0.0f));
 	//에셋 설정은 에디터에서 진행
+
 }
 
 // Called when the game starts or when spawned
