@@ -8,6 +8,9 @@
 ATestPokemon::ATestPokemon()
 {
 	LoadAnimSequenceData(TEXT("/Game/Data/Pokemon/DA_DarkCrowAnimSequence.DA_DarkCrowAnimSequence"));
+	
+	AIControllerClass = APokemonAIController::StaticClass();
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
 void ATestPokemon::BeginPlay()
