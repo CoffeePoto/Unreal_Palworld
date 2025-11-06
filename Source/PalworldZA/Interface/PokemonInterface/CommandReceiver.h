@@ -7,6 +7,7 @@
 #include "CommandReceiver.generated.h"
 
 DECLARE_DELEGATE(FOnPokemonDown);
+DECLARE_MULTICAST_DELEGATE(FEndPokemonSkill);
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
@@ -37,8 +38,14 @@ public:
 	// 포켓몬 쓰러졌을 때 호출할 델리게이트 등록 
 	virtual void BindOnPokemonDown(const FOnPokemonDown& InDelegate) = 0;
 
+	// 포켓몬 공격 종료시 호출할 델리게이트 등록
+	virtual void BindEndPokemonSkill(const FEndPokemonSkill::FDelegate& InDelegate) = 0;
+
 	// 포켓몬 타겟 설정
 	virtual void SetTarget(AActor* NewTarget) = 0;
+
+	// 포켓몬 트레이너 설정
+	virtual void SetTrainer(APawn* NewTrainer) = 0;
 
 	//virtual void UsingItem() = 0;
 };

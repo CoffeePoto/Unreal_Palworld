@@ -66,16 +66,21 @@ public:	// 인터페이스 구현부 (ICommandReceiver) - 포켓몬이 받는
 	// 포켓몬 쓰러졌을 때 호출할 델리게이트 등록
 	virtual void BindOnPokemonDown(const FOnPokemonDown& InDelegate) override;
 
+	// 포켓몬 기술 종료시 호출할 델리게이트 등록
+	virtual void BindEndPokemonSkill(const FEndPokemonSkill::FDelegate& InDelegate) override;
+
 	// 새 타겟 설정
 	virtual void SetTarget(AActor* NewTarget) override;
 
+	virtual void SetTrainer(APawn* NewTrainer) override;
+
 public:	// 인터페이스 구현부 (IPokemonDataGetter) - 포켓몬이 주는
 
-	FORCEINLINE virtual AActor* GetTarget() { return CurrentSkillTarget; }
+	FORCEINLINE virtual AActor* GetTarget() override { return CurrentSkillTarget; }
 
-	FORCEINLINE virtual uint8 IsOnSkill() { return ActionState == EPokemonAction::OnSkill; }
+	FORCEINLINE virtual uint8 IsOnSkill() override { return ActionState == EPokemonAction::OnSkill; }
 
-	FORCEINLINE virtual FVector GetShootPoint() { return GetActorLocation(); }
+	FORCEINLINE virtual FVector GetShootPoint() override { return GetActorLocation(); }
 
 protected: // 오버라이딩 구현부 
 
@@ -146,7 +151,11 @@ protected: // Has 변수
 
 protected: // 파라미터 변수
 
+	// 포켓몬 기절 이벤트
 	FOnPokemonDown PokemonDownEvents;
+
+	// 포켓몬 기술 종료 이벤트
+	FEndPokemonSkill PokemonSkillEndEvents;
 
 	// 기본 포켓몬 스탯 데이터
 	FPokemonStatData DefaultStatData;
@@ -157,6 +166,7 @@ protected: // 파라미터 변수
 	// 현재 포켓몬 행동 상태
 	EPokemonAction ActionState = EPokemonAction::NonCommand;
 
+	// 현재 선택된 스킬 번호
 	uint8 SelectSkillNumber;
 
 	// Todo : PokemonBase 예상 추가 요소 

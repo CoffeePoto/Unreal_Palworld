@@ -17,6 +17,7 @@ enum class EActionType : uint8
 UENUM(BlueprintType)
 enum class EPokemonType : uint8
 {
+	NONE,
 	NORMAL,
 	FIRE,
 	WATER,

@@ -198,9 +198,19 @@ void APokemonBase::BindOnPokemonDown(const FOnPokemonDown& InDelegate)
 	PokemonDownEvents = InDelegate;
 }
 
+void APokemonBase::BindEndPokemonSkill(const FEndPokemonSkill::FDelegate& InDelegate)
+{
+	PokemonSkillEndEvents.Add(InDelegate);
+}
+
 void APokemonBase::SetTarget(AActor* NewTarget)
 {
 	NewSkillTarget = NewTarget;
+}
+
+void APokemonBase::SetTrainer(APawn* NewTrainer)
+{
+	Trainer = NewTrainer;
 }
 
 void APokemonBase::EndSkill()
@@ -219,5 +229,6 @@ void APokemonBase::EndSkill()
 		SpawnedSkill = nullptr;
 	}
 
+	PokemonSkillEndEvents.Broadcast();
 	ActionState = EPokemonAction::NonCommand;
 }

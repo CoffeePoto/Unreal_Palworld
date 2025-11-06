@@ -4,6 +4,7 @@
 #include "Character/Pokemon/AttackTestPokemon.h"
 #include "AttackTestPokemon.h"
 #include "TestPokemon.h"
+#include "Character/Trainer/PlayerTrainer.h"
 #include "Kismet/GameplayStatics.h"
 
 AAttackTestPokemon::AAttackTestPokemon()
@@ -37,6 +38,10 @@ void AAttackTestPokemon::Tick(float DeltaTime)
 
 	CurrentSkillTarget = UGameplayStatics::GetActorOfClass(GetWorld(), ATestPokemon::StaticClass());
 	NewSkillTarget = CurrentSkillTarget;
-	
+
+	if (!Trainer)
+	{
+		Trainer = Cast<APawn>(UGameplayStatics::GetActorOfClass(GetWorld(), APlayerTrainer::StaticClass()));
+	}
 }
 
