@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
+#include "PokemonEnum.h"
 #include "PokemonStatData.generated.h"
+
 
 USTRUCT()
 struct FPokemonStatData : public FTableRowBase
@@ -13,11 +15,11 @@ struct FPokemonStatData : public FTableRowBase
 
 	// 제 1 타입
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stat)
-	FString Type1;
+	EPokemonType Type1;
 
 	// 제 2 타입
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stat)
-	FString Type2;
+	EPokemonType Type2;
 
 	// 체력
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stat)

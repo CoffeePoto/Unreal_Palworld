@@ -4,6 +4,7 @@
 #include "PokemonAnimInstanceBase.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Interface/PokemonInterface/PokemonDataGetter.h"
 
 UPokemonAnimInstanceBase::UPokemonAnimInstanceBase()
 {
@@ -34,6 +35,9 @@ void UPokemonAnimInstanceBase::NativeInitializeAnimation()
 
 	Owner = Cast<ACharacter>(GetOwningActor());
 
+	OwnerGetter.SetObject(Owner);
+	OwnerGetter.SetInterface(Cast<IPokemonDataGetter>(Owner));
+
 	if (Owner)
 	{
 		Movement = Owner->GetCharacterMovement();
@@ -47,5 +51,11 @@ void UPokemonAnimInstanceBase::NativeUpdateAnimation(float DeltaSeconds)
 	if (Movement)
 	{
 		MovementSpeed = Movement->Velocity.Size2D();
+
+		
+		if (OwnerGetter)
+		{
+			bIsOnSkill = OwnerGetter->IsOnSkill();
+		}
 	}
 }

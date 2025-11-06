@@ -48,8 +48,6 @@ public: // 공개 함수
 
 	APokemonBase();
 
-	// 스킬 사용중인지 여부를 반환하는 함수
-	FORCEINLINE uint8 GetIsOnSkill() { return ActionState == EPokemonAction::OnSkill; }
 
 	// 스킬 종료시 호출
 	void EndSkill();
@@ -74,6 +72,10 @@ public:	// 인터페이스 구현부 (ICommandReceiver) - 포켓몬이 받는
 public:	// 인터페이스 구현부 (IPokemonDataGetter) - 포켓몬이 주는
 
 	FORCEINLINE virtual AActor* GetTarget() { return CurrentSkillTarget; }
+
+	FORCEINLINE virtual uint8 IsOnSkill() { return ActionState == EPokemonAction::OnSkill; }
+
+	FORCEINLINE virtual FVector GetShootPoint() { return GetActorLocation(); }
 
 protected: // 오버라이딩 구현부 
 
@@ -134,15 +136,13 @@ protected: // Has 변수
 	UPROPERTY()
 	TArray<FSkillContainer> PokemonSkills;
 
-	// 사용이 선택된 스킬
+	// 소환된 스킬
 	UPROPERTY()
-	TObjectPtr<class ASkillBase> SelectUseSkill;
+	TObjectPtr<class ASkillBase> SpawnedSkill;
 
-
+	// 소환된 스킬 컨트롤러
 	UPROPERTY()
-	TScriptInterface<class IPokemonSkill> SelectSkillCountroller;
-
-
+	TScriptInterface<class IPokemonSkill> SpawnSkillController;
 
 protected: // 파라미터 변수
 

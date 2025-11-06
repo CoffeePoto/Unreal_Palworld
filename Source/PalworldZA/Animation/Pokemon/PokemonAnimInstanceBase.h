@@ -48,6 +48,9 @@ protected:
 	TObjectPtr<class ACharacter> Owner;
 
 	UPROPERTY()
+	TScriptInterface<class IPokemonDataGetter> OwnerGetter;
+
+	UPROPERTY()
 	TObjectPtr<class UCharacterMovementComponent> Movement;
 	
 protected:

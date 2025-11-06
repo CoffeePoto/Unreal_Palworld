@@ -84,10 +84,12 @@ ASkillBase* APokemonBase::SpawnSkill(int SkillIndex)
 
 	FActorSpawnParameters SpawnParams;
 
+	// 파라미터 값 세팅
 	SpawnParams.Owner = this;
 	SpawnParams.Instigator = GetInstigator();
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
+	// 스킬 스폰 
 	ASkillBase* SpawnSk = GetWorld()->SpawnActor<ASkillBase>(
 		SkillType,
 		GetActorLocation(),
@@ -100,15 +102,20 @@ ASkillBase* APokemonBase::SpawnSkill(int SkillIndex)
 
 void APokemonBase::ExecuteSkill()
 {
-//	ASkillBase* SpawnSk = SpawnSkill(SkillNumber);
-//	if (!SpawnSk) { return false; }
-//
-//	IPokemonSkill* SkillController = Cast<IPokemonSkill>(SpawnSk);
-//
-//	SpawnSk->InitializeSkill(this);
-//	ActionState = EPokemonAction::OnSkill;
-//
-//	SkillController->ExecuteSkill();
+	// 스킬 소환
+	SpawnedSkill = SpawnSkill(SelectSkillNumber);
+	if (!SpawnedSkill) { return; }
+
+	// 스킬 컨트롤러 세팅
+	SpawnSkillController.SetObject(SpawnedSkill);
+	SpawnSkillController.SetInterface(Cast<IPokemonSkill>(SpawnedSkill));
+
+	// 초기화 및 상태 변환
+	SpawnedSkill->InitializeSkill(this);
+	ActionState = EPokemonAction::OnSkill;
+
+	// 스킬 실행
+	SpawnSkillController->ExecuteSkill();
 }
 
 float APokemonBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -124,16 +131,7 @@ bool APokemonBase::UsingSkill(uint8 SkillNumber)
 	SelectSkillNumber = SkillNumber;
 	ActionState = EPokemonAction::InCommand;
 
-
-	ASkillBase* SpawnSk = SpawnSkill(SkillNumber);
-	if (!SpawnSk) { return false; }
-
-	IPokemonSkill* SkillController = Cast<IPokemonSkill>(SpawnSk);
-
-	SpawnSk->InitializeSkill(this);
-	ActionState = EPokemonAction::OnSkill;
-
-	SkillController->ExecuteSkill();
+	ExecuteSkill();
 
 	return true;
 }
@@ -207,13 +205,19 @@ void APokemonBase::SetTarget(AActor* NewTarget)
 
 void APokemonBase::EndSkill()
 {
+	// 스킬 쿨타임 설정
+	if (SpawnSkillController)
+	{
+		PokemonSkills[SelectSkillNumber].CoolDown = SpawnSkillController->GetSkillData().Cooltime;
+	}
+
+	// 스폰된 스킬 제거
+	if (SpawnedSkill)
+	{
+		SpawnedSkill->Destroy();
+		SpawnSkillController = nullptr;
+		SpawnedSkill = nullptr;
+	}
+
 	ActionState = EPokemonAction::NonCommand;
 }
-
-
-// Called to bind functionality to input
-//void APokemonBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-//{
-//	Super::SetupPlayerInputComponent(PlayerInputComponent);
-//}
-

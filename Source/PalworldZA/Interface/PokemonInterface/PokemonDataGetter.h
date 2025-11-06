@@ -21,6 +21,11 @@ class PALWORLDZA_API IPokemonDataGetter
 	// Todo : 내용 채우기 
 public:
 
+	// 현재 포켓몬이 바라보는 타겟
 	virtual AActor* GetTarget() = 0;
 
+	// 현재 포켓몬이 공격하는지 판단
+	virtual uint8 IsOnSkill() = 0;
+
+	virtual FVector GetShootPoint() = 0;
 };

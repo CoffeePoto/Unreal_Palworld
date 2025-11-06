@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
+#include "PokemonEnum.h"
 #include "PokemonSkillData.generated.h"
+
 
 USTRUCT()
 struct FPokemonSkillData : public FTableRowBase
@@ -15,7 +17,7 @@ struct FPokemonSkillData : public FTableRowBase
 	FString Name;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Skill)
-	int Type;
+	EPokemonType Type;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Skill)
 	float DMG;
@@ -24,5 +26,8 @@ struct FPokemonSkillData : public FTableRowBase
 	float Cooltime;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Skill)
-	int ActionType;
+	EActionType ActionType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Skill)
+	float Range;
 };
