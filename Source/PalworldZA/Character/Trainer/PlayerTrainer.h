@@ -34,6 +34,10 @@ public:
 	void Run();
 	void RunEnd();
 
+	// 공격 로직
+	void Throw(const FInputActionValue& value);
+	void ThrowActionEnd(UAnimMontage* TargetMontage, bool IsProperlyEnded);
+
 protected:
 	//Camera Section
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -55,6 +59,15 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> SelectAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UInputAction> ThrowAction;
+
 	//focus 여부 판단 
 	bool isFocusing;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	TObjectPtr<class UAnimMontage> ThrowActionMontage;
+
+	// 던지기 스킬 중인지 판단.
+	bool IsThrowing;
 };

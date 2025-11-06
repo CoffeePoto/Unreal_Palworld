@@ -80,6 +80,7 @@ void APlayerTrainer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(FocusAction, ETriggerEvent::Triggered, this, &APlayerTrainer::FocusOn);
 		EnhancedInputComponent->BindAction(FocusAction, ETriggerEvent::Completed, this, &APlayerTrainer::FocusEnd);
 		EnhancedInputComponent->BindAction(SelectAction, ETriggerEvent::Started, this, &APlayerTrainer::SelectPokemon);
+		EnhancedInputComponent->BindAction(ThrowAction, ETriggerEvent::Triggered, this, &APlayerTrainer::Throw);
 	}
 
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
@@ -128,6 +129,12 @@ void APlayerTrainer::SelectPokemon(const FInputActionValue& value)
 
 void APlayerTrainer::Move(const FInputActionValue& value)
 {
+	// 던지기 스킬 진행 중일 때는 이동 처리 안함.
+	if (IsThrowing)
+	{
+		return;
+	}
+
 	// 입력 값 읽어오기.
 	FVector2D Movement = value.Get<FVector2D>();
 
@@ -173,4 +180,52 @@ void APlayerTrainer::Run()
 void APlayerTrainer::RunEnd()
 {
 	GetCharacterMovement()->MaxWalkSpeed = 500.0f;
+}
+
+void APlayerTrainer::Throw(const FInputActionValue& value)
+{
+	// 이미 던지기 진행 중이면 종료.
+	if (IsThrowing)
+	{
+		return;
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("IA Throw"));
+
+	// 입력 비활성화.
+	//APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	//if (PlayerController)
+	//{
+	//	DisableInput(PlayerController);
+	//}
+
+	// 던지기 시작.
+	IsThrowing = true;
+
+	// 걷다가 멈추고 throw
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+
+	// Todo. 몽타주
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	AnimInstance->Montage_Play(ThrowActionMontage, 1.0f);
+
+	FOnMontageEnded EndDelegate;
+	EndDelegate.BindUObject(this, &APlayerTrainer::ThrowActionEnd);
+	AnimInstance->Montage_SetEndDelegate(EndDelegate, ThrowActionMontage);
+}
+
+void APlayerTrainer::ThrowActionEnd(UAnimMontage* TargetMontage, bool IsProperlyEnded)
+{
+	// ensure(CurrentCombo != 0);
+	// CurrentCombo = 0;
+	// 입력 다시 활성화.
+	//APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	//if (PlayerController)
+	//{
+	//	EnableInput(PlayerController);
+	//}
+
+	// 던지기 종료.
+	IsThrowing = false;
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 }
