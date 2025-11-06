@@ -21,7 +21,7 @@ AAttackTestPokemon::AAttackTestPokemon()
 		NewSkill.Skill = NewSkillRef.Class;
 	}
 
-	//PokemonSkills.Add(NewSkill);
+	PokemonSkills.Add(NewSkill);
 }
 
 
