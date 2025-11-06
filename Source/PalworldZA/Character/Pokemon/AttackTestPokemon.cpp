@@ -15,7 +15,7 @@ AAttackTestPokemon::AAttackTestPokemon()
 
 	FSkillContainer NewSkill;
 
-	static ConstructorHelpers::FClassFinder<AActor> NewSkillRef(TEXT("/Game/BluePrint/TestPokemon/BP_TestSkill.BP_TestSkill_C"));
+	static ConstructorHelpers::FClassFinder<AActor> NewSkillRef(TEXT("/Game/BluePrint/TestPokemon/BP_FireSlash.BP_FireSlash_C"));
 	if (NewSkillRef.Succeeded())
 	{
 		NewSkill.Skill = NewSkillRef.Class;

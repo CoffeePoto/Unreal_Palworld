@@ -6,7 +6,7 @@
 
 ATestCloseRangeSkill::ATestCloseRangeSkill()
 {
-	static ConstructorHelpers::FClassFinder<AActor> FireSlashRef(TEXT("/Game/BluePrint/TestPokemon/BP_TestFireSlash.BP_TestFireSlash_C"));
+	static ConstructorHelpers::FClassFinder<AActor> FireSlashRef(TEXT("/Game/BluePrint/TestPokemon/BP_FireSlash.BP_FireSlash_C"));
 	if (FireSlashRef.Succeeded())
 	{
 		FireSlash = FireSlashRef.Class;
@@ -40,25 +40,14 @@ void ATestCloseRangeSkill::ExecuteSkill()
 	FRotator LookAtRotation = Direction.Rotation();
 	User->SetActorRotation(LookAtRotation);
 
-	// 타겟 앞까지 돌진할 위치 계산
-	StopDistance = 100.0f;
-	FVector RushEndLocation = TargetPos - (Direction * StopDistance);
-
-	// 돌진 속도
-	RushSpeed = 1000.0f;
-	float RushDuration = DistanceToTarget / RushSpeed;
-
-	// 실제 돌진 이동 시작.
-	
-	// 스킬 소환.
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	AActor* SpawnedEffect = GetWorld()->SpawnActor<AActor>(
-		FireSlash,
-		UserPos,
-		LookAtRotation,
-		SpawnParams
+	// 동작 회복
+	FTimerHandle SkillEndTimer;
+	GetWorldTimerManager().SetTimer(
+		SkillEndTimer,
+		this,
+		&ASkillBase::OnEndSkill,  // 2초 뒤 실행할 함수
+		0.7f,                     // 2초 뒤
+		false                     // 반복 여부 (false = 한 번만)
 	);
-	
 	
 }

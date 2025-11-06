@@ -25,13 +25,4 @@ protected:
 	UPROPERTY()
 	TSubclassOf<AActor> FireSlash;
 
-	// 돌진할 때 얼마나 
-
-	// 돌진 속도.
-	UPROPERTY()
-	float RushSpeed;
-
-	// 얼마나 앞까지 돌진할 지 거리.
-	UPROPERTY()
-	float StopDistance;
 };
