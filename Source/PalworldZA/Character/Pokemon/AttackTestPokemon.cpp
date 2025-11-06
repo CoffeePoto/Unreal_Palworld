@@ -11,6 +11,8 @@ AAttackTestPokemon::AAttackTestPokemon()
 {
 	LoadAnimSequenceData(TEXT("/Game/Data/Pokemon/DA_FireFoxAnimSequence.DA_FireFoxAnimSequence"));
 
+	PokemonSkills.Empty();
+
 	FSkillContainer NewSkill;
 
 	static ConstructorHelpers::FClassFinder<AActor> NewSkillRef(TEXT("/Game/BluePrint/TestPokemon/BP_TestSkill.BP_TestSkill_C"));
@@ -19,8 +21,10 @@ AAttackTestPokemon::AAttackTestPokemon()
 		NewSkill.Skill = NewSkillRef.Class;
 	}
 
-	PokemonSkills.Add(NewSkill);
+	//PokemonSkills.Add(NewSkill);
 }
+
+
 
 void AAttackTestPokemon::Tick(float DeltaTime)
 {

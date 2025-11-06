@@ -138,7 +138,7 @@ protected: // Has 변수
 	TObjectPtr<class AActor> NewSkillTarget;
 	
 	// 스킬 관리 배열 
-	UPROPERTY()
+	UPROPERTY(Transient)
 	TArray<FSkillContainer> PokemonSkills;
 
 	// 소환된 스킬
