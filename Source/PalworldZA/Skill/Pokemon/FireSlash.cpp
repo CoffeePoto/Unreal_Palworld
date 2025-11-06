@@ -1,24 +1,24 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Skill/Pokemon/TestCloseRangeSkill.h"
-#include "TestCloseRangeSkill.h"
+#include "Skill/Pokemon/FireSlash.h"
+#include "FireSlash.h"
 
-ATestCloseRangeSkill::ATestCloseRangeSkill()
+AFireSlash::AFireSlash()
 {
-	//static ConstructorHelpers::FClassFinder<AActor> FireSlashRef(TEXT("/Game/BluePrint/TestPokemon/BP_TestMeleeAttack.BP_TestMeleeAttack_C"));
-	//if (FireSlashRef.Succeeded())
-	//{
-	//	FireSlash = FireSlashRef.Class;
-	//}
+	static ConstructorHelpers::FClassFinder<AActor> FireSlashRef(TEXT("/Game/BluePrint/TestPokemon/BP_TestMeleeAttack.BP_TestMeleeAttack_C"));
+	if (FireSlashRef.Succeeded())
+	{
+		FireSlash = FireSlashRef.Class;
+	}
 }
 
-void ATestCloseRangeSkill::ExecuteSkill()
+void AFireSlash::ExecuteSkill()
 {
 	// User Null 체크
 	if (!User) { return; }
 	IPokemonDataGetter* Getter = Cast<IPokemonDataGetter>(User);
-	
+
 	// Target Null 체크
 	AActor* Target = Getter->GetTarget();
 	if (!Target)
@@ -49,5 +49,4 @@ void ATestCloseRangeSkill::ExecuteSkill()
 		0.6f,
 		false
 	);
-	
 }

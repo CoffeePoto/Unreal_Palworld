@@ -15,7 +15,8 @@ AAttackTestPokemon::AAttackTestPokemon()
 
 	FSkillContainer NewSkill;
 
-	static ConstructorHelpers::FClassFinder<AActor> NewSkillRef(TEXT("/Game/BluePrint/TestPokemon/BP_FireSlash.BP_FireSlash_C"));
+	// @Todo: 새로운 테스트 스킬 적용시 여기다 작성
+	static ConstructorHelpers::FClassFinder<AActor> NewSkillRef(TEXT(""));
 	if (NewSkillRef.Succeeded())
 	{
 		NewSkill.Skill = NewSkillRef.Class;
