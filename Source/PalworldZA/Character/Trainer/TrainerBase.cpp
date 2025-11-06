@@ -34,9 +34,9 @@ ATrainerBase::ATrainerBase()
 void ATrainerBase::SummonPokemon()
 {
 	//Todo : Pokemons 배열에 담긴 포켓몬 객체 생성
-
 	//플레이어 위치 + 조정값을 포켓몬 객체에 넘겨준다.
-	
+	FVector SummonLocation = GetActorLocation() + FVector(200.0f, 200.0f, 0.0f);
+	Pokemons[SelectedPokemon]->SetActive(SummonLocation);
 }
 
 void ATrainerBase::CommandSkills(uint8 SkillIndex)

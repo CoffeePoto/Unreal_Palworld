@@ -17,8 +17,8 @@ public:
 
 protected:
 	//selectedpokemon 변수 외부 조정을 위한 getter/setter
-	FORCEINLINE uint8 getSelectedPokemon() { return SelectedPokemon; }
-	FORCEINLINE void setSelectedPokemon(uint8 setNum) { setNum = SelectedPokemon; }
+	FORCEINLINE uint8 GetSelectedPokemon() { return SelectedPokemon; }
+	FORCEINLINE void SetSelectedPokemon(uint8 setNum) { SelectedPokemon = setNum; }
 
 protected:
 	//포켓몬 소환

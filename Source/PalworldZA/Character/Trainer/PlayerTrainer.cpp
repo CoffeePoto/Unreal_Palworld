@@ -22,6 +22,37 @@ APlayerTrainer::APlayerTrainer()
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
 	Camera->bUsePawnControlRotation = false;
+
+	//Input Action c++ 상에서 미리 경로 설정 - 상속받은 블루프린트 생성때마다 지정하기 귀찮아서.
+	static ConstructorHelpers::FObjectFinder<UInputAction> LookActionRef(TEXT("/Game/Input/Trainer/IA_Look.IA_Look"));
+	if (LookActionRef.Succeeded())
+	{
+		LookAction = LookActionRef.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> MoveActionRef(TEXT("/Game/Input/Trainer/IA_Move.IA_Move"));
+	if (MoveActionRef.Succeeded())
+	{
+		MoveAction = MoveActionRef.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> RunActionRef(TEXT("/Game/Input/Trainer/IA_Run.IA_Run"));
+	if (RunActionRef.Succeeded())
+	{
+		RunAction = RunActionRef.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> FocusActionRef(TEXT("/Game/Input/Trainer/IA_Focus.IA_Focus"));
+	if (FocusActionRef.Succeeded())
+	{
+		FocusAction = FocusActionRef.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> SelectActionRef(TEXT("/Game/Input/Trainer/IA_Select.IA_Select"));
+	if (SelectActionRef.Succeeded())
+	{
+		SelectAction = SelectActionRef.Object;
+	}
 }
 
 void APlayerTrainer::BeginPlay()
@@ -48,6 +79,7 @@ void APlayerTrainer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Completed, this, &APlayerTrainer::RunEnd);
 		EnhancedInputComponent->BindAction(FocusAction, ETriggerEvent::Triggered, this, &APlayerTrainer::FocusOn);
 		EnhancedInputComponent->BindAction(FocusAction, ETriggerEvent::Completed, this, &APlayerTrainer::FocusEnd);
+		EnhancedInputComponent->BindAction(SelectAction, ETriggerEvent::Started, this, &APlayerTrainer::SelectPokemon);
 	}
 
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
@@ -69,11 +101,29 @@ void APlayerTrainer::FocusOn()
 	UE_LOG(LogTemp, Log, TEXT("FocusOn 함수 호출"));
 
 	//주시할 포켓몬을 찾았을 경우에만 isFocusing 변수를 true로 만들 것.
+	//주시할 포켓몬
+	//APokemonBase* FocusedPokemon;
+	//line trace 시작 지점 - 캐릭터가 소유한 카메라
+	
+
+	//if (GetWorld()->LineTraceSingleByChannel())
+	//{
+
+	//}
 }
 
 void APlayerTrainer::FocusEnd()
 {
 	isFocusing = false;
+}
+
+void APlayerTrainer::SelectPokemon(const FInputActionValue& value)
+{
+	float SelectedIndex = value.Get<float>() - 1;
+	SetSelectedPokemon((uint8)SelectedIndex);
+	//SelectedPokemon = (uint8)SelectedIndex;
+	//for test 
+	UE_LOG(LogTemp, Log, TEXT("Current Index : %d"), SelectedPokemon);
 }
 
 void APlayerTrainer::Move(const FInputActionValue& value)

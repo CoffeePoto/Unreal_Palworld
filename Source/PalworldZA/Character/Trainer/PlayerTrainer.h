@@ -25,6 +25,9 @@ public:
 	void FocusOn();
 	void FocusEnd();
 
+	//플레이어가 포켓몬을 선택한다.
+	void SelectPokemon(const FInputActionValue& value);
+
 	//이동 로직
 	void Move(const FInputActionValue& value);
 	void Look(const FInputActionValue& value);
@@ -49,6 +52,8 @@ protected:
 	TObjectPtr<class UInputAction> RunAction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> FocusAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UInputAction> SelectAction;
 
 	//focus 여부 판단 
 	bool isFocusing;
