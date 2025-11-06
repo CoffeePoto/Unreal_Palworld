@@ -20,7 +20,7 @@ void ATestPokemon::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-bool ATestPokemon::UsingSkill(int SkillNumber)
+bool ATestPokemon::UsingSkill(uint8 SkillNumber)
 {
 	bool Value = Super::UsingSkill(SkillNumber);
 

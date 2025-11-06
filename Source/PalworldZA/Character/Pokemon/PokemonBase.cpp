@@ -98,22 +98,42 @@ ASkillBase* APokemonBase::SpawnSkill(int SkillIndex)
 	return SpawnSk;
 }
 
+void APokemonBase::ExecuteSkill()
+{
+//	ASkillBase* SpawnSk = SpawnSkill(SkillNumber);
+//	if (!SpawnSk) { return false; }
+//
+//	IPokemonSkill* SkillController = Cast<IPokemonSkill>(SpawnSk);
+//
+//	SpawnSk->InitializeSkill(this);
+//	ActionState = EPokemonAction::OnSkill;
+//
+//	SkillController->ExecuteSkill();
+}
+
 float APokemonBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	return 0.0f;
 }
 
-bool APokemonBase::UsingSkill(int SkillNumber)
+bool APokemonBase::UsingSkill(uint8 SkillNumber)
 {
 	if (ActionState != EPokemonAction::NonCommand) { return false; }
-
-	UE_LOG(LogTemp, Log, TEXT("포켓몬이 트레이너의 지시를 듣고 있습니다."));
+	if (!PokemonSkills[SkillNumber].Skill) { return false; }
 	
-	IPokemonSkill* SkillController = Cast<IPokemonSkill>(PokemonSkills[SkillNumber].Skill);
+	SelectSkillNumber = SkillNumber;
+	ActionState = EPokemonAction::InCommand;
+
+
 	ASkillBase* SpawnSk = SpawnSkill(SkillNumber);
+	if (!SpawnSk) { return false; }
+
+	IPokemonSkill* SkillController = Cast<IPokemonSkill>(SpawnSk);
+
+	SpawnSk->InitializeSkill(this);
+	ActionState = EPokemonAction::OnSkill;
 
 	SkillController->ExecuteSkill();
-	ActionState = EPokemonAction::OnSkill;
 
 	return true;
 }

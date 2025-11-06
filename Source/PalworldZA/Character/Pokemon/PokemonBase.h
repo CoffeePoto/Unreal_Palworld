@@ -57,7 +57,7 @@ public: // 공개 함수
 public:	// 인터페이스 구현부 (ICommandReceiver) - 포켓몬이 받는
 
 	// 스킬 사용
-	virtual bool UsingSkill(int SkillNumber) override;
+	virtual bool UsingSkill(uint8 SkillNumber) override;
 
 	// 포켓몬 활성화
 	virtual bool SetActive(FVector Location) override;
@@ -104,6 +104,9 @@ protected: // 자체 함수 구현부
 	// 스킬 소환 함수
 	ASkillBase* SpawnSkill(int SkillIndex);
 
+	// 스킬 실행 함수
+	void ExecuteSkill();
+
 
 protected: // Has 변수 
 
@@ -131,6 +134,15 @@ protected: // Has 변수
 	UPROPERTY()
 	TArray<FSkillContainer> PokemonSkills;
 
+	// 사용이 선택된 스킬
+	UPROPERTY()
+	TObjectPtr<class ASkillBase> SelectUseSkill;
+
+
+	UPROPERTY()
+	TScriptInterface<class IPokemonSkill> SelectSkillCountroller;
+
+
 
 protected: // 파라미터 변수
 
@@ -144,6 +156,8 @@ protected: // 파라미터 변수
 
 	// 현재 포켓몬 행동 상태
 	EPokemonAction ActionState = EPokemonAction::NonCommand;
+
+	uint8 SelectSkillNumber;
 
 	// Todo : PokemonBase 예상 추가 요소 
 	// 노출 포켓몬 정보 Sturct (UI를 위함)

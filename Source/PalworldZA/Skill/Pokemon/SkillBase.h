@@ -22,7 +22,7 @@ public:
 	
 	ASkillBase();
 
-	void InitializationSKill(APokemonBase* InUser);
+	void InitializeSkill(APokemonBase* InUser);
 
 	// 스킬 실행
 	virtual void ExecuteSkill() override;

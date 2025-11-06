@@ -20,10 +20,8 @@ public:
 	// 스킬 실행
 	virtual void ExecuteSkill() override;
 
-	// 스킬 종료 시
-	virtual void OnEndSkill() override;
-
 	
 protected:
-
+	UPROPERTY()
+	TSubclassOf<AActor> FireBall;
 };

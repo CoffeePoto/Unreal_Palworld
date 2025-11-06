@@ -12,7 +12,7 @@ ASkillBase::ASkillBase()
 
 }
 
-void ASkillBase::InitializationSKill(APokemonBase* InUser)
+void ASkillBase::InitializeSkill(APokemonBase* InUser)
 {
 	User = InUser;
 }
@@ -23,6 +23,7 @@ void ASkillBase::ExecuteSkill()
 
 void ASkillBase::OnEndSkill()
 {
+	User->EndSkill();
 }
 
 const FPokemonSkillData& ASkillBase::GetSkillData()

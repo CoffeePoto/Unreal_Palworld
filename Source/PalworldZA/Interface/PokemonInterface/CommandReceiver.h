@@ -26,7 +26,7 @@ class PALWORLDZA_API ICommandReceiver
 public:
 
 	// 스킬 사용
-	virtual bool UsingSkill(int SkillNumber) = 0;
+	virtual bool UsingSkill(uint8 SkillNumber) = 0;
 
 	// 포켓몬 활성화 
 	virtual bool SetActive(FVector Location) = 0;

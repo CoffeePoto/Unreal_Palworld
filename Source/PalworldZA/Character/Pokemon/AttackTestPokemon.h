@@ -18,5 +18,9 @@ public:
 	AAttackTestPokemon();
 
 protected:
-	
+
+	virtual void Tick(float DeltaTime) override;
+
+	float TargetTime = 5.0f;
+	float CurrentTime = 0.0f;
 };
