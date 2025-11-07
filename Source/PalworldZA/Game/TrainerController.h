@@ -18,4 +18,12 @@ public:
 	ATrainerController();
 
 	virtual void BeginPlay() override;
+
+protected:
+	//HUD section
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HUD)
+	TSubclassOf<class UPokemonHUD> HUDWidgetClass;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = HUD)
+	TObjectPtr<class UPokemonHUD> HUDWidget;
 };

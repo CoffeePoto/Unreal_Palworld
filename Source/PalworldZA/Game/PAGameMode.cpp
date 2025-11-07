@@ -17,7 +17,7 @@ APAGameMode::APAGameMode()
 		DefaultPawnClass = TrainerClassRef.Class;
 	}
 
-	static ConstructorHelpers::FClassFinder<APawn> PlayerControllerClassRef(
+	static ConstructorHelpers::FClassFinder<APlayerController> PlayerControllerClassRef(
 		TEXT("/Script/PalworldZA.TrainerController")
 	);
 	if (PlayerControllerClassRef.Succeeded())

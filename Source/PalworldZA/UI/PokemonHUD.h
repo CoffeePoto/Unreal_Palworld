@@ -15,8 +15,15 @@ class PALWORLDZA_API UPokemonHUD : public UUserWidget
 	GENERATED_BODY()
 	
 protected:
+	virtual void NativeConstruct() override;
+
+	void SelectPokemon(uint8 Index);
+
+protected:
 	UPROPERTY()
 	TObjectPtr<class UHorizontalBox> SlotBox;
 	UPROPERTY()
-	TObjectPtr<class UPokemonSlot> PokemonViewer;
+	TObjectPtr<class UPokemonSlot> CurrentSelected;
+	UPROPERTY()
+	TObjectPtr<class UPokemonSlot> PreviousSelected;
 };

@@ -8,7 +8,19 @@ public class PalworldZA : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG", "NavigationSystem", "AIModule", "GameplayTasks" });
+		PublicDependencyModuleNames.AddRange(new string[] { 
+			"Core", 
+			"CoreUObject", 
+			"Engine", 
+			"InputCore", 
+			"EnhancedInput", 
+			"UMG",
+			"Slate",
+			"SlateCore",
+			"NavigationSystem", 
+			"AIModule", 
+			"GameplayTasks"
+		});
 
         PublicIncludePaths.AddRange(new string[] {
             "PalworldZA"
