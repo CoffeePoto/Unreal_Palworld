@@ -10,6 +10,9 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 
+#include "Components/LineTraceComponent.h"
+
+
 APlayerTrainer::APlayerTrainer()
 	:isFocusing(false)
 {
@@ -53,6 +56,9 @@ APlayerTrainer::APlayerTrainer()
 	{
 		SelectAction = SelectActionRef.Object;
 	}
+
+	// LineTraceComponent 생성
+	LineTraceComponent = CreateDefaultSubobject<ULineTraceComponent>(TEXT("LineTraceComponent"));
 }
 
 void APlayerTrainer::BeginPlay()
@@ -100,6 +106,9 @@ void APlayerTrainer::FocusOn()
 	//키입력 F가 입력되고 있으면 FocusOn 함수 호출
 	//Test
 	UE_LOG(LogTemp, Log, TEXT("FocusOn 함수 호출"));
+	if (LineTraceComponent)
+		LineTraceComponent->PerformLineTrace();
+
 
 	//주시할 포켓몬을 찾았을 경우에만 isFocusing 변수를 true로 만들 것.
 	//주시할 포켓몬
@@ -190,7 +199,7 @@ void APlayerTrainer::Throw(const FInputActionValue& value)
 		return;
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("IA Throw"));
+	//UE_LOG(LogTemp, Log, TEXT("IA Throw"));
 
 	// 입력 비활성화.
 	//APlayerController* PlayerController = Cast<APlayerController>(GetController());

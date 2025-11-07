@@ -7,6 +7,8 @@
 #include "InputActionValue.h"
 #include "PlayerTrainer.generated.h"
 
+class ULineTraceComponent;
+
 /**
  * 
  */
@@ -70,4 +72,8 @@ protected:
 
 	// 던지기 스킬 중인지 판단.
 	bool IsThrowing;
+
+	// 라인트레이스 컴포넌트
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Trace", meta = (AllowPrivateAccess = "true"))
+	ULineTraceComponent* LineTraceComponent = nullptr;
 };
