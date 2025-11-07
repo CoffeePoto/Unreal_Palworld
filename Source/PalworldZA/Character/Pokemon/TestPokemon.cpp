@@ -3,7 +3,6 @@
 
 #include "Character/Pokemon/TestPokemon.h"
 #include "AI/Pokemon/PokemonAIController.h"
-#include "Game/GameSingleton.h"
 
 
 ATestPokemon::ATestPokemon()
