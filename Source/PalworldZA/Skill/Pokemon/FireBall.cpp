@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Skill/Pokemon/FireBall.h"
@@ -20,28 +20,28 @@ void AFireBall::ExecuteSkill()
 	AActor* Target = Getter->GetTarget();
 	if (!Target) { return; }
 
-	// À§Ä¡ °ª ÃßÃâ
+	// ìœ„ì¹˜ ê°’ ì¶”ì¶œ
 	FVector UserPos = Getter->GetShootPoint();
 	FVector TargetPos = Target->GetActorLocation();
 
-	// ¹æÇâ °ª »ı¼º
+	// ë°©í–¥ ê°’ ìƒì„±
 	FVector RotationVector = TargetPos - UserPos;
 	RotationVector.Normalize();
 	FRotator Rotation = RotationVector.Rotation();
 
-	// ¹ß»çÃ¼ »ı¼º ¹× »ı¸í ÁÖ±â ¼³Á¤
+	// ë°œì‚¬ì²´ ìƒì„± ë° ìƒëª… ì£¼ê¸° ì„¤ì •
 	FireBall = SpawnProjectile(UserPos, Rotation); 
 	FireBall->SetLifeSpan(2.0f);
 
 	FTimerHandle SkillEndTimer;
 
-	// Å¸ÀÌ¸Ó
+	// íƒ€ì´ë¨¸
 	GetWorldTimerManager().SetTimer(
 		SkillEndTimer,
 		this,
-		&ASkillBase::OnEndSkill,  // 2ÃÊ µÚ ½ÇÇàÇÒ ÇÔ¼ö
-		2.0f,                     // 2ÃÊ µÚ
-		false                     // ¹İº¹ ¿©ºÎ (false = ÇÑ ¹ø¸¸)
+		&ASkillBase::OnEndSkill,  // 2ì´ˆ ë’¤ ì‹¤í–‰í•  í•¨ìˆ˜
+		2.0f,                     // 2ì´ˆ ë’¤
+		false                     // ë°˜ë³µ ì—¬ë¶€ (false = í•œ ë²ˆë§Œ)
 	);
 }
 

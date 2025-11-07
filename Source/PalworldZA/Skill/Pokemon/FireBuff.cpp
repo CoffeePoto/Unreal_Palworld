@@ -6,11 +6,7 @@
 
 AFireBuff::AFireBuff()
 {
-	static ConstructorHelpers::FClassFinder<AActor> FireBuffRef(TEXT("/Game/BluePrint/PokemonSkill/BP_FireBuff.BP_FireBuff_C"));
-	if (FireBuffRef.Succeeded())
-	{
-		FireBuff = FireBuffRef.Class;
-	}
+
 }
 
 void AFireBuff::ExecuteSkill()

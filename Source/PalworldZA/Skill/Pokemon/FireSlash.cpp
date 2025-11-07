@@ -6,11 +6,7 @@
 
 AFireSlash::AFireSlash()
 {
-	static ConstructorHelpers::FClassFinder<AActor> FireSlashRef(TEXT("/Game/BluePrint/PokemonSkill/BP_FireSlash.BP_FireSlash_C"));
-	if (FireSlashRef.Succeeded())
-	{
-		FireSlash = FireSlashRef.Class;
-	}
+
 }
 
 void AFireSlash::ExecuteSkill()
