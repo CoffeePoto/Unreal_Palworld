@@ -25,6 +25,22 @@ AAttackTestPokemon::AAttackTestPokemon()
 	}
 
 	PokemonSkills.Add(NewSkill);
+
+	//static ConstructorHelpers::FClassFinder<AActor> NewSkillRef(TEXT("/Game/BluePrint/TestPokemon/BP_TestBuffSkill.BP_TestBuffSkill_C"));
+	//if (NewSkillRef.Succeeded())
+	//{
+	//	NewSkill.Skill = NewSkillRef.Class;
+	//}
+
+	//PokemonSkills.Add(NewSkill);
+
+	//static ConstructorHelpers::FClassFinder<AActor> NewSkillRef(TEXT("/Game/BluePrint/TestPokemon/BP_TestBuffSkill.BP_TestBuffSkill_C"));
+	//if (NewSkillRef.Succeeded())
+	//{
+	//	NewSkill.Skill = NewSkillRef.Class;
+	//}
+
+	//PokemonSkills.Add(NewSkill);
 }
 
 

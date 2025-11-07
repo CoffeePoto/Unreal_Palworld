@@ -41,5 +41,5 @@ protected:
 	FRotator TargetRot;
 
 	// 회전 속도 (Todo: 임시 값) 
-	float TurnSpeed = 5.0f;
+	float TurnSpeed = 8.0f;
 };

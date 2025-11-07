@@ -127,8 +127,8 @@ protected: // 자체 함수 구현부
 	// 스킬 소환 함수
 	ASkillBase* SpawnSkill(int SkillIndex);
 
-	
-
+	// 원거리 공격 이동 위치 설정 함수
+	void SetRangeAttackPosition();
 
 
 protected: // Has 변수 

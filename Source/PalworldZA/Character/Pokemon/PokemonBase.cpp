@@ -124,6 +124,18 @@ ASkillBase* APokemonBase::SpawnSkill(int SkillIndex)
 	return SpawnSk;
 }
 
+void APokemonBase::SetRangeAttackPosition()
+{
+	if (!Trainer) { return; }
+
+	FVector Pos = Trainer->GetActorLocation();
+	FVector Forward = Trainer->GetActorForwardVector();
+	FVector Rot = Forward.RotateAngleAxis(45.0f, FVector::UpVector);
+	FVector SelectPos = Pos + (Rot.Normalize() * 200.0f);
+
+	BBComponent->SetValueAsVector(BBKEY_TARGET_LOCATION, SelectPos);
+}
+
 void APokemonBase::ExecuteSkill()
 {
 	// 스킬 소환

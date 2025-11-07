@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "BTTask_TurnToTarget.h"
@@ -16,18 +16,18 @@ EBTNodeResult::Type UBTTask_TurnToTarget::ExecuteTask(UBehaviorTreeComponent& Ow
 {
 	EBTNodeResult::Type Result = Super::ExecuteTask(OwnerComp, NodeMemory);
 
-	// È¸Àü Æù Á¤º¸ ºÒ·¯¿À±â 
+	// íšŒì „ í° ì •ë³´ ë¶ˆëŸ¬ì˜¤ê¸° 
 	ControllingPawn = OwnerComp.GetAIOwner()->GetPawn();
 	if (!ControllingPawn) return EBTNodeResult::Failed;
 
-	// Å¸°Ù Æù Á¤º¸ ºÒ·¯¿À±â 
-	APawn* TargetPawn = Cast<APawn>( OwnerComp.GetBlackboardComponent()->GetValueAsObject(TEXT("EMPTY")) );
+	// íƒ€ê²Ÿ í° ì •ë³´ ë¶ˆëŸ¬ì˜¤ê¸° 
+	APawn* TargetPawn = Cast<APawn>( OwnerComp.GetBlackboardComponent()->GetValueAsObject(BBKEY_TARGET_OBJECT) );
 	if(!TargetPawn) return EBTNodeResult::Failed;
 
-	// NPC°¡ ¹Ù¶óº¼ ¹æÇâ ±¸ÇÏ±â.
+	// NPCê°€ ë°”ë¼ë³¼ ë°©í–¥ êµ¬í•˜ê¸°.
 	LookVector = TargetPawn->GetActorLocation() - ControllingPawn->GetActorLocation();
 
-	// È¸Àü °ª ±¸ÇÏ±â.
+	// íšŒì „ ê°’ êµ¬í•˜ê¸°.
 	TargetRot = FRotationMatrix::MakeFromX(LookVector).Rotator();
 
 	return EBTNodeResult::InProgress;
@@ -37,7 +37,7 @@ void UBTTask_TurnToTarget::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* No
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
-	// º¸°£ È¸Àü °ª »ı¼º
+	// ë³´ê°„ íšŒì „ ê°’ ìƒì„±
 	FRotator NewRot = FMath::RInterpTo(
 		ControllingPawn->GetActorRotation(),
 		TargetRot,
@@ -45,16 +45,17 @@ void UBTTask_TurnToTarget::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* No
 		TurnSpeed
 	);
 
-	// º¸°£ È¸Àü °ª Àû¿ë 
+	// ë³´ê°„ íšŒì „ ê°’ ì ìš© 
 	ControllingPawn->SetActorRotation(NewRot);
 
 	float YawDiff = FMath::Abs(FRotator::NormalizeAxis(TargetRot.Yaw - NewRot.Yaw));
 
-	if (YawDiff < 5.0f)
+	if (YawDiff < TurnSpeed)
 	{
-		// Ã³À½ ¸ñÇ¥ ´Ş¼º 
+		// ì²˜ìŒ ëª©í‘œ ë‹¬ì„± 
 		ControllingPawn->SetActorRotation(TargetRot);
-		// ¼º°ø ¹İÈ¯
+
+		// ì„±ê³µ ë°˜í™˜
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	}
 }
