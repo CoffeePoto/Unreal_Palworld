@@ -45,7 +45,6 @@ void APokemonBase::BeginPlay()
 	
 	// 블랙 보드 연결
 	BBComponent = Cast<APokemonAIController>(GetController())->GetBlackboardComponent();	
-	BBComponent->SetValueAsEnum(BBKEY_ACTION_TYPE, static_cast<uint8>(EActionType::MELEE));
 }
 
 void APokemonBase::Tick(float DeltaTime)
@@ -128,10 +127,11 @@ void APokemonBase::SetRangeAttackPosition()
 {
 	if (!Trainer) { return; }
 
-	FVector Pos = Trainer->GetActorLocation();
-	FVector Forward = Trainer->GetActorForwardVector();
-	FVector Rot = Forward.RotateAngleAxis(45.0f, FVector::UpVector);
-	FVector SelectPos = Pos + (Rot.Normalize() * 200.0f);
+	const FVector Pos = Trainer->GetActorLocation();
+	const FVector Forward = Trainer->GetActorForwardVector();
+	const FVector Rotated = Forward.RotateAngleAxis(45.0f, FVector::UpVector);
+	const FVector Dir = Rotated.GetSafeNormal();
+	const FVector SelectPos = Pos + (Dir * 200.0f);
 
 	BBComponent->SetValueAsVector(BBKEY_TARGET_LOCATION, SelectPos);
 }
@@ -163,10 +163,20 @@ bool APokemonBase::UsingSkill(uint8 SkillNumber)
 {
 	if (ActionState != EPokemonAction::NonCommand) { return false; }
 	if (!PokemonSkills[SkillNumber].Skill) { return false; }
+
+	ASkillBase* DefaultSkill = PokemonSkills[SkillNumber].Skill.Get()->GetDefaultObject<ASkillBase>();
+	if (!DefaultSkill) { return false; }
 	
 	SelectSkillNumber = SkillNumber;
 	ActionState = EPokemonAction::InCommand;
 
+	FPokemonSkillData SkillData = DefaultSkill->GetSkillData();
+	
+	BBComponent->SetValueAsEnum(BBKEY_ACTION_TYPE, static_cast<uint8>(SkillData.ActionType));
+	if (SkillData.ActionType == EActionType::RANGE)
+	{
+		SetRangeAttackPosition();
+	}
 	//ExecuteSkill();
 
 	return true;

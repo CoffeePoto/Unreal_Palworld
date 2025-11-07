@@ -18,7 +18,7 @@ AAttackTestPokemon::AAttackTestPokemon()
 	FSkillContainer NewSkill;
 
 	// @Todo: 새로운 테스트 스킬 적용시 여기다 작성
-	static ConstructorHelpers::FClassFinder<AActor> NewSkillRef(TEXT("/Game/BluePrint/TestPokemon/BP_TestBuffSkill.BP_TestBuffSkill_C"));
+	static ConstructorHelpers::FClassFinder<AActor> NewSkillRef(TEXT("/Game/BluePrint/PokemonSkill/BP_FireSlash.BP_FireSlash_C"));
 	if (NewSkillRef.Succeeded())
 	{
 		NewSkill.Skill = NewSkillRef.Class;
@@ -26,21 +26,21 @@ AAttackTestPokemon::AAttackTestPokemon()
 
 	PokemonSkills.Add(NewSkill);
 
-	//static ConstructorHelpers::FClassFinder<AActor> NewSkillRef(TEXT("/Game/BluePrint/TestPokemon/BP_TestBuffSkill.BP_TestBuffSkill_C"));
-	//if (NewSkillRef.Succeeded())
-	//{
-	//	NewSkill.Skill = NewSkillRef.Class;
-	//}
+	static ConstructorHelpers::FClassFinder<AActor> NewSkillRef2(TEXT("/Game/BluePrint/PokemonSkill/BP_FireBall.BP_FireBall_C"));
+	if (NewSkillRef2.Succeeded())
+	{
+		NewSkill.Skill = NewSkillRef2.Class;
+	}
 
-	//PokemonSkills.Add(NewSkill);
+	PokemonSkills.Add(NewSkill);
 
-	//static ConstructorHelpers::FClassFinder<AActor> NewSkillRef(TEXT("/Game/BluePrint/TestPokemon/BP_TestBuffSkill.BP_TestBuffSkill_C"));
-	//if (NewSkillRef.Succeeded())
-	//{
-	//	NewSkill.Skill = NewSkillRef.Class;
-	//}
+	static ConstructorHelpers::FClassFinder<AActor> NewSkillRef3(TEXT("/Game/BluePrint/PokemonSkill/BP_FireBuff.BP_FireBuff_C"));
+	if (NewSkillRef3.Succeeded())
+	{
+		NewSkill.Skill = NewSkillRef3.Class;
+	}
 
-	//PokemonSkills.Add(NewSkill);
+	PokemonSkills.Add(NewSkill);
 }
 
 
@@ -55,7 +55,8 @@ void AAttackTestPokemon::Tick(float DeltaTime)
 		if (CurrentSkillTarget)
 		{
 			CurrentTime = 0.0f;
-			UsingSkill(0);
+			UsingSkill(SkillNumber);
+			SkillNumber = (SkillNumber + 1) % 3;
 		}
 	}
 

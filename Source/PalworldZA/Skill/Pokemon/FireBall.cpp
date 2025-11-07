@@ -11,6 +11,7 @@ AFireBall::AFireBall()
 		FireBallClass = FireBallRef.Class;
 	}
 	
+	Data.ActionType = EActionType::RANGE;
 }
 
 void AFireBall::ExecuteSkill()

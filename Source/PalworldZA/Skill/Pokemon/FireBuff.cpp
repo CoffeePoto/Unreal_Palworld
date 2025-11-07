@@ -6,7 +6,7 @@
 
 AFireBuff::AFireBuff()
 {
-
+	Data.ActionType = EActionType::BUFF;
 }
 
 void AFireBuff::ExecuteSkill()

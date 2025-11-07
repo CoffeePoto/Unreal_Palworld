@@ -6,7 +6,7 @@
 
 AFireSlash::AFireSlash()
 {
-
+	Data.ActionType = EActionType::MELEE;
 }
 
 void AFireSlash::ExecuteSkill()
