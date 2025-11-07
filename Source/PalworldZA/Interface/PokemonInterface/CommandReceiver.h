@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+#include "Data/Pokemon/PokemonEnum.h"
 #include "CommandReceiver.generated.h"
 
 DECLARE_DELEGATE(FOnPokemonDown);
@@ -46,6 +47,9 @@ public:
 
 	// 포켓몬 트레이너 설정
 	virtual void SetTrainer(APawn* NewTrainer) = 0;
+
+	// 버프 설정 / 매개 변수 : (버프 스탯, 시간, 버프 덮어쓰기 여부)
+	virtual void SetBuff(EPokemonBuffStat Stat, float Time, bool IsCover = true) = 0;
 
 	//virtual void UsingItem() = 0;
 };

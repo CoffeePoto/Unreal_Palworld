@@ -49,6 +49,7 @@ void AAttackTestPokemon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	/*
 	CurrentTime += DeltaTime;
 	if (CurrentTime >= TargetTime)
 	{
@@ -59,15 +60,18 @@ void AAttackTestPokemon::Tick(float DeltaTime)
 			SkillNumber = (SkillNumber + 1) % 3;
 		}
 	}
+	*/
 
 	CurrentSkillTarget = UGameplayStatics::GetActorOfClass(GetWorld(), ATestPokemon::StaticClass());
 	NewSkillTarget = CurrentSkillTarget;
 	BBComponent->SetValueAsObject(BBKEY_TARGET_OBJECT, NewSkillTarget);
 
+	/*
 	if (!Trainer)
 	{
 		Trainer = Cast<APawn>(UGameplayStatics::GetActorOfClass(GetWorld(), APlayerTrainer::StaticClass()));
 		BBComponent->SetValueAsObject(BBKEY_OWNER, Trainer);
 	}
+	*/
 }
 

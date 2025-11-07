@@ -25,3 +25,14 @@ enum class EPokemonType : uint8
 	ELECTRIC
 };
 
+UENUM(BlueprintType)
+enum class EPokemonBuffStat : uint8
+{
+	ATK,
+	DEF,
+	SPA,
+	SPD,
+	SPEED,
+	COUNT
+};
+

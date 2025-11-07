@@ -2,13 +2,18 @@
 
 
 #include "PokemonBase.h"
+
 #include "AI/Pokemon/PokemonAIController.h"
+#include "AI/Pokemon/PokemonBBKeys.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BrainComponent.h"
+
 #include "Animation/Pokemon/PokemonAnimInstanceBase.h"
+
 #include "Interface/PokemonInterface/PokemonSkill.h"
 #include "Skill/Pokemon/SkillBase.h"
-#include "AI/Pokemon/PokemonBBKeys.h"
+
+#include "Data/Pokemon/PokemonDamageEvent.h"
 
 
 APokemonBase::APokemonBase()
@@ -52,8 +57,9 @@ void APokemonBase::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	SkillCoolDown(DeltaTime);
+	DownRemainingBuffTime(DeltaTime);
 	UpdateSkillTarget();
-	UpdateBBComand();
+	UpdateBBCommand();
 }
 
 void APokemonBase::SkillCoolDown(float DeltaTime)
@@ -67,6 +73,17 @@ void APokemonBase::SkillCoolDown(float DeltaTime)
 	}
 }
 
+void APokemonBase::DownRemainingBuffTime(float DeltaTime)
+{
+	for (float& Buff : RemainingBuffTimes)
+	{
+		if (Buff > 0)
+		{
+			Buff = FMath::Max(Buff - DeltaTime, 0.0f);
+		}
+	}
+}
+
 void APokemonBase::UpdateSkillTarget()
 {
 	if (ActionState != EPokemonAction::NonCommand) { return; }
@@ -76,7 +93,7 @@ void APokemonBase::UpdateSkillTarget()
 	BBComponent->SetValueAsObject(BBKEY_TARGET, CurrentSkillTarget);
 }
 
-void APokemonBase::UpdateBBComand()
+void APokemonBase::UpdateBBCommand()
 {
 	bool BBComand = BBComponent->GetValueAsBool(BBKEY_IN_COMMAND);
 	
@@ -156,13 +173,24 @@ void APokemonBase::ExecuteSkill()
 
 float APokemonBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	return 0.0f;
+	if (DamageEvent.GetTypeID() == FPokemonDamageEvent::ClassID)
+	{
+		const FPokemonDamageEvent& PokemonDamage = static_cast<const FPokemonDamageEvent&>(DamageEvent);
+
+		// Todo : 데미지 계산 처리
+	}
+	else
+	{
+		CurrentStatData.Hp -= DamageAmount;
+	}
+
+	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }
 
 bool APokemonBase::UsingSkill(uint8 SkillNumber)
 {
 	if (ActionState != EPokemonAction::NonCommand) { return false; }
-	if (!PokemonSkills[SkillNumber].Skill) { return false; }
+	if (!PokemonSkills.IsValidIndex(SkillNumber)) { return false; }
 
 	ASkillBase* DefaultSkill = PokemonSkills[SkillNumber].Skill.Get()->GetDefaultObject<ASkillBase>();
 	if (!DefaultSkill) { return false; }
@@ -177,7 +205,6 @@ bool APokemonBase::UsingSkill(uint8 SkillNumber)
 	{
 		SetRangeAttackPosition();
 	}
-	//ExecuteSkill();
 
 	return true;
 }
@@ -263,6 +290,23 @@ void APokemonBase::SetTrainer(APawn* NewTrainer)
 {
 	Trainer = NewTrainer;
 	BBComponent->SetValueAsObject(BBKEY_OWNER, Trainer);
+}
+
+void APokemonBase::SetBuff(EPokemonBuffStat Stat, float Time, bool IsCover)
+{
+	uint8 StatNumber = static_cast<uint8>(Stat);
+	if (!RemainingBuffTimes.IsValidIndex(StatNumber)) { return; }
+
+	if (IsCover)
+	{
+		RemainingBuffTimes[StatNumber] = Time;
+	}
+	else
+	{
+		RemainingBuffTimes[StatNumber] += Time;
+	}
+
+	if(RemainingBuffTimes[StatNumber] < 0) { RemainingBuffTimes[StatNumber] = 0; }
 }
 
 void APokemonBase::EndSkill()

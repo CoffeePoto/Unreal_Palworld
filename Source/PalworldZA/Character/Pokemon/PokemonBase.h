@@ -47,13 +47,14 @@ class PALWORLDZA_API APokemonBase :
 {
 	GENERATED_BODY()
 
+
 public: // 공개 함수
 
 	APokemonBase();
 
-
 	// 스킬 종료시 호출
 	void EndSkill();
+
 
 public:	// 인터페이스 구현부 (ICommandReceiver) - 포켓몬이 받는
 
@@ -81,10 +82,15 @@ public:	// 인터페이스 구현부 (ICommandReceiver) - 포켓몬이 받는
 	// 트레이너 설정
 	virtual void SetTrainer(APawn* NewTrainer) override;
 
+	// 버프 설정 / 매개 변수 : (버프 스탯, 시간, 버프 덮어쓰기 여부)
+	virtual void SetBuff(EPokemonBuffStat Stat, float Time, bool IsCover = true) override;
+
+
 public: // 인터페이스 구현부 (IHardCommandReceiver)
 
 	// 스킬 실행 함수
 	virtual void ExecuteSkill() override;
+
 
 public:	// 인터페이스 구현부 (IPokemonDataGetter) - 포켓몬이 주는
 
@@ -110,16 +116,20 @@ protected: // 오버라이딩 구현부
 		class AController* EventInstigator,
 		AActor* DamageCauser) override;
 
+
 protected: // 자체 함수 구현부
 
 	// 스킬 쿨타임 감소 함수
 	void SkillCoolDown(float DeltaTime);
 
+	// 버프 남은 시간 감소 함수
+	void DownRemainingBuffTime(float DeltaTime);
+
 	// 스킬 타겟 업데이트
 	void UpdateSkillTarget();
 
 	// BB에 상태 업데이트
-	void UpdateBBComand();
+	void UpdateBBCommand();
 
 	// 경로를 통해 애니메이션 시퀀스 로드
 	void LoadAnimSequenceData(FString Path);
@@ -165,6 +175,7 @@ protected: // Has 변수
 	UPROPERTY()
 	TScriptInterface<class IPokemonSkill> SpawnSkillController;
 
+
 protected: // 파라미터 변수
 
 	// 포켓몬 기절 이벤트
@@ -185,6 +196,6 @@ protected: // 파라미터 변수
 	// 현재 선택된 스킬 번호
 	uint8 SelectSkillNumber;
 
-	// Todo : PokemonBase 예상 추가 요소 
-	// 노출 포켓몬 정보 Sturct (UI를 위함)
+	// 현재 버프 쿨타임
+	TArray<float> RemainingBuffTimes;
 };
