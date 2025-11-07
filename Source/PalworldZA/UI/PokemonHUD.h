@@ -25,5 +25,6 @@ protected:
 	UPROPERTY()
 	TObjectPtr<class UPokemonSlot> CurrentSelected;
 	UPROPERTY()
+	//선택 해제 전 visible한 선택 영역을 hidden하기 위한 변수
 	TObjectPtr<class UPokemonSlot> PreviousSelected;
 };
