@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -14,6 +14,7 @@ enum class EActionType : uint8
 	BUFF
 };
 
+// @Todo: uint32로 바꿔야되는데 전체적으로 바꿔야함.
 UENUM(BlueprintType)
 enum class EPokemonType : uint8
 {
