@@ -11,7 +11,7 @@ APokemonAIController::APokemonAIController()
 {
 	// BBAsset
 	static ConstructorHelpers::FObjectFinder<UBlackboardData> BBAssetRef(TEXT(
-		"/Game/BluePrint/TestPokemon/BB_TestPokemon.BB_TestPokemon"
+		"/Game/AI/Pokemon/BB_Pokemon.BB_Pokemon"
 	));
 	if (BBAssetRef.Succeeded())
 	{
@@ -20,7 +20,7 @@ APokemonAIController::APokemonAIController()
 
 	// BTAsset
 	static ConstructorHelpers::FObjectFinder<UBehaviorTree> BTAssetRef(TEXT(
-		"/Game/BluePrint/TestPokemon/BT_TestPokemon.BT_TestPokemon"
+		"/Game/AI/Pokemon/BT_Pokemon.BT_Pokemon"
 	));
 	if (BTAssetRef.Succeeded())
 	{

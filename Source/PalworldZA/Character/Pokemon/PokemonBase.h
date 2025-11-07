@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "Interface/PokemonInterface/CommandReceiver.h"
 #include "Interface/PokemonInterface/PokemonDataGetter.h"
+#include "Interface/PokemonInterface/HardCommandReceiver.h"
 #include "Data/Pokemon/PokemonStatData.h"
 #include "PokemonBase.generated.h"
 
@@ -37,10 +38,12 @@ public:
 
 
 UCLASS()
-class PALWORLDZA_API APokemonBase : 
+class PALWORLDZA_API APokemonBase :
 	public ACharacter,
 	public ICommandReceiver,
+	public IHardCommandReceiver,
 	public IPokemonDataGetter
+
 {
 	GENERATED_BODY()
 
@@ -67,12 +70,21 @@ public:	// 인터페이스 구현부 (ICommandReceiver) - 포켓몬이 받는
 	virtual void BindOnPokemonDown(const FOnPokemonDown& InDelegate) override;
 
 	// 포켓몬 기술 종료시 호출할 델리게이트 등록
-	virtual void BindEndPokemonSkill(const FEndPokemonSkill::FDelegate& InDelegate) override;
+	virtual FDelegateHandle BindEndPokemonSkill(const FEndPokemonSkill::FDelegate& InDelegate) override;
+
+	// 포켓몬 기술 종료 호출 델리게이트 해지
+	virtual void UnBindEndPokemonSkill(FDelegateHandle Handle) override;
 
 	// 새 타겟 설정
 	virtual void SetTarget(AActor* NewTarget) override;
 
+	// 트레이너 설정
 	virtual void SetTrainer(APawn* NewTrainer) override;
+
+public: // 인터페이스 구현부 (IHardCommandReceiver)
+
+	// 스킬 실행 함수
+	virtual void ExecuteSkill() override;
 
 public:	// 인터페이스 구현부 (IPokemonDataGetter) - 포켓몬이 주는
 
@@ -81,6 +93,7 @@ public:	// 인터페이스 구현부 (IPokemonDataGetter) - 포켓몬이 주는
 	FORCEINLINE virtual uint8 IsOnSkill() override { return ActionState == EPokemonAction::OnSkill; }
 
 	FORCEINLINE virtual FVector GetShootPoint() override { return GetActorLocation(); }
+
 
 protected: // 오버라이딩 구현부 
 
@@ -105,14 +118,17 @@ protected: // 자체 함수 구현부
 	// 스킬 타겟 업데이트
 	void UpdateSkillTarget();
 
+	// BB에 상태 업데이트
+	void UpdateBBComand();
+
 	// 경로를 통해 애니메이션 시퀀스 로드
 	void LoadAnimSequenceData(FString Path);
 
 	// 스킬 소환 함수
 	ASkillBase* SpawnSkill(int SkillIndex);
 
-	// 스킬 실행 함수
-	void ExecuteSkill();
+	
+
 
 
 protected: // Has 변수 

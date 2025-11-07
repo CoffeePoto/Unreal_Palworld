@@ -39,7 +39,10 @@ public:
 	virtual void BindOnPokemonDown(const FOnPokemonDown& InDelegate) = 0;
 
 	// 포켓몬 공격 종료시 호출할 델리게이트 등록
-	virtual void BindEndPokemonSkill(const FEndPokemonSkill::FDelegate& InDelegate) = 0;
+	virtual FDelegateHandle BindEndPokemonSkill(const FEndPokemonSkill::FDelegate& InDelegate) = 0;
+
+	// 포켓몬 공격 종료시 호출할 델리게이트 해지
+	virtual void UnBindEndPokemonSkill(FDelegateHandle Handle) = 0;
 
 	// 포켓몬 타겟 설정
 	virtual void SetTarget(AActor* NewTarget) = 0;

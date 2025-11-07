@@ -8,6 +8,7 @@
 #include "Animation/Pokemon/PokemonAnimInstanceBase.h"
 #include "Interface/PokemonInterface/PokemonSkill.h"
 #include "Skill/Pokemon/SkillBase.h"
+#include "AI/Pokemon/PokemonBBKeys.h"
 
 
 APokemonBase::APokemonBase()
@@ -43,7 +44,8 @@ void APokemonBase::BeginPlay()
 	if (AnimData) { animInstance->SetAnimSequence(AnimData); }
 	
 	// 블랙 보드 연결
-	BBComponent = Cast<APokemonAIController>(GetController())->GetBlackboardComponent();		
+	BBComponent = Cast<APokemonAIController>(GetController())->GetBlackboardComponent();	
+	BBComponent->SetValueAsEnum(BBKEY_ACTION_TYPE, static_cast<uint8>(EActionType::MELEE));
 }
 
 void APokemonBase::Tick(float DeltaTime)
@@ -52,6 +54,7 @@ void APokemonBase::Tick(float DeltaTime)
 
 	SkillCoolDown(DeltaTime);
 	UpdateSkillTarget();
+	UpdateBBComand();
 }
 
 void APokemonBase::SkillCoolDown(float DeltaTime)
@@ -71,6 +74,27 @@ void APokemonBase::UpdateSkillTarget()
 	if (CurrentSkillTarget == NewSkillTarget) { return; }
 
 	CurrentSkillTarget = NewSkillTarget;
+	BBComponent->SetValueAsObject(BBKEY_TARGET, CurrentSkillTarget);
+}
+
+void APokemonBase::UpdateBBComand()
+{
+	bool BBComand = BBComponent->GetValueAsBool(BBKEY_IN_COMMAND);
+	
+	if (ActionState == EPokemonAction::InCommand)
+	{
+		if (!BBComand)
+		{
+			BBComponent->SetValueAsBool(BBKEY_IN_COMMAND, true);
+		}
+	}
+	else if (ActionState == EPokemonAction::NonCommand)
+	{
+		if (BBComand)
+		{
+			BBComponent->SetValueAsBool(BBKEY_IN_COMMAND, false);
+		}
+	}
 }
 
 void APokemonBase::LoadAnimSequenceData(FString Path)
@@ -131,7 +155,7 @@ bool APokemonBase::UsingSkill(uint8 SkillNumber)
 	SelectSkillNumber = SkillNumber;
 	ActionState = EPokemonAction::InCommand;
 
-	ExecuteSkill();
+	//ExecuteSkill();
 
 	return true;
 }
@@ -198,9 +222,14 @@ void APokemonBase::BindOnPokemonDown(const FOnPokemonDown& InDelegate)
 	PokemonDownEvents = InDelegate;
 }
 
-void APokemonBase::BindEndPokemonSkill(const FEndPokemonSkill::FDelegate& InDelegate)
+FDelegateHandle APokemonBase::BindEndPokemonSkill(const FEndPokemonSkill::FDelegate& InDelegate)
 {
-	PokemonSkillEndEvents.Add(InDelegate);
+	return PokemonSkillEndEvents.Add(InDelegate);
+}
+
+void APokemonBase::UnBindEndPokemonSkill(FDelegateHandle Handle)
+{
+	PokemonSkillEndEvents.Remove(Handle);
 }
 
 void APokemonBase::SetTarget(AActor* NewTarget)
@@ -211,6 +240,7 @@ void APokemonBase::SetTarget(AActor* NewTarget)
 void APokemonBase::SetTrainer(APawn* NewTrainer)
 {
 	Trainer = NewTrainer;
+	BBComponent->SetValueAsObject(BBKEY_OWNER, Trainer);
 }
 
 void APokemonBase::EndSkill()
