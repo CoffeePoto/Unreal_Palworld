@@ -14,17 +14,21 @@ enum class EActionType : uint8
 	BUFF
 };
 
-// @Todo: uint32로 바꿔야되는데 전체적으로 바꿔야함.
+
 UENUM(BlueprintType)
 enum class EPokemonType : uint8
 {
 	NONE,
 	NORMAL,
 	FIRE,
-	WATER,
 	GRASS,
-	ELECTRIC,
-	GROUND
+	GROUND,
+	ELECTRICITY,
+	WATER,
+	ICE,
+	DRAGON,
+	DARK,
+	COUNT
 };
 
 UENUM(BlueprintType)

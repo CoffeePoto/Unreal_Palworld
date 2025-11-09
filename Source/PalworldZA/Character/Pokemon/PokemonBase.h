@@ -10,6 +10,8 @@
 #include "Data/Pokemon/PokemonStatData.h"
 #include "PokemonBase.generated.h"
 
+#define ZERO 0.0f
+
 class ASkillBase;
 
 UENUM(BlueprintType)
@@ -18,7 +20,7 @@ enum class EPokemonAction : uint8
 	NonCommand UMETA(DisplayName = "명령 수행 안함"),
 	InCommand  UMETA(DisplayName = "명령 수행 중"),
 	OnSkill    UMETA(DisplayName = "스킬 사용 중"),
-	Down	   UMETA(DispalyName = "포켓몬 기절")
+	Down	   UMETA(DisplayName = "포켓몬 기절")
 };
 
 
@@ -94,11 +96,23 @@ public: // 인터페이스 구현부 (IHardCommandReceiver)
 
 public:	// 인터페이스 구현부 (IPokemonDataGetter) - 포켓몬이 주는
 
+	// 현재 포켓몬이 바라보는 타겟
 	FORCEINLINE virtual AActor* GetTarget() override { return CurrentSkillTarget; }
 
+	// 현재 포켓몬이 공격하는지 판단
 	FORCEINLINE virtual uint8 IsOnSkill() override { return ActionState == EPokemonAction::OnSkill; }
 
+	// 포켓몬 발사체 발사 위치
 	FORCEINLINE virtual FVector GetShootPoint() override { return GetActorLocation(); }
+
+	// 포켓몬 기본 스텟 정보 
+	FORCEINLINE virtual const FPokemonStatData& GetPokemonDefaultStat() override { return DefaultStatData; }
+
+	// 포켓몬 현재 스텟 정보
+	FORCEINLINE virtual const FPokemonStatData GetPokemonCurrentStat() override { return CalculateCurrentStat(); }
+
+	// 포켓몬 현재 체력 반환
+	FORCEINLINE const float GetPokemonHp() override { return CurrentHP; }
 
 
 protected: // 오버라이딩 구현부 
@@ -140,6 +154,14 @@ protected: // 자체 함수 구현부
 	// 원거리 공격 이동 위치 설정 함수
 	void SetRangeAttackPosition();
 
+	// 현재 스탯 데이터 계산
+	const FPokemonStatData CalculateCurrentStat();
+
+	// 각각 파라미터 계산
+	float CalculateStatParameters(EPokemonBuffStat Stat, float DefaultStat);
+
+	// 포켓몬 기절 
+	void PokemonDown();
 
 protected: // Has 변수 
 
@@ -188,7 +210,7 @@ protected: // 파라미터 변수
 	FPokemonStatData DefaultStatData;
 
 	// 현재 포켓몬 스탯 데이터
-	FPokemonStatData CurrentStatData;
+	//FPokemonStatData CurrentStatData;
 
 	// 현재 포켓몬 행동 상태
 	EPokemonAction ActionState = EPokemonAction::NonCommand;
@@ -198,4 +220,7 @@ protected: // 파라미터 변수
 
 	// 현재 버프 쿨타임
 	TArray<float> RemainingBuffTimes;
+
+	// 현재 남은 체력
+	float CurrentHP;
 };

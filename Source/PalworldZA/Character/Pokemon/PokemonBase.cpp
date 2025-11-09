@@ -14,6 +14,7 @@
 #include "Skill/Pokemon/SkillBase.h"
 
 #include "Data/Pokemon/PokemonDamageEvent.h"
+#include "Data/Pokemon/FPokemonTypeTable.h"
 
 
 APokemonBase::APokemonBase()
@@ -47,6 +48,10 @@ void APokemonBase::BeginPlay()
 
 	// 애니메이션 시퀀스 전달
 	if (AnimData) { animInstance->SetAnimSequence(AnimData); }
+
+	// 버프 타이머 초기화 
+	RemainingBuffTimes.SetNum((uint8)EPokemonBuffStat::COUNT);
+	for (float& Time : RemainingBuffTimes) { Time = ZERO; }
 	
 	// 블랙 보드 연결
 	BBComponent = Cast<APokemonAIController>(GetController())->GetBlackboardComponent();	
@@ -66,9 +71,9 @@ void APokemonBase::SkillCoolDown(float DeltaTime)
 {
 	for (FSkillContainer& Skill : PokemonSkills)
 	{
-		if (Skill.CoolDown > 0.0f)
+		if (Skill.CoolDown > ZERO)
 		{
-			Skill.CoolDown = FMath::Max(Skill.CoolDown - DeltaTime, 0.0f);
+			Skill.CoolDown = FMath::Max(Skill.CoolDown - DeltaTime, ZERO);
 		}
 	}
 }
@@ -79,7 +84,7 @@ void APokemonBase::DownRemainingBuffTime(float DeltaTime)
 	{
 		if (Buff > 0)
 		{
-			Buff = FMath::Max(Buff - DeltaTime, 0.0f);
+			Buff = FMath::Max(Buff - DeltaTime, ZERO);
 		}
 	}
 }
@@ -153,6 +158,38 @@ void APokemonBase::SetRangeAttackPosition()
 	BBComponent->SetValueAsVector(BBKEY_TARGET_LOCATION, SelectPos);
 }
 
+const FPokemonStatData APokemonBase::CalculateCurrentStat()
+{
+	FPokemonStatData ReturnStat;
+	
+	ReturnStat.Hp = DefaultStatData.Hp;
+
+	ReturnStat.ATK = CalculateStatParameters(EPokemonBuffStat::ATK, DefaultStatData.ATK);
+	ReturnStat.DEF = CalculateStatParameters(EPokemonBuffStat::DEF, DefaultStatData.DEF);
+	ReturnStat.SPA = CalculateStatParameters(EPokemonBuffStat::SPA, DefaultStatData.SPA);
+	ReturnStat.SPD = CalculateStatParameters(EPokemonBuffStat::SPD, DefaultStatData.SPD);
+	ReturnStat.Speed = CalculateStatParameters(EPokemonBuffStat::SPEED, DefaultStatData.Speed);
+
+	return ReturnStat;
+}
+
+float APokemonBase::CalculateStatParameters(EPokemonBuffStat Stat, float DefaultStat)
+{
+	float Index = static_cast<uint8>(Stat);
+
+	if (RemainingBuffTimes[Index] > 0)
+	{
+		DefaultStat *= 1.5f;
+	}
+	
+	return DefaultStat;
+}
+
+void APokemonBase::PokemonDown()
+{
+	PokemonDownEvents.Execute();
+}
+
 void APokemonBase::ExecuteSkill()
 {
 	// 스킬 소환
@@ -173,18 +210,48 @@ void APokemonBase::ExecuteSkill()
 
 float APokemonBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
+	float FinalDMG = ZERO;
+
 	if (DamageEvent.GetTypeID() == FPokemonDamageEvent::ClassID)
 	{
 		const FPokemonDamageEvent& PokemonDamage = static_cast<const FPokemonDamageEvent&>(DamageEvent);
 
-		// Todo : 데미지 계산 처리
+		if (Trainer == PokemonDamage.Trainer) { return ZERO; }
+		if (Cast<APawn>(this) == PokemonDamage.Pokemon) { return ZERO; }
+
+		float DefenseStat = ZERO;
+		float MulType1 = FPokemonTypeTable::GetMultiplier(PokemonDamage.Type, DefaultStatData.Type1);
+		float MulType2 = FPokemonTypeTable::GetMultiplier(PokemonDamage.Type, DefaultStatData.Type2);
+
+		// 속성 데미지 계산 
+		FinalDMG = PokemonDamage.Power * MulType1 * MulType2;
+
+		// 특수 공격 및 공격 판정 후 특수 방어와 방어 중 선택
+		if (PokemonDamage.IsSpecial)
+		{
+			DefenseStat = CalculateCurrentStat().SPD * 0.01f;
+		}
+		else
+		{
+			DefenseStat = CalculateCurrentStat().DEF * 0.01f;
+		}
+
+		// 방어력 공격력의 20% 정도 반영
+		FinalDMG = FinalDMG - (FinalDMG * 0.2f * DefenseStat);
 	}
 	else
 	{
-		CurrentStatData.Hp -= DamageAmount;
+		FinalDMG = DamageAmount;
 	}
 
-	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	// 데미지는 언제나 0 이상
+	if (FinalDMG < ZERO) { FinalDMG = ZERO; }
+
+	// 최종 데미지 계산
+	CurrentHP = FMath::Max(CurrentHP - FinalDMG, ZERO);
+	if (CurrentHP == ZERO) { PokemonDown(); }
+
+	return FinalDMG;
 }
 
 bool APokemonBase::UsingSkill(uint8 SkillNumber)
