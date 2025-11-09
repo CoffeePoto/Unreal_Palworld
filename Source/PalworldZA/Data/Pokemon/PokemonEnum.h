@@ -22,8 +22,9 @@ enum class EPokemonType : uint8
 	NORMAL,
 	FIRE,
 	WATER,
-	LEAF,
-	ELECTRIC
+	GRASS,
+	ELECTRIC,
+	GROUND
 };
 
 UENUM(BlueprintType)

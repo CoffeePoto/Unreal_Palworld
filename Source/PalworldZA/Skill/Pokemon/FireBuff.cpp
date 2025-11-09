@@ -10,7 +10,8 @@ AFireBuff::AFireBuff()
 }
 
 void AFireBuff::ExecuteSkill()
-{// User Null 체크
+{
+	// User Null 체크
 	if (!User) { return; }
 	IPokemonDataGetter* Getter = Cast<IPokemonDataGetter>(User);
 
