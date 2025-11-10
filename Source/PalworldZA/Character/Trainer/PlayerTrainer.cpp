@@ -106,7 +106,7 @@ void APlayerTrainer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(SkillAction, ETriggerEvent::Completed, this, &APlayerTrainer::ReleaseSkillMode);
 		EnhancedInputComponent->BindAction(FocusAction, ETriggerEvent::Triggered, this, &APlayerTrainer::FocusOn);
 		EnhancedInputComponent->BindAction(FocusAction, ETriggerEvent::Completed, this, &APlayerTrainer::FocusEnd);
-		EnhancedInputComponent->BindAction(SelectAction, ETriggerEvent::Started, this, &APlayerTrainer::SelectPokemonorSkill);
+		EnhancedInputComponent->BindAction(SelectAction, ETriggerEvent::Triggered, this, &APlayerTrainer::SelectPokemonorSkill);
 		EnhancedInputComponent->BindAction(ThrowAction, ETriggerEvent::Triggered, this, &APlayerTrainer::Throw);
 	}
 
@@ -158,7 +158,8 @@ void APlayerTrainer::SelectPokemonorSkill(const FInputActionValue& value)
 		{
 			//for test
 			UE_LOG(LogTemp, Log, TEXT("Skill Mode : %d"), intIndex);
-			Pokemons[SelectedPokemon]->UsingSkill(intIndex);
+			//Pokemons[SelectedPokemon]->UsingSkill(intIndex);
+			CommandSkills(intIndex);
 		}
 	}
 	else
