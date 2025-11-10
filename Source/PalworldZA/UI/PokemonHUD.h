@@ -14,17 +14,16 @@ class PALWORLDZA_API UPokemonHUD : public UUserWidget
 {
 	GENERATED_BODY()
 	
+public:
+	void SelectUI(uint8 Index);
+
 protected:
 	virtual void NativeConstruct() override;
-
-	void SelectPokemon(uint8 Index);
 
 protected:
 	UPROPERTY()
 	TObjectPtr<class UHorizontalBox> SlotBox;
 	UPROPERTY()
-	TObjectPtr<class UPokemonSlot> CurrentSelected;
-	UPROPERTY()
 	//선택 해제 전 visible한 선택 영역을 hidden하기 위한 변수
-	TObjectPtr<class UPokemonSlot> PreviousSelected;
+	TObjectPtr<class UPokemonSlot> UISlot;
 };
