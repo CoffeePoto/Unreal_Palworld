@@ -14,21 +14,13 @@ UGameSingleton::UGameSingleton()
 		// 재확인.
 		ensureAlways(StatTable->GetRowMap().Num() > 0);
 
-		// 편의를 위해 배열로 변환해서 처리.
-		TArray<uint8*> StatValueArray;
-		StatTable->GetRowMap().GenerateValueArray(StatValueArray);
-
-		// 형변환해서 배열에 추가.
-		Algo::Transform(StatValueArray, PokemonStatTable, [](uint8* Value)
-			{
-				return *reinterpret_cast<FPokemonStatData*>(Value);
-			}
-		);
-
-		// 이름 기반으로 빠른 접근이 가능하도록 TMap 구성.
-		for (const FPokemonStatData& Data : PokemonStatTable)
+		// 스탯의 Table(TArray)과 Map(TMap)에 csv 파일 데이터를 채움.
+		for (const auto& RowPair : StatTable->GetRowMap())
 		{
-			PokemonStatMap.Add(Data.RowName, Data);
+			FName RowName = RowPair.Key;
+			FPokemonStatData* RowData = reinterpret_cast<FPokemonStatData*>(RowPair.Value);
+			PokemonStatTable.Add(*RowData);
+			PokemonStatMap.Add(RowName, *RowData);
 		}
 
 		// 확인.
@@ -46,26 +38,29 @@ UGameSingleton::UGameSingleton()
 		// 재확인.
 		ensureAlways(SkillTable->GetRowMap().Num() > 0);
 
-		// 편의를 위해 배열로 변환해서 처리.
-		TArray<uint8*> SkillValueArray;
-		SkillTable->GetRowMap().GenerateValueArray(SkillValueArray);
-
-		// 형변환해서 배열에 추가.
-		Algo::Transform(SkillValueArray, PokemonSkillTable, [](uint8* Value)
-			{
-				return *reinterpret_cast<FPokemonSkillData*>(Value);
-			}
-		);
-
-		// 이름 기반으로 빠른 접근이 가능하도록 TMap 구성. but FString을 FName으로 형변환.
-		for (const FPokemonSkillData& Data : PokemonSkillTable)
+		// 스킬의 Table(TArray)과 Map(TMap)에 csv 파일 데이터를 채움.
+		for (const auto& RowPair : SkillTable->GetRowMap())
 		{
-			PokemonSkillMap.Add(Data.RowName, Data);
+			FName RowName = RowPair.Key;
+			FPokemonSkillData* RowData = reinterpret_cast<FPokemonSkillData*>(RowPair.Value);
+			PokemonSkillTable.Add(*RowData);
+			PokemonSkillMap.Add(RowName, *RowData);
 		}
 		
 		// 확인.
 		NumOfSkill= PokemonSkillTable.Num();
 		ensureAlways(NumOfSkill > 0);
+
+		for (const auto& Pair : PokemonStatMap)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Inserted Stat Key: '%s'"), *Pair.Key.ToString());
+		}
+
+		for (const auto& Pair : PokemonSkillMap)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Inserted Skill Key: '%s'"), *Pair.Key.ToString());
+		}
+
 	}
 		
 }
