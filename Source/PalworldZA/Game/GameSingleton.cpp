@@ -22,12 +22,7 @@ UGameSingleton::UGameSingleton()
 			PokemonStatTable.Add(*RowData);
 			PokemonStatMap.Add(RowName, *RowData);
 		}
-
-		// 확인.
-		NumOfPokemon = PokemonStatTable.Num();
-		ensureAlways(NumOfPokemon > 0);
-	}
-	
+	}	
 
 	// DT_PokemonSkillTable 로드.
 	static ConstructorHelpers::FObjectFinder<UDataTable> SkillTableRef(TEXT("/Game/Data/Pokemon/DT_PokemonSkillTable.DT_PokemonSkillTable"));
@@ -46,23 +41,23 @@ UGameSingleton::UGameSingleton()
 			PokemonSkillTable.Add(*RowData);
 			PokemonSkillMap.Add(RowName, *RowData);
 		}
-		
-		// 확인.
-		NumOfSkill= PokemonSkillTable.Num();
-		ensureAlways(NumOfSkill > 0);
-
-		for (const auto& Pair : PokemonStatMap)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Inserted Stat Key: '%s'"), *Pair.Key.ToString());
-		}
-
-		for (const auto& Pair : PokemonSkillMap)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Inserted Skill Key: '%s'"), *Pair.Key.ToString());
-		}
-
 	}
-		
+	
+	// 확인.
+	NumOfPokemon = PokemonStatTable.Num();
+	ensureAlways(NumOfPokemon > 0);
+	NumOfSkill = PokemonSkillTable.Num();
+	ensureAlways(NumOfSkill > 0);
+
+	// 확인차 LogTemp 출력.
+	for (const auto& Pair : PokemonStatMap)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Inserted Stat Key: '%s'"), *Pair.Key.ToString());
+	}
+	for (const auto& Pair : PokemonSkillMap)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Inserted Skill Key: '%s'"), *Pair.Key.ToString());
+	}
 }
 
 UGameSingleton& UGameSingleton::Get()
