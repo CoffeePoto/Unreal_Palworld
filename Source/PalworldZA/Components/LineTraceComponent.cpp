@@ -1,44 +1,58 @@
-
 #include "Components/LineTraceComponent.h"
 #include "Camera/CameraComponent.h"
-
+#include "GameFramework/PlayerController.h"
+#include "Components/CapsuleComponent.h"
 
 ULineTraceComponent::ULineTraceComponent()
 {
-	PrimaryComponentTick.bCanEverTick = false;
+    // Tick 비활성화 (매 프레임 수행할 필요가 없음)
+    PrimaryComponentTick.bCanEverTick = false;
 }
 
 void ULineTraceComponent::PerformLineTrace()
 {
+    // 오너 확인
     AActor* Owner = GetOwner();
-    if (!Owner) return;
-
-    // 캐릭터의 카메라를 찾기
-    UCameraComponent* Camera = Owner->FindComponentByClass<UCameraComponent>();
-    if (!Camera)
+    if (!Owner)
     {
-        UE_LOG(LogTemp, Warning, TEXT("[LineTraceComponent] No Camera Found"));
+        UE_LOG(LogTemp, Warning, TEXT("[LineTraceComponent] No Owner"));
         return;
     }
 
-    FVector Start = Camera->GetComponentLocation();
-    FVector End = Start + (Camera->GetForwardVector() * TraceDistance);
+    APlayerController* PC = Cast<APlayerController>(GetOwner());
+    if (!PC) return;
 
-    FHitResult Hit;
-    FCollisionQueryParams Params(SCENE_QUERY_STAT(LineTrace), false, Owner);
+    FVector CameraLocation = PC->PlayerCameraManager->GetCameraLocation();
+    FRotator CameraRotation = PC->PlayerCameraManager->GetCameraRotation();
 
-    bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, Params);
+    FVector TraceStart = CameraLocation;
+    FVector TraceEnd = TraceStart + (CameraRotation.Vector() * TraceDistance);
 
-    DrawDebugLine(GetWorld(), Start, End, bHit ? FColor::Green : FColor::Red, false, 1.0f, 0, 1.5f);
+    FHitResult HitResult;
+    FCollisionQueryParams Params;  //예외처리
+    Params.AddIgnoredActor(PC->GetPawn());
 
-    if (bHit && Hit.GetActor())
+    bool bHit = GetWorld()->LineTraceSingleByChannel(
+        HitResult,
+        TraceStart,
+        TraceEnd,
+        ECC_Visibility,
+        Params
+    );
+
+#if WITH_EDITOR
+    DebugDrawLine(TraceStart, TraceEnd);
+#endif #if WITH_EDITOR 
+
+    if (bHit && HitResult.GetActor())
     {
-        UE_LOG(LogTemp, Warning, TEXT("[LineTraceComponent] Hit Actor: %s"),
-            *Hit.GetActor()->GetName());
+        UE_LOG(LogTemp, Warning, TEXT("LineTraceComponent] Hit Actor: %s"), *HitResult.GetActor()->GetName());
+        return;
     }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("[LineTraceComponent] No Hit"));
-    }
+}
+
+void ULineTraceComponent::DebugDrawLine(const FVector& Start, const FVector& End)
+{
+    DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 0.1f, 0, 0.1f);
 }
 

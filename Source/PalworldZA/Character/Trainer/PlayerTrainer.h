@@ -33,9 +33,10 @@ public:
 	//이동 로직
 	void Move(const FInputActionValue& value);
 	void Look(const FInputActionValue& value);
+
 	//스킬 로직
-	void SkillMode();
-	void ReleaseSkillMode();
+	void SkillMode(const FInputActionValue& value);
+	void ReleaseSkillMode(UAnimMontage* TargetMontage, bool IsProperlyEnded);
 
 	// 공격 로직
 	void Throw(const FInputActionValue& value);
@@ -55,10 +56,16 @@ protected:
 	TObjectPtr<class UInputAction> LookAction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> MoveAction;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> SkillAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	TObjectPtr<class UAnimMontage> SkillActionMontage;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> FocusAction;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> SelectAction;
 
@@ -70,7 +77,7 @@ protected:
 
 	// 라인트레이스 컴포넌트
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Trace", meta = (AllowPrivateAccess = "true"))
-	ULineTraceComponent* LineTraceComponent = nullptr;
+	ULineTraceComponent* LineTraceComponent;
 
 	//focus 여부 판단 
 	bool IsFocusing;

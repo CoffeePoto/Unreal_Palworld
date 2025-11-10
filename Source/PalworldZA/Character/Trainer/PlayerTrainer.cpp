@@ -103,7 +103,6 @@ void APlayerTrainer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &APlayerTrainer::Look);
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerTrainer::Move);
 		EnhancedInputComponent->BindAction(SkillAction, ETriggerEvent::Triggered, this, &APlayerTrainer::SkillMode);
-		EnhancedInputComponent->BindAction(SkillAction, ETriggerEvent::Completed, this, &APlayerTrainer::ReleaseSkillMode);
 		EnhancedInputComponent->BindAction(FocusAction, ETriggerEvent::Triggered, this, &APlayerTrainer::FocusOn);
 		EnhancedInputComponent->BindAction(FocusAction, ETriggerEvent::Completed, this, &APlayerTrainer::FocusEnd);
 		EnhancedInputComponent->BindAction(SelectAction, ETriggerEvent::Triggered, this, &APlayerTrainer::SelectPokemonorSkill);
@@ -227,14 +226,38 @@ void APlayerTrainer::Look(const FInputActionValue& value)
 	AddControllerPitchInput(LookValue.Y * CameraSpeed);
 }
 
-void APlayerTrainer::SkillMode()
+void APlayerTrainer::SkillMode(const FInputActionValue& value)
 {
+	// UseSkill = true;
+
+	// 이미 스킬 진행 중이면 종료.
+	if (UseSkill)
+	{
+		return;
+	}
+
+	// 스킬 시작.
 	UseSkill = true;
+
+	// 걷다가 멈추고 skill
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+
+	// Todo. 몽타주
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	AnimInstance->Montage_Play(SkillActionMontage, 1.5f);
+
+	FOnMontageEnded EndDelegate;
+	EndDelegate.BindUObject(this, &APlayerTrainer::ReleaseSkillMode);
+	AnimInstance->Montage_SetEndDelegate(EndDelegate, SkillActionMontage);
 }
 
-void APlayerTrainer::ReleaseSkillMode()
+void APlayerTrainer::ReleaseSkillMode(UAnimMontage* TargetMontage, bool IsProperlyEnded)
 {
+	//UseSkill = false;
+
+	// skill 종료.
 	UseSkill = false;
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 }
 
 void APlayerTrainer::Throw(const FInputActionValue& value)
@@ -244,15 +267,6 @@ void APlayerTrainer::Throw(const FInputActionValue& value)
 	{
 		return;
 	}
-
-	//UE_LOG(LogTemp, Log, TEXT("IA Throw"));
-
-	// 입력 비활성화.
-	//APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	//if (PlayerController)
-	//{
-	//	DisableInput(PlayerController);
-	//}
 
 	// 던지기 시작.
 	IsThrowing = true;
@@ -271,15 +285,6 @@ void APlayerTrainer::Throw(const FInputActionValue& value)
 
 void APlayerTrainer::ThrowActionEnd(UAnimMontage* TargetMontage, bool IsProperlyEnded)
 {
-	// ensure(CurrentCombo != 0);
-	// CurrentCombo = 0;
-	// 입력 다시 활성화.
-	//APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	//if (PlayerController)
-	//{
-	//	EnableInput(PlayerController);
-	//}
-
 	// 던지기 종료.
 	IsThrowing = false;
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
