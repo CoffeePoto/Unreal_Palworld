@@ -40,5 +40,6 @@ public:
 	// 포켓몬 현재 체력 반환
 	virtual const float GetPokemonHp() = 0;
 
-	
+	// 현재 포켓몬의 트레이너 반환
+	virtual const APawn* GetTrainer() = 0;
 };

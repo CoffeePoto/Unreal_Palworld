@@ -17,11 +17,35 @@ class PALWORLDZA_API AFireSlash : public ASkillBase
 public:
 	AFireSlash();
 
+	virtual void PostInitializeComponents() override;
+
+	
+	virtual void BeginPlay();
+
 	// 스킬 실행
 	virtual void ExecuteSkill() override;
 
+protected:
+
+	UFUNCTION()
+	void OnSkillOverlap(
+		UPrimitiveComponent* OverlappedComp,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult& SweepResult
+	);
+
+	// 콜리전 활성화 
+	UFUNCTION()
+	void ActivateCollision();
 
 protected:
+
 	UPROPERTY()
-	TSubclassOf<AActor> FireSlash;
+	TObjectPtr<class USphereComponent> HitCollision;
+
+	UPROPERTY()
+	TObjectPtr<class UTimelineComponent> AttackTimeline;
 };

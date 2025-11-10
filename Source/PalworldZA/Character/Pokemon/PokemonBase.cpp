@@ -61,10 +61,19 @@ void APokemonBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	// 스킬 쿨 타임 감소
 	SkillCoolDown(DeltaTime);
+
+	// 버프 시간 감소
 	DownRemainingBuffTime(DeltaTime);
+
+	// 데미지 주체 큐 관리
 	DamageCauserQueueDequeue(DeltaTime);
+
+	// 스킬 타겟 업데이트 
 	UpdateSkillTarget();
+
+	// 블랙 보드 업데이트 
 	UpdateBBCommand();
 }
 
@@ -103,7 +112,10 @@ void APokemonBase::DamageCauserQueueDequeue(float DeltaTime)
 	{
 		DamageCauserArray.Reset();
 		DamageCauserIndex = 0;
+		
 		CurrentDCDStartTime = ZERO;
+		CurrentDCDCycleTime = ZERO;
+
 		return;
 	}
 
@@ -179,6 +191,7 @@ ASkillBase* APokemonBase::SpawnSkill(int SkillIndex)
 		SpawnParams
 	);
 
+	SpawnSk->SetUser(this);
 	return SpawnSk;
 }
 
@@ -199,6 +212,9 @@ const FPokemonStatData APokemonBase::CalculateCurrentStat()
 {
 	FPokemonStatData ReturnStat;
 	
+	ReturnStat.Type1 = DefaultStatData.Type1;
+	ReturnStat.Type2 = DefaultStatData.Type2;
+
 	ReturnStat.Hp = DefaultStatData.Hp;
 
 	ReturnStat.ATK   = CalculateStatParameters(EPokemonBuffStat::ATK, DefaultStatData.ATK);
@@ -224,7 +240,13 @@ float APokemonBase::CalculateStatParameters(EPokemonBuffStat Stat, float Default
 
 void APokemonBase::PokemonDown()
 {
-	PokemonDownEvents.Execute();
+	UE_LOG(LogTemp, Log, TEXT("기절해 버렸다."));
+	Deactive();
+
+	if (PokemonDownEvents.IsBound())
+	{
+		PokemonDownEvents.Execute();
+	}
 }
 
 void APokemonBase::ExecuteSkill()
@@ -291,6 +313,7 @@ float APokemonBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 	CurrentHP = FMath::Max(CurrentHP - FinalDMG, ZERO);
 	if (CurrentHP == ZERO) { PokemonDown(); }
 
+	UE_LOG(LogTemp, Log, TEXT("맞은 데미지: %f"), FinalDMG);
 	DamageCauserArray.Add(DamageCauser);
 
 	return FinalDMG;
@@ -424,6 +447,11 @@ void APokemonBase::EndSkill()
 	if (SpawnSkillController)
 	{
 		PokemonSkills[SelectSkillNumber].CoolDown = SpawnSkillController->GetSkillData().Cooltime;
+
+		// Todo : 추후 활성화
+		//float CoolTime = SpawnSkillController->GetSkillData().Cooltime;
+		//CoolTime -= ((CoolTime * 0.3f) * (GetPokemonCurrentStat().Speed * 0.01f));
+		//PokemonSkills[SelectSkillNumber].CoolDown = CoolTime;
 	}
 
 	// 스폰된 스킬 제거

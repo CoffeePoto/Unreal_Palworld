@@ -3,6 +3,7 @@
 
 #include "Character/Pokemon/TestPokemon.h"
 #include "AI/Pokemon/PokemonAIController.h"
+#include "Game/GameSingleton.h"
 
 
 ATestPokemon::ATestPokemon()
@@ -16,6 +17,8 @@ ATestPokemon::ATestPokemon()
 void ATestPokemon::BeginPlay()
 {
 	Super::BeginPlay();
+	DefaultStatData = UGameSingleton::Get().GetPokemonStatData(2);
+	CurrentHP = DefaultStatData.Hp;
 }
 
 void ATestPokemon::Tick(float DeltaTime)

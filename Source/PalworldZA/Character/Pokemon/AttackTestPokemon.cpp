@@ -7,6 +7,7 @@
 #include "Character/Trainer/PlayerTrainer.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AI/Pokemon/PokemonBBKeys.h"
+#include "Game/GameSingleton.h"
 #include "Kismet/GameplayStatics.h"
 
 AAttackTestPokemon::AAttackTestPokemon()
@@ -18,7 +19,7 @@ AAttackTestPokemon::AAttackTestPokemon()
 	FSkillContainer NewSkill;
 
 	// @Todo: 새로운 테스트 스킬 적용시 여기다 작성
-	static ConstructorHelpers::FClassFinder<AActor> NewSkillRef(TEXT("/Game/BluePrint/PokemonSkill/BP_FireSlash.BP_FireSlash_C"));
+	static ConstructorHelpers::FClassFinder<AActor> NewSkillRef(TEXT("/Game/BluePrint/PokemonSkill/Fire/BP_FireSlash.BP_FireSlash_C"));
 	if (NewSkillRef.Succeeded())
 	{
 		NewSkill.Skill = NewSkillRef.Class;
@@ -26,7 +27,7 @@ AAttackTestPokemon::AAttackTestPokemon()
 
 	PokemonSkills.Add(NewSkill);
 
-	static ConstructorHelpers::FClassFinder<AActor> NewSkillRef2(TEXT("/Game/BluePrint/PokemonSkill/BP_FireBall.BP_FireBall_C"));
+	static ConstructorHelpers::FClassFinder<AActor> NewSkillRef2(TEXT("/Game/BluePrint/PokemonSkill/Fire/BP_FireBall.BP_FireBall_C"));
 	if (NewSkillRef2.Succeeded())
 	{
 		NewSkill.Skill = NewSkillRef2.Class;
@@ -34,7 +35,7 @@ AAttackTestPokemon::AAttackTestPokemon()
 
 	PokemonSkills.Add(NewSkill);
 
-	static ConstructorHelpers::FClassFinder<AActor> NewSkillRef3(TEXT("/Game/BluePrint/PokemonSkill/BP_FireBuff.BP_FireBuff_C"));
+	static ConstructorHelpers::FClassFinder<AActor> NewSkillRef3(TEXT("/Game/BluePrint/PokemonSkill/Fire/BP_FireBuff.BP_FireBuff_C"));
 	if (NewSkillRef3.Succeeded())
 	{
 		NewSkill.Skill = NewSkillRef3.Class;
@@ -43,7 +44,13 @@ AAttackTestPokemon::AAttackTestPokemon()
 	PokemonSkills.Add(NewSkill);
 }
 
-
+void AAttackTestPokemon::BeginPlay()
+{
+	Super::BeginPlay();
+	DefaultStatData = UGameSingleton::Get().GetPokemonStatData(1);
+	
+	CurrentHP = DefaultStatData.Hp;
+}
 
 void AAttackTestPokemon::Tick(float DeltaTime)
 {
@@ -73,19 +80,5 @@ void AAttackTestPokemon::Tick(float DeltaTime)
 		BBComponent->SetValueAsObject(BBKEY_OWNER, Trainer);
 	}
 	*/
-}
-
-bool AAttackTestPokemon::UsingSkill(uint8 SkillNumber)
-{
-	if (CurrentSkillTarget)
-	{
-		CurrentSkillNumber = (CurrentSkillNumber + 1) % 3;
-
-		return Super::UsingSkill(CurrentSkillNumber);
-	}
-	else
-	{
-		return false;
-	}
 }
 

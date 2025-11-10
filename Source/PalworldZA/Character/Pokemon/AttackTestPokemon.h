@@ -19,9 +19,9 @@ public:
 
 protected:
 
-	virtual void Tick(float DeltaTime) override;
+	virtual void BeginPlay() override;
 
-	virtual bool UsingSkill(uint8 SkillNumber) override;
+	virtual void Tick(float DeltaTime) override;
 
 	float TargetTime = 5.0f;
 	float CurrentTime = 0.0f;

@@ -32,10 +32,10 @@ public:
 
 	// 지시 트레이너
 	UPROPERTY()
-	TObjectPtr<class APawn> Trainer;
+	TObjectPtr<const class APawn> Trainer;
 
 	// 공격 포켓몬
 	UPROPERTY()
-	TObjectPtr<class APawn> Pokemon;
+	TObjectPtr<const class APawn> Pokemon;
 
 };

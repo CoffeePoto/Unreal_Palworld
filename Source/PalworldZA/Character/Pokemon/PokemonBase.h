@@ -114,6 +114,8 @@ public:	// 인터페이스 구현부 (IPokemonDataGetter) - 포켓몬이 주는
 	// 포켓몬 현재 체력 반환
 	FORCEINLINE const float GetPokemonHp() override { return CurrentHP; }
 
+	// 현재 포켓몬의 트레이너 반환
+	FORCEINLINE const APawn* GetTrainer() { return Trainer; }
 
 protected: // 오버라이딩 구현부 
 

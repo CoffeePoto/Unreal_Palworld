@@ -5,7 +5,8 @@
 
 AFireBall::AFireBall()
 {
-	static ConstructorHelpers::FClassFinder<AActor> FireBallRef(TEXT("/Game/BluePrint/PokemonSkill/BP_FireBallProjectile.BP_FireBallProjectile_C"));
+	static ConstructorHelpers::FClassFinder<AActor> FireBallRef(TEXT("/Game/BluePrint/PokemonSkill/Fire/BP_FireBallProjectile.BP_FireBallProjectile_C"));
+
 	if (FireBallRef.Succeeded())
 	{
 		FireBallClass = FireBallRef.Class;
