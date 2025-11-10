@@ -60,8 +60,7 @@ UGameSingleton::UGameSingleton()
 		// 이름 기반으로 빠른 접근이 가능하도록 TMap 구성. but FString을 FName으로 형변환.
 		for (const FPokemonSkillData& Data : PokemonSkillTable)
 		{
-			FName KeyName(*Data.Name);
-			PokemonSkillMap.Add(KeyName, Data);
+			PokemonSkillMap.Add(Data.RowName, Data);
 		}
 		
 		// 확인.

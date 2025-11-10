@@ -37,10 +37,9 @@ public:
 		const FPokemonStatData* FoundStat = PokemonStatMap.Find(InName);
 		return FoundStat ? *FoundStat : FPokemonStatData();
 	}
-	FORCEINLINE FPokemonSkillData GetPokemonSkillDataByName(const FString& InName) const
+	FORCEINLINE FPokemonSkillData GetPokemonSkillDataByName(const FName& InName) const
 	{
-		const FName KeyName(*InName);
-		const FPokemonSkillData* FoundSkill = PokemonSkillMap.Find(KeyName);
+		const FPokemonSkillData* FoundSkill = PokemonSkillMap.Find(InName);
 		return FoundSkill ? *FoundSkill : FPokemonSkillData();
 	}
 

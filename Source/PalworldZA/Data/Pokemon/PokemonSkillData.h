@@ -14,6 +14,9 @@ struct FPokemonSkillData : public FTableRowBase
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Skill)
+	FName RowName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Skill)
 	FString Name;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Skill)
