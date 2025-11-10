@@ -3,9 +3,15 @@
 
 #include "Character/Trainer/PlayerTrainer.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+
+#include "Game/TrainerController.h"
+#include "UI/PokemonHUD.h"
+
+#include "Character/Pokemon/AttackTestPokemon.h"
 
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
@@ -72,6 +78,21 @@ void APlayerTrainer::BeginPlay()
 	}
 }
 
+void APlayerTrainer::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	AAttackTestPokemon* FindPokemon = Cast<AAttackTestPokemon>(
+		UGameplayStatics::GetActorOfClass(GetWorld(), AAttackTestPokemon::StaticClass())
+	);
+	if (FindPokemon)
+	{
+		//UE_LOG(LogTemp, Log, TEXT("Find Pokemon"));
+		Pokemons.Add(FindPokemon);
+	}
+
+}
+
 void APlayerTrainer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -130,8 +151,20 @@ void APlayerTrainer::FocusEnd()
 void APlayerTrainer::SelectPokemon(const FInputActionValue& value)
 {
 	float SelectedIndex = value.Get<float>() - 1;
-	SetSelectedPokemon((uint8)SelectedIndex);
-	//SelectedPokemon = (uint8)SelectedIndex;
+	uint8 intIndex = (uint8)SelectedIndex;
+	//전과 같은 번호를 입력했다면, 입력 무시
+	if (SelectedPokemon == intIndex) return;
+	SetSelectedPokemon(intIndex);
+	SelectedPokemon = (uint8)SelectedIndex;
+	
+	//UI에 변경사항 반영
+	ATrainerController* MyController = Cast<ATrainerController>(GetController());
+	if (MyController)
+	{
+		UPokemonHUD* UI = MyController->GetHUDWidget();
+		UI->SelectUI(intIndex);
+	}
+
 	//for test 
 	UE_LOG(LogTemp, Log, TEXT("Current Index : %d"), SelectedPokemon);
 }
