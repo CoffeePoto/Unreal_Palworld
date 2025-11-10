@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "UI/PokemonHUD.h"
 #include "TrainerController.generated.h"
 
 /**
@@ -18,6 +19,8 @@ public:
 	ATrainerController();
 
 	virtual void BeginPlay() override;
+
+	FORCEINLINE UPokemonHUD* GetHUDWidget() const { return HUDWidget; }
 
 protected:
 	//HUD section

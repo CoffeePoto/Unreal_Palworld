@@ -29,7 +29,7 @@ void UPokemonSlot::SetPokemonThumbnail(const FString& FilePath)
 	if (PokemonThumbnail && PokemonImage)
 	{
 		PokemonThumbnail->SetVisibility(ESlateVisibility::Visible);
-		PokemonThumbnail->Brush.SetResourceObject(PokemonImage);
+		PokemonThumbnail->SetBrushFromTexture(PokemonImage);
 		//PokemonThumbnail->InvalidateLayoutAndVolatility(); // 즉시 반영
 	}
 }

@@ -7,11 +7,10 @@
 #include "InputActionValue.h"
 #include "PlayerTrainer.generated.h"
 
-class ULineTraceComponent;
-
 /**
  * 
  */
+class ULineTraceComponent;
 UCLASS()
 class PALWORLDZA_API APlayerTrainer : public ATrainerBase
 {
@@ -21,6 +20,7 @@ public:
 	APlayerTrainer();
 
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	//플레이어가 상대 포켓몬을 주시한다.
