@@ -21,7 +21,9 @@ protected:
 
 	virtual void Tick(float DeltaTime) override;
 
+	virtual bool UsingSkill(uint8 SkillNumber) override;
+
 	float TargetTime = 5.0f;
 	float CurrentTime = 0.0f;
-	int32 SkillNumber = 0;
+	int32 CurrentSkillNumber = 0;
 };

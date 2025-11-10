@@ -75,3 +75,17 @@ void AAttackTestPokemon::Tick(float DeltaTime)
 	*/
 }
 
+bool AAttackTestPokemon::UsingSkill(uint8 SkillNumber)
+{
+	if (CurrentSkillTarget)
+	{
+		CurrentSkillNumber = (CurrentSkillNumber + 1) % 3;
+
+		return Super::UsingSkill(CurrentSkillNumber);
+	}
+	else
+	{
+		return false;
+	}
+}
+

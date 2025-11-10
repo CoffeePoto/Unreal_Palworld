@@ -139,6 +139,9 @@ protected: // 자체 함수 구현부
 	// 버프 남은 시간 감소 함수
 	void DownRemainingBuffTime(float DeltaTime);
 
+	// 데미지 커서 큐 꺼내는 함수 
+	void DamageCauserQueueDequeue(float DeltaTime);
+
 	// 스킬 타겟 업데이트
 	void UpdateSkillTarget();
 
@@ -162,6 +165,7 @@ protected: // 자체 함수 구현부
 
 	// 포켓몬 기절 
 	void PokemonDown();
+
 
 protected: // Has 변수 
 
@@ -197,6 +201,9 @@ protected: // Has 변수
 	UPROPERTY()
 	TScriptInterface<class IPokemonSkill> SpawnSkillController;
 
+	// 데미지를 준 주체를 저장하는 배열
+	UPROPERTY()
+	TArray<TObjectPtr<AActor>> DamageCauserArray;
 
 protected: // 파라미터 변수
 
@@ -223,4 +230,21 @@ protected: // 파라미터 변수
 
 	// 현재 남은 체력
 	float CurrentHP;
+
+	// 지울 데미지 커서 인덱스
+	int32 DamageCauserIndex;
+
+	// 현재 더미지 커서 지우는 주기 시간
+	float CurrentDCDCycleTime;
+
+	// 현재 더미지 커서 지우는 시작 시간
+	float CurrentDCDStartTime;
+
+private: // Base내에서만 사용하는 상수
+	
+	// 데미지 커서 제거 시작 시간
+	static constexpr float DAMAGE_CAUSER_DEQUEUE_START_TIME = 1.0f;
+
+	// 데미지 커서 제거 주기 시간
+	static constexpr float DAMAGE_CAUSER_DEQUEUE_CYCLE_TIME = 0.5f;
 };
