@@ -20,7 +20,7 @@
 
 
 APlayerTrainer::APlayerTrainer()
-	:isFocusing(false)
+	:IsFocusing(false)
 {
 	//Camera
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
@@ -45,10 +45,10 @@ APlayerTrainer::APlayerTrainer()
 		MoveAction = MoveActionRef.Object;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UInputAction> RunActionRef(TEXT("/Game/Input/Trainer/IA_Run.IA_Run"));
-	if (RunActionRef.Succeeded())
+	static ConstructorHelpers::FObjectFinder<UInputAction> SkillActionRef(TEXT("/Game/Input/Trainer/IA_Skill.IA_Skill"));
+	if (SkillActionRef.Succeeded())
 	{
-		RunAction = RunActionRef.Object;
+		SkillAction = SkillActionRef.Object;
 	}
 
 	static ConstructorHelpers::FObjectFinder<UInputAction> FocusActionRef(TEXT("/Game/Input/Trainer/IA_Focus.IA_Focus"));
@@ -88,9 +88,9 @@ void APlayerTrainer::Tick(float DeltaTime)
 	if (FindPokemon)
 	{
 		//UE_LOG(LogTemp, Log, TEXT("Find Pokemon"));
+		FindPokemon->SetTrainer(this);
 		Pokemons.Add(FindPokemon);
 	}
-
 }
 
 void APlayerTrainer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -102,11 +102,11 @@ void APlayerTrainer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	{
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &APlayerTrainer::Look);
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerTrainer::Move);
-		EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Triggered, this, &APlayerTrainer::Run);
-		EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Completed, this, &APlayerTrainer::RunEnd);
+		EnhancedInputComponent->BindAction(SkillAction, ETriggerEvent::Triggered, this, &APlayerTrainer::SkillMode);
+		EnhancedInputComponent->BindAction(SkillAction, ETriggerEvent::Completed, this, &APlayerTrainer::ReleaseSkillMode);
 		EnhancedInputComponent->BindAction(FocusAction, ETriggerEvent::Triggered, this, &APlayerTrainer::FocusOn);
 		EnhancedInputComponent->BindAction(FocusAction, ETriggerEvent::Completed, this, &APlayerTrainer::FocusEnd);
-		EnhancedInputComponent->BindAction(SelectAction, ETriggerEvent::Started, this, &APlayerTrainer::SelectPokemon);
+		EnhancedInputComponent->BindAction(SelectAction, ETriggerEvent::Started, this, &APlayerTrainer::SelectPokemonorSkill);
 		EnhancedInputComponent->BindAction(ThrowAction, ETriggerEvent::Triggered, this, &APlayerTrainer::Throw);
 	}
 
@@ -145,28 +145,40 @@ void APlayerTrainer::FocusOn()
 
 void APlayerTrainer::FocusEnd()
 {
-	isFocusing = false;
+	IsFocusing = false;
 }
 
-void APlayerTrainer::SelectPokemon(const FInputActionValue& value)
+void APlayerTrainer::SelectPokemonorSkill(const FInputActionValue& value)
 {
 	float SelectedIndex = value.Get<float>() - 1;
 	uint8 intIndex = (uint8)SelectedIndex;
-	//전과 같은 번호를 입력했다면, 입력 무시
-	if (SelectedPokemon == intIndex) return;
-	SetSelectedPokemon(intIndex);
-	SelectedPokemon = (uint8)SelectedIndex;
-	
-	//UI에 변경사항 반영
-	ATrainerController* MyController = Cast<ATrainerController>(GetController());
-	if (MyController)
+	if (UseSkill)
 	{
-		UPokemonHUD* UI = MyController->GetHUDWidget();
-		UI->SelectUI(intIndex);
+		if (intIndex < 4)
+		{
+			//for test
+			UE_LOG(LogTemp, Log, TEXT("Skill Mode : %d"), intIndex);
+			Pokemons[SelectedPokemon]->UsingSkill(intIndex);
+		}
 	}
+	else
+	{
+		//전과 같은 번호를 입력했다면, 입력 무시
+		if (SelectedPokemon == intIndex) return;
+		SetSelectedPokemon(intIndex);
+		SelectedPokemon = (uint8)SelectedIndex;
 
-	//for test 
-	UE_LOG(LogTemp, Log, TEXT("Current Index : %d"), SelectedPokemon);
+		//UI에 변경사항 반영
+		ATrainerController* MyController = Cast<ATrainerController>(GetController());
+		if (MyController)
+		{
+			UPokemonHUD* UI = MyController->GetHUDWidget();
+			UI->SelectUI(intIndex);
+		}
+
+		//for test 
+		UE_LOG(LogTemp, Log, TEXT("Current Index : %d"), SelectedPokemon);
+	}
 }
 
 void APlayerTrainer::Move(const FInputActionValue& value)
@@ -214,14 +226,14 @@ void APlayerTrainer::Look(const FInputActionValue& value)
 	AddControllerPitchInput(LookValue.Y * CameraSpeed);
 }
 
-void APlayerTrainer::Run()
+void APlayerTrainer::SkillMode()
 {
-	GetCharacterMovement()->MaxWalkSpeed = 700.0f;
+	UseSkill = true;
 }
 
-void APlayerTrainer::RunEnd()
+void APlayerTrainer::ReleaseSkillMode()
 {
-	GetCharacterMovement()->MaxWalkSpeed = 500.0f;
+	UseSkill = false;
 }
 
 void APlayerTrainer::Throw(const FInputActionValue& value)
