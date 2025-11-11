@@ -2,10 +2,13 @@
 
 
 #include "Skill/Pokemon/Fire/FireBall.h"
+#include "Skill/Pokemon/ProjectileBase.h"
+#include "Interface/PokemonInterface/ProjectileController.h"
+#include "Game/GameSingleton.h"
 
 AFireBall::AFireBall()
 {
-	static ConstructorHelpers::FClassFinder<AActor> FireBallRef(TEXT("/Game/BluePrint/PokemonSkill/Fire/BP_FireBallProjectile.BP_FireBallProjectile_C"));
+	static ConstructorHelpers::FClassFinder<AProjectileBase> FireBallRef(TEXT("/Game/BluePrint/PokemonSkill/Fire/BP_FireBallProjectile.BP_FireBallProjectile_C"));
 
 	if (FireBallRef.Succeeded())
 	{
@@ -18,6 +21,8 @@ AFireBall::AFireBall()
 void AFireBall::ExecuteSkill()
 {
 	if (!User) { return; }
+	Data = UGameSingleton::Get().GetPokemonSkillDataByName(TEXT("FIRE_001"));
+
 	IPokemonDataGetter* Getter = Cast<IPokemonDataGetter>(User);
 
 	AActor* Target = Getter->GetTarget();
@@ -34,7 +39,11 @@ void AFireBall::ExecuteSkill()
 
 	// 발사체 생성 및 생명 주기 설정
 	FireBall = SpawnProjectile(UserPos, Rotation); 
-	FireBall->SetLifeSpan(2.0f);
+	
+	IProjectileController* PController = Cast<IProjectileController>(FireBall);
+
+	PController->SetDamageEvent(MakeDamageEvent());
+	PController->SetDestroyTimer(2.0f);
 
 	FTimerHandle SkillEndTimer;
 
@@ -48,7 +57,7 @@ void AFireBall::ExecuteSkill()
 	);
 }
 
-AActor* AFireBall::SpawnProjectile(FVector Pos, FRotator Rot)
+AProjectileBase* AFireBall::SpawnProjectile(FVector Pos, FRotator Rot)
 {
 	FActorSpawnParameters SpawnParams;
 
@@ -56,7 +65,7 @@ AActor* AFireBall::SpawnProjectile(FVector Pos, FRotator Rot)
 	SpawnParams.Instigator = GetInstigator();
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
-	AActor* Projectile = GetWorld()->SpawnActor<AActor>(
+	AProjectileBase* Projectile = GetWorld()->SpawnActor<AProjectileBase>(
 		FireBallClass,
 		Pos,
 		Rot,

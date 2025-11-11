@@ -17,7 +17,7 @@ ATestPokemon::ATestPokemon()
 void ATestPokemon::BeginPlay()
 {
 	Super::BeginPlay();
-	DefaultStatData = UGameSingleton::Get().GetPokemonStatData(2);
+	DefaultStatData = UGameSingleton::Get().GetPokemonStatDataByName(TEXT("DARK_CROW"));
 	CurrentHP = DefaultStatData.Hp;
 }
 

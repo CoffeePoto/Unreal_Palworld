@@ -298,8 +298,8 @@ float APokemonBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 			DefenseStat = CalculateCurrentStat().DEF * 0.01f;
 		}
 
-		// 방어력 공격력의 20% 정도 반영
-		FinalDMG = FinalDMG - (FinalDMG * 0.2f * DefenseStat);
+		// 방어력 공격력의 30% 정도 반영
+		FinalDMG = FinalDMG - (FinalDMG * 0.3f * DefenseStat);
 	}
 	else
 	{
@@ -446,12 +446,11 @@ void APokemonBase::EndSkill()
 	// 스킬 쿨타임 설정
 	if (SpawnSkillController)
 	{
-		PokemonSkills[SelectSkillNumber].CoolDown = SpawnSkillController->GetSkillData().Cooltime;
+		//PokemonSkills[SelectSkillNumber].CoolDown = SpawnSkillController->GetSkillData().Cooltime;
 
-		// Todo : 추후 활성화
-		//float CoolTime = SpawnSkillController->GetSkillData().Cooltime;
-		//CoolTime -= ((CoolTime * 0.3f) * (GetPokemonCurrentStat().Speed * 0.01f));
-		//PokemonSkills[SelectSkillNumber].CoolDown = CoolTime;
+		float CoolTime = SpawnSkillController->GetSkillData().Cooltime;
+		CoolTime -= ((CoolTime * 0.3f) * (GetPokemonCurrentStat().Speed * 0.01f));
+		PokemonSkills[SelectSkillNumber].CoolDown = CoolTime;
 	}
 
 	// 스폰된 스킬 제거

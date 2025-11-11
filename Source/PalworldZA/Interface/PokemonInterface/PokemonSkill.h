@@ -31,5 +31,6 @@ public:
 	// 스킬 정보 반환 (Todo : 데이터 구조 잡은뒤 반환값 조정)
 	virtual const FPokemonSkillData& GetSkillData() = 0;
 
+	// 스킬 사용 유저 등록
 	virtual void SetUser(APokemonBase* NewUser) = 0;
 };

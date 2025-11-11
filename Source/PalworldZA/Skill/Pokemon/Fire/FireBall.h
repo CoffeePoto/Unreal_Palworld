@@ -6,9 +6,8 @@
 #include "Skill/Pokemon/SkillBase.h"
 #include "FireBall.generated.h"
 
-/**
- * 
- */
+class AProjectileBase;
+
 UCLASS()
 class PALWORLDZA_API AFireBall : public ASkillBase
 {
@@ -23,12 +22,12 @@ public:
 protected:
 
 	// 발사체 소환
-	AActor* SpawnProjectile(FVector Pos, FRotator Rot);
+	AProjectileBase* SpawnProjectile(FVector Pos, FRotator Rot);
 
 protected:
 	UPROPERTY()
-	TSubclassOf<AActor> FireBallClass;	
+	TSubclassOf<AProjectileBase> FireBallClass;
 
 	UPROPERTY()
-	TObjectPtr<AActor> FireBall;
+	TObjectPtr<AProjectileBase> FireBall;
 };

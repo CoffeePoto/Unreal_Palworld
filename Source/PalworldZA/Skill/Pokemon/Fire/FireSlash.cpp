@@ -9,7 +9,6 @@
 AFireSlash::AFireSlash()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	Data.ActionType = EActionType::MELEE;
 	AttackTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("AttackTimeline"));
 }
 
@@ -30,7 +29,7 @@ void AFireSlash::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	Data = UGameSingleton::Get().GetPokemonSkillData(2);
+	Data = UGameSingleton::Get().GetPokemonSkillDataByName(TEXT("FIRE_002"));
 
 	if (AttackTimeline)
 	{

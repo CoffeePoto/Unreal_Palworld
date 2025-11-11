@@ -60,8 +60,5 @@ protected:
 
 	UPROPERTY()
 	FPokemonSkillData Data;
-
-
-
-
+	
 };

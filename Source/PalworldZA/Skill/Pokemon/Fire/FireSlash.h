@@ -6,9 +6,7 @@
 #include "Skill/Pokemon/SkillBase.h"
 #include "FireSlash.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class PALWORLDZA_API AFireSlash : public ASkillBase
 {
