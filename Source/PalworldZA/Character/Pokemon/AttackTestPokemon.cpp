@@ -42,6 +42,14 @@ AAttackTestPokemon::AAttackTestPokemon()
 	}
 
 	PokemonSkills.Add(NewSkill);
+
+	//static ConstructorHelpers::FClassFinder<AActor> NewSkillRef4(TEXT("/Game/BluePrint/TestPokemon/BP_TestFourthSkill.BP_TestFourthSkill_C"));
+	//if (NewSkillRef4.Succeeded())
+	//{
+	//	NewSkill.Skill = NewSkillRef4.Class;
+	//}
+	//
+	//PokemonSkills.Add(NewSkill);
 }
 
 void AAttackTestPokemon::BeginPlay()
