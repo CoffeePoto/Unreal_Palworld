@@ -126,20 +126,6 @@ void APlayerTrainer::FocusOn()
 	//키입력 F가 입력되고 있으면 FocusOn 함수 호출
 	//Test
 	UE_LOG(LogTemp, Log, TEXT("FocusOn 함수 호출"));
-	if (LineTraceComponent)
-		LineTraceComponent->PerformLineTrace();
-
-
-	//주시할 포켓몬을 찾았을 경우에만 isFocusing 변수를 true로 만들 것.
-	//주시할 포켓몬
-	//APokemonBase* FocusedPokemon;
-	//line trace 시작 지점 - 캐릭터가 소유한 카메라
-	
-
-	//if (GetWorld()->LineTraceSingleByChannel())
-	//{
-
-	//}
 }
 
 void APlayerTrainer::FocusEnd()
