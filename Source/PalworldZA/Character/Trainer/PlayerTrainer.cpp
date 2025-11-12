@@ -2,6 +2,7 @@
 
 
 #include "Character/Trainer/PlayerTrainer.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -60,9 +61,6 @@ APlayerTrainer::APlayerTrainer()
 	{
 		SelectAction = SelectActionRef.Object;
 	}
-
-	// LineTraceComponent 생성
-	LineTraceComponent = CreateDefaultSubobject<ULineTraceComponent>(TEXT("LineTraceComponent"));
 }
 
 void APlayerTrainer::BeginPlay()
@@ -124,6 +122,59 @@ void APlayerTrainer::FocusOn()
 	//키입력 F가 입력되고 있으면 FocusOn 함수 호출
 	//Test
 	UE_LOG(LogTemp, Log, TEXT("FocusOn 함수 호출"));
+
+	FHitResult HitTarget;
+	FVector Start = GetActorLocation() 
+		+ GetActorForwardVector() 
+		* GetCapsuleComponent()->GetScaledCapsuleRadius();
+	FVector End = Start + GetActorForwardVector() * 200.0f;//감지거리 hardcoding
+
+	bool HitDetected = GetWorld()->SweepSingleByChannel
+	(
+		HitTarget,
+		Start,
+		End,
+		FQuat::Identity,
+		ECollisionChannel::ECC_GameTraceChannel1,
+		FCollisionShape::MakeSphere(100.0f)
+	);
+
+	//충돌 발생
+	if (HitDetected)
+	{
+		//충돌 결과를 포켓몬으로 캐스팅
+		APokemonBase* TargetPokemon = Cast<APokemonBase>(HitTarget.GetActor());
+		if (TargetPokemon)
+		{
+			UE_LOG(LogTemp, Log, TEXT("포켓몬 탐색 성공"));
+			Pokemons[SelectedPokemon]->SetTarget(TargetPokemon);
+		}
+	}
+
+	// 디버그 모드일 때만 그리도록.
+#if ENABLE_DRAW_DEBUG
+
+	// 캡슐의 중심 위치.
+	FVector CapsuleOrigin = Start + (End - Start) * 0.5f;
+
+	// 캡슐 높이의 절반 값.
+	float CapsuleHalfHeight = 200.0f * 0.5f;
+
+	// 색상 (그리기 색상).
+	FColor DrawColor = HitDetected ? FColor::Green : FColor::Red;
+
+	// 충돌 디버그 (시각적 도구 활용).
+	DrawDebugCapsule(
+		GetWorld(),
+		CapsuleOrigin,
+		CapsuleHalfHeight,
+		200.0f,
+		FRotationMatrix::MakeFromZ(GetActorForwardVector()).ToQuat(),
+		DrawColor,
+		false,
+		5.0f
+	);
+#endif
 }
 
 void APlayerTrainer::FocusEnd()
@@ -143,6 +194,16 @@ void APlayerTrainer::SelectPokemonorSkill(const FInputActionValue& value)
 			UE_LOG(LogTemp, Log, TEXT("Skill Mode : %d"), intIndex);
 			//Pokemons[SelectedPokemon]->UsingSkill(intIndex);
 			CommandSkills(intIndex);
+			// 걷다가 멈추고 skill
+			GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+
+			// Todo. 몽타주
+			UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+			AnimInstance->Montage_Play(SkillActionMontage, 1.5f);
+
+			FOnMontageEnded EndDelegate;
+			EndDelegate.BindUObject(this, &APlayerTrainer::ReleaseSkillMode);
+			AnimInstance->Montage_SetEndDelegate(EndDelegate, SkillActionMontage);
 		}
 	}
 	else
@@ -223,16 +284,16 @@ void APlayerTrainer::SkillMode(const FInputActionValue& value)
 	// 스킬 시작.
 	UseSkill = true;
 
-	// 걷다가 멈추고 skill
-	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+	//// 걷다가 멈추고 skill
+	//GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 
-	// Todo. 몽타주
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	AnimInstance->Montage_Play(SkillActionMontage, 1.5f);
+	//// Todo. 몽타주
+	//UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	//AnimInstance->Montage_Play(SkillActionMontage, 1.5f);
 
-	FOnMontageEnded EndDelegate;
-	EndDelegate.BindUObject(this, &APlayerTrainer::ReleaseSkillMode);
-	AnimInstance->Montage_SetEndDelegate(EndDelegate, SkillActionMontage);
+	//FOnMontageEnded EndDelegate;
+	//EndDelegate.BindUObject(this, &APlayerTrainer::ReleaseSkillMode);
+	//AnimInstance->Montage_SetEndDelegate(EndDelegate, SkillActionMontage);
 }
 
 void APlayerTrainer::ReleaseSkillMode(UAnimMontage* TargetMontage, bool IsProperlyEnded)
