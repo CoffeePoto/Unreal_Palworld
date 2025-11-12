@@ -51,8 +51,14 @@ void APokemonBase::BeginPlay()
 
 	// 버프 타이머 초기화 
 	RemainingBuffTimes.SetNum((uint8)EPokemonBuffStat::COUNT);
-	for (float& Time : RemainingBuffTimes) { Time = ZERO; }
-	
+	BuffOrDebuffArray.SetNum((uint8)EPokemonBuffStat::COUNT);
+
+	for (int i = 0; i < (uint8)EPokemonBuffStat::COUNT; ++i)
+	{
+		RemainingBuffTimes[i] = ZERO;
+		BuffOrDebuffArray[i] = 0;
+	}
+
 	// 블랙 보드 연결
 	BBComponent = Cast<APokemonAIController>(GetController())->GetBlackboardComponent();	
 }
@@ -90,11 +96,17 @@ void APokemonBase::SkillCoolDown(float DeltaTime)
 
 void APokemonBase::DownRemainingBuffTime(float DeltaTime)
 {
-	for (float& Buff : RemainingBuffTimes)
+	for (int i = 0; i < RemainingBuffTimes.Num(); ++i)
 	{
-		if (Buff > 0)
+		float& Time = RemainingBuffTimes[i];
+
+		if (Time > ZERO)
 		{
-			Buff = FMath::Max(Buff - DeltaTime, ZERO);
+			Time = FMath::Max(Time - DeltaTime, ZERO);
+		}
+		else
+		{
+			BuffOrDebuffArray[i] = 0;
 		}
 	}
 }
@@ -230,9 +242,9 @@ float APokemonBase::CalculateStatParameters(EPokemonBuffStat Stat, float Default
 {
 	float Index = static_cast<uint8>(Stat);
 
-	if (RemainingBuffTimes[Index] > 0)
+	if (BuffOrDebuffArray[Index] != 0)
 	{
-		DefaultStat *= 1.5f;
+		DefaultStat *= (1.5f * BuffOrDebuffArray[Index]);
 	}
 	
 	return DefaultStat;
@@ -323,6 +335,7 @@ bool APokemonBase::UsingSkill(uint8 SkillNumber)
 {
 	if (ActionState != EPokemonAction::NonCommand) { return false; }
 	if (!PokemonSkills.IsValidIndex(SkillNumber)) { return false; }
+	if (PokemonSkills[SkillNumber].CoolDown > ZERO) { return false; }
 
 	ASkillBase* DefaultSkill = PokemonSkills[SkillNumber].Skill.Get()->GetDefaultObject<ASkillBase>();
 	if (!DefaultSkill) { return false; }
@@ -429,16 +442,51 @@ void APokemonBase::SetBuff(EPokemonBuffStat Stat, float Time, bool IsCover)
 	uint8 StatNumber = static_cast<uint8>(Stat);
 	if (!RemainingBuffTimes.IsValidIndex(StatNumber)) { return; }
 
+	if (BuffOrDebuffArray[StatNumber] == -1 && RemainingBuffTimes[StatNumber] > ZERO)
+	{
+		BuffOrDebuffArray[StatNumber] = 0;
+		RemainingBuffTimes[StatNumber] = ZERO;
+		return;
+	}
+
 	if (IsCover)
 	{
+		BuffOrDebuffArray[StatNumber] = 1;
 		RemainingBuffTimes[StatNumber] = Time;
 	}
 	else
 	{
+		BuffOrDebuffArray[StatNumber] = 1;
 		RemainingBuffTimes[StatNumber] += Time;
 	}
 
 	if(RemainingBuffTimes[StatNumber] < 0) { RemainingBuffTimes[StatNumber] = 0; }
+}
+
+void APokemonBase::SetDeBuff(EPokemonBuffStat Stat, float Time, bool IsCover)
+{
+	uint8 StatNumber = static_cast<uint8>(Stat);
+	if (!RemainingBuffTimes.IsValidIndex(StatNumber)) { return; }
+
+	if (BuffOrDebuffArray[StatNumber] == 1 && RemainingBuffTimes[StatNumber] > ZERO)
+	{
+		BuffOrDebuffArray[StatNumber] = 0;
+		RemainingBuffTimes[StatNumber] = ZERO;
+		return;
+	}
+
+	if (IsCover)
+	{
+		BuffOrDebuffArray[StatNumber] = -1;
+		RemainingBuffTimes[StatNumber] = Time;
+	}
+	else
+	{
+		BuffOrDebuffArray[StatNumber] = -1;
+		RemainingBuffTimes[StatNumber] += Time;
+	}
+
+	if (RemainingBuffTimes[StatNumber] < 0) { RemainingBuffTimes[StatNumber] = 0; }
 }
 
 void APokemonBase::EndSkill()
@@ -446,8 +494,6 @@ void APokemonBase::EndSkill()
 	// 스킬 쿨타임 설정
 	if (SpawnSkillController)
 	{
-		//PokemonSkills[SelectSkillNumber].CoolDown = SpawnSkillController->GetSkillData().Cooltime;
-
 		float CoolTime = SpawnSkillController->GetSkillData().Cooltime;
 		CoolTime -= ((CoolTime * 0.3f) * (GetPokemonCurrentStat().Speed * 0.01f));
 		PokemonSkills[SelectSkillNumber].CoolDown = CoolTime;

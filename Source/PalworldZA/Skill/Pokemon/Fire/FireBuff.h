@@ -20,6 +20,8 @@ public:
 	// 스킬 실행
 	virtual void ExecuteSkill() override;
 
+	virtual void OnEndSkill() override;
+
 
 protected:
 	UPROPERTY()

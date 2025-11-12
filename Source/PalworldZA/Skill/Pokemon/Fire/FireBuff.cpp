@@ -1,8 +1,8 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Skill/Pokemon/Fire/FireBuff.h"
 #include "FireBuff.h"
+#include "Interface/PokemonInterface/CommandReceiver.h"
 
 AFireBuff::AFireBuff()
 {
@@ -13,18 +13,23 @@ void AFireBuff::ExecuteSkill()
 {
 	// User Null 체크
 	if (!User) { return; }
-	IPokemonDataGetter* Getter = Cast<IPokemonDataGetter>(User);
-
-	// User 위치 가져오기.
-	FVector UserPos = User->GetActorLocation();
-
+	Data = UGameSingleton::Get().GetPokemonSkillDataByName(TEXT("FIRE_003"));
+	
 	// 동작 회복
 	FTimerHandle SkillEndTimer;
 	GetWorldTimerManager().SetTimer(
 		SkillEndTimer,
 		this,
-		&ASkillBase::OnEndSkill,
-		1.0f,
+		&AFireBuff::OnEndSkill,
+		2.0f,
 		false
 	);
+}
+
+void AFireBuff::OnEndSkill()
+{
+	ICommandReceiver* PokemonController = Cast<ICommandReceiver>(User);
+	PokemonController->SetBuff(EPokemonBuffStat::ATK, 20.0f);
+
+	Super::OnEndSkill();
 }

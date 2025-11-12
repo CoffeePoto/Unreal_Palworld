@@ -51,5 +51,8 @@ public:
 	// 버프 설정 / 매개 변수 : (버프 스탯, 시간, 버프 덮어쓰기 여부)
 	virtual void SetBuff(EPokemonBuffStat Stat, float Time, bool IsCover = true) = 0;
 
+	// 디버프 설정 / 매개 변수 : (디버프 스탯, 시간, 디버프 덮어쓰기 여부)
+	virtual void SetDeBuff(EPokemonBuffStat Stat, float Time, bool IsCover = true) = 0;
+
 	//virtual void UsingItem() = 0;
 };

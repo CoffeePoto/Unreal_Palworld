@@ -21,8 +21,8 @@ AFireBall::AFireBall()
 void AFireBall::ExecuteSkill()
 {
 	if (!User) { return; }
-	Data = UGameSingleton::Get().GetPokemonSkillDataByName(TEXT("FIRE_001"));
 
+	Data = UGameSingleton::Get().GetPokemonSkillDataByName(TEXT("FIRE_001"));
 	IPokemonDataGetter* Getter = Cast<IPokemonDataGetter>(User);
 
 	AActor* Target = Getter->GetTarget();

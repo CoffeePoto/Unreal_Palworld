@@ -50,6 +50,8 @@ AAttackTestPokemon::AAttackTestPokemon()
 	//}
 	//
 	//PokemonSkills.Add(NewSkill);
+
+	MyName = TEXT("파이어 폭스");
 }
 
 void AAttackTestPokemon::BeginPlay()

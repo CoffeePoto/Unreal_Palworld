@@ -9,6 +9,7 @@
 #include "Components/ShapeComponent.h"
 #include "Data/Pokemon/PokemonDamageEvent.h"
 #include "Data/Pokemon/PokemonSkillData.h"
+#include "Game/GameSingleton.h"
 #include "SkillBase.generated.h"
 
 class APokemonBase;

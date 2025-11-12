@@ -87,6 +87,8 @@ public:	// 인터페이스 구현부 (ICommandReceiver) - 포켓몬이 받는
 	// 버프 설정 / 매개 변수 : (버프 스탯, 시간, 버프 덮어쓰기 여부)
 	virtual void SetBuff(EPokemonBuffStat Stat, float Time, bool IsCover = true) override;
 
+	// 디버프 설정 / 매개 변수 : (디버프 스탯, 시간, 디버프 덮어쓰기 여부)
+	virtual void SetDeBuff(EPokemonBuffStat Stat, float Time, bool IsCover = true) override;
 
 public: // 인터페이스 구현부 (IHardCommandReceiver)
 
@@ -115,7 +117,13 @@ public:	// 인터페이스 구현부 (IPokemonDataGetter) - 포켓몬이 주는
 	FORCEINLINE const float GetPokemonHp() override { return CurrentHP; }
 
 	// 현재 포켓몬의 트레이너 반환
-	FORCEINLINE const APawn* GetTrainer() { return Trainer; }
+	FORCEINLINE const APawn* GetTrainer() override { return Trainer; }
+
+	// 현재 포켓몬의 버프 상태 반환
+	FORCEINLINE const TArray<int8>& GetBuffState() const { return BuffOrDebuffArray; }
+
+	// 포켓몬 이름 반환
+	FORCEINLINE const FString GetPokemonName() { return MyName; }
 
 protected: // 오버라이딩 구현부 
 
@@ -230,6 +238,9 @@ protected: // 파라미터 변수
 	// 현재 버프 쿨타임
 	TArray<float> RemainingBuffTimes;
 
+	// 현재 버프 디버프 판별
+	TArray<int8> BuffOrDebuffArray;
+
 	// 현재 남은 체력
 	float CurrentHP;
 
@@ -241,6 +252,9 @@ protected: // 파라미터 변수
 
 	// 현재 더미지 커서 지우는 시작 시간
 	float CurrentDCDStartTime;
+
+	// 포켓몬 이름 (임시)
+	FString MyName;
 
 private: // Base내에서만 사용하는 상수
 	

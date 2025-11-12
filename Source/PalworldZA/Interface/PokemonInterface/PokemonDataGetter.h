@@ -42,4 +42,10 @@ public:
 
 	// 현재 포켓몬의 트레이너 반환
 	virtual const APawn* GetTrainer() = 0;
+
+	// 현재 포켓몬의 버프 상태 반환
+	virtual const TArray<int8>& GetBuffState() const = 0;
+
+	// 포켓몬 이름 반환
+	virtual const FString GetPokemonName() = 0;
 };

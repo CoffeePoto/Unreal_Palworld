@@ -12,6 +12,8 @@ ATestPokemon::ATestPokemon()
 	
 	AIControllerClass = APokemonAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+	MyName = TEXT("다크 크로우");
 }
 
 void ATestPokemon::BeginPlay()
