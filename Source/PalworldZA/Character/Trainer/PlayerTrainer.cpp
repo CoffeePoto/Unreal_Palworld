@@ -16,8 +16,6 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 
-#include "Components/LineTraceComponent.h"
-
 
 APlayerTrainer::APlayerTrainer()
 	:IsFocusing(false)

@@ -75,10 +75,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TObjectPtr<class UAnimMontage> ThrowActionMontage;
 
-	// 라인트레이스 컴포넌트
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Trace", meta = (AllowPrivateAccess = "true"))
-	ULineTraceComponent* LineTraceComponent;
-
 	//focus 여부 판단 
 	bool IsFocusing;
 
