@@ -27,7 +27,7 @@ UPokemonBillboardComponent::UPokemonBillboardComponent()
 	SetPivot(FVector2D(0.5f, 0.0f));
 
 	// 전체 사이즈 스케일링 
-	SetWorldScale3D(FVector(0.08f));   
+	SetWorldScale3D(FVector(0.12f));   
 
 	// 위젯 위치 설정 
 	SetRelativeLocation(FVector(0.0f, 0.0f, 150.f));

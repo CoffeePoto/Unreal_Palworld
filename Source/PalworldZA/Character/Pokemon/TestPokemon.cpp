@@ -20,6 +20,8 @@ void ATestPokemon::BeginPlay()
 {
 	Super::BeginPlay();
 	DefaultStatData = UGameSingleton::Get().GetPokemonStatDataByName(TEXT("DARK_CROW"));
+	DefaultStatData.Type1 = EPokemonType::DARK;
+	DefaultStatData.Type2 = EPokemonType::NORMAL;
 	CurrentHP = DefaultStatData.Hp;
 }
 

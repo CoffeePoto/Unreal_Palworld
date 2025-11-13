@@ -4,6 +4,8 @@
 #include "UI/PokemonBillboard/PokemonDataBillboard.h"
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
+#include "Character/Pokemon/PokemonBase.h"
+#include "Interface/PokemonInterface/CommandReceiver.h"
 
 void UPokemonDataBillboard::NativeConstruct()
 {
@@ -42,4 +44,28 @@ void UPokemonDataBillboard::UpdateType(EPokemonType NewType1, EPokemonType NewTy
         IMG_Type2->SetVisibility(ESlateVisibility::Visible);
         IMG_Type2->SetBrushFromTexture(TypeIcons[NewType2]);
     }
+}
+
+void UPokemonDataBillboard::SetPokemonSkillEvent(APokemonBase* Pokemon)
+{
+    ICommandReceiver* Controller = Cast<ICommandReceiver>(Pokemon);
+    if (!Controller) { return; }
+
+    FStartPokemonSkill::FDelegate StartDel;
+    StartDel.BindUObject(this, &UPokemonDataBillboard::DeactivateNameForSkillEndEvent);
+    StartHandle = Controller->BindStartPokemonSkill(StartDel);
+
+    FEndPokemonSkill::FDelegate EndDel;
+    EndDel.BindUObject(this, &UPokemonDataBillboard::ActivateName);
+    EndHandle = Controller->BindEndPokemonSkill(EndDel);
+}
+
+void UPokemonDataBillboard::ActivateName()
+{
+    TEXT_Name->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UPokemonDataBillboard::DeactivateNameForSkillEndEvent(const FString& Name)
+{
+    TEXT_Name->SetVisibility(ESlateVisibility::Hidden);
 }

@@ -29,6 +29,7 @@ void UPokemonBillboard::SetNonPlayerPokemonView()
 void UPokemonBillboard::SetPokemon(APokemonBase* Pokemon)
 {
     WBP_Skill->BindPokemon(Pokemon);
+    WBP_Data->SetPokemonSkillEvent(Pokemon);
 }
 
 void UPokemonBillboard::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)

@@ -22,15 +22,15 @@ void UPokemonSkillBillboard::OnSkillUI(const FString& SkillName)
 	{
 		PlayAnimation(Anim_PopIn);
 	}
-
-	//IMG_SkillNameBound->SetVisibility(ESlateVisibility::Visible);
-	TEXT_SkillName->SetVisibility(ESlateVisibility::Visible);
 }
 
 void UPokemonSkillBillboard::EndSkillUI()
 {
-	IMG_SkillNameBound->SetVisibility(ESlateVisibility::Hidden);
 	TEXT_SkillName->SetVisibility(ESlateVisibility::Hidden);
+	if (Anim_PopOut)
+	{
+		PlayAnimation(Anim_PopOut);
+	}
 }
 
 void UPokemonSkillBillboard::BindPokemon(APokemonBase* Pokemon)

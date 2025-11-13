@@ -26,6 +26,15 @@ public:
     // 타입 업데이트 
     void UpdateType(EPokemonType NewType1, EPokemonType NewType2);
 
+    // 포켓몬 델리게이트 연결
+    void SetPokemonSkillEvent(class APokemonBase* Pokemon);
+
+    // 이름 활성화
+    void ActivateName();
+
+    // 이름 비활성화 
+    void DeactivateNameForSkillEndEvent(const FString& Name);
+
 protected:
 
     UPROPERTY(meta = (BindWidget))
@@ -42,4 +51,11 @@ protected:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pokemon Info")
     TMap<EPokemonType, UTexture2D*> TypeIcons;
+
+private:
+    // 시작 델리게이트 핸들
+    FDelegateHandle StartHandle;
+
+    // 종료 델리게이트 핸들
+    FDelegateHandle EndHandle;
 };

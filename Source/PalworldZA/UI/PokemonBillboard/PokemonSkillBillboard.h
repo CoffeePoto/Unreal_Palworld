@@ -38,6 +38,12 @@ protected:
 	UPROPERTY(meta = (BindWidgetAnim), Transient)
 	UWidgetAnimation* Anim_PopIn;
 
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	UWidgetAnimation* Anim_PopInEnemy;
+
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	UWidgetAnimation* Anim_PopOut;
+
 private:
 	// 시작 델리게이트 핸들
 	FDelegateHandle StartHandle;
