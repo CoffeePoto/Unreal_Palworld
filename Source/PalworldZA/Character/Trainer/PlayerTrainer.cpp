@@ -21,6 +21,9 @@
 APlayerTrainer::APlayerTrainer()
 	:IsFocusing(false)
 {
+	// 콜리전 프로파일 설정하는 함수.
+	//GetCapsuleComponent()->SetCollisionProfileName(TEXT(""));
+
 	//Camera
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
@@ -123,11 +126,21 @@ void APlayerTrainer::FocusOn()
 	//Test
 	UE_LOG(LogTemp, Log, TEXT("FocusOn 함수 호출"));
 
+	const float DetectRange = 600.0f;
+	const float DetectRadius = 50.0f;
+
 	FHitResult HitTarget;
 	FVector Start = GetActorLocation() 
 		+ GetActorForwardVector() 
 		* GetCapsuleComponent()->GetScaledCapsuleRadius();
-	FVector End = Start + GetActorForwardVector() * 200.0f;//감지거리 hardcoding
+	//FVector Start =
+	FVector End = Start + GetActorForwardVector() * DetectRange;//감지거리 hardcoding
+
+	FCollisionQueryParams Params(
+		SCENE_QUERY_STAT(TrainerDetect),
+		false,
+		this
+	);
 
 	bool HitDetected = GetWorld()->SweepSingleByChannel
 	(
@@ -135,19 +148,25 @@ void APlayerTrainer::FocusOn()
 		Start,
 		End,
 		FQuat::Identity,
-		ECollisionChannel::ECC_GameTraceChannel1,
-		FCollisionShape::MakeSphere(100.0f)
+		ECollisionChannel::ECC_GameTraceChannel1,// == pokemon trace channel
+		FCollisionShape::MakeSphere(DetectRadius),
+		Params
 	);
 
 	//충돌 발생
 	if (HitDetected)
 	{
+		UE_LOG(LogTemp, Log, TEXT("충돌 확인"));
 		//충돌 결과를 포켓몬으로 캐스팅
 		APokemonBase* TargetPokemon = Cast<APokemonBase>(HitTarget.GetActor());
 		if (TargetPokemon)
 		{
 			UE_LOG(LogTemp, Log, TEXT("포켓몬 탐색 성공"));
 			Pokemons[SelectedPokemon]->SetTarget(TargetPokemon);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Log, TEXT("캐스팅 실패"));
 		}
 	}
 
@@ -158,7 +177,7 @@ void APlayerTrainer::FocusOn()
 	FVector CapsuleOrigin = Start + (End - Start) * 0.5f;
 
 	// 캡슐 높이의 절반 값.
-	float CapsuleHalfHeight = 200.0f * 0.5f;
+	float CapsuleHalfHeight = DetectRange * 0.5f;
 
 	// 색상 (그리기 색상).
 	FColor DrawColor = HitDetected ? FColor::Green : FColor::Red;
@@ -168,12 +187,12 @@ void APlayerTrainer::FocusOn()
 		GetWorld(),
 		CapsuleOrigin,
 		CapsuleHalfHeight,
-		200.0f,
+		DetectRadius,
 		FRotationMatrix::MakeFromZ(GetActorForwardVector()).ToQuat(),
 		DrawColor,
 		false,
 		5.0f
-	);
+	); 
 #endif
 }
 
