@@ -9,6 +9,7 @@
 #include "AI/Pokemon/PokemonBBKeys.h"
 #include "Game/GameSingleton.h"
 #include "Kismet/GameplayStatics.h"
+#include "Data/Pokemon/PokemonSkillDataAsset.h"
 
 AAttackTestPokemon::AAttackTestPokemon()
 {
@@ -19,26 +20,27 @@ AAttackTestPokemon::AAttackTestPokemon()
 	FSkillContainer NewSkill;
 
 	// @Todo: 새로운 테스트 스킬 적용시 여기다 작성
-	static ConstructorHelpers::FClassFinder<AActor> NewSkillRef(TEXT("/Game/BluePrint/PokemonSkill/Fire/BP_FireSlash.BP_FireSlash_C"));
+	static ConstructorHelpers::FObjectFinder<UPokemonSkillDataAsset> NewSkillRef(TEXT("/Game/Data/Skill/Fire/DA_FireBall.DA_FireBall"));
 	if (NewSkillRef.Succeeded())
 	{
-		NewSkill.Skill = NewSkillRef.Class;
+		NewSkill.Skill = NewSkillRef.Object;
 	}
 
 	PokemonSkills.Add(NewSkill);
 
-	static ConstructorHelpers::FClassFinder<AActor> NewSkillRef2(TEXT("/Game/BluePrint/PokemonSkill/Fire/BP_FireBall.BP_FireBall_C"));
+	
+	static ConstructorHelpers::FObjectFinder<UPokemonSkillDataAsset> NewSkillRef2(TEXT("/Game/Data/Skill/Fire/DA_FireSlash.DA_FireSlash"));
 	if (NewSkillRef2.Succeeded())
 	{
-		NewSkill.Skill = NewSkillRef2.Class;
+		NewSkill.Skill = NewSkillRef2.Object;
 	}
 
 	PokemonSkills.Add(NewSkill);
 
-	static ConstructorHelpers::FClassFinder<AActor> NewSkillRef3(TEXT("/Game/BluePrint/PokemonSkill/Fire/BP_FireBuff.BP_FireBuff_C"));
+	static ConstructorHelpers::FObjectFinder<UPokemonSkillDataAsset> NewSkillRef3(TEXT("/Game/Data/Skill/Fire/DA_FireBuff.DA_FireBuff"));
 	if (NewSkillRef3.Succeeded())
 	{
-		NewSkill.Skill = NewSkillRef3.Class;
+		NewSkill.Skill = NewSkillRef3.Object;
 	}
 
 	PokemonSkills.Add(NewSkill);

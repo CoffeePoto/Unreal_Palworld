@@ -14,15 +14,11 @@ AFireBall::AFireBall()
 	{
 		FireBallClass = FireBallRef.Class;
 	}
-	
-	Data.ActionType = EActionType::RANGE;
 }
 
 void AFireBall::ExecuteSkill()
 {
 	if (!User) { return; }
-
-	Data = UGameSingleton::Get().GetPokemonSkillDataByName(TEXT("FIRE_001"));
 	IPokemonDataGetter* Getter = Cast<IPokemonDataGetter>(User);
 
 	AActor* Target = Getter->GetTarget();

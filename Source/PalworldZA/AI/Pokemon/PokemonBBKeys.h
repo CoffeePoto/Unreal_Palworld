@@ -13,3 +13,4 @@
 #define BBKEY_OWNER TEXT("Owner")
 #define BBKEY_TARGET_LOCATION TEXT("TargetLocation")
 #define BBKEY_TARGET_OBJECT TEXT("TargetObject")
+#define BBKEY_ON_DOWN TEXT("bOnDown")

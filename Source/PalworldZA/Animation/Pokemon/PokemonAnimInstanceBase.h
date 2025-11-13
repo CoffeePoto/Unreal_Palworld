@@ -66,6 +66,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
 	uint8 bIsOnSkill : 1;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
+	uint8 bIsOnDead : 1;
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
 	UAnimSequence* IdleAnim;
@@ -88,6 +91,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
 	UAnimSequence* EncountAnim;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
-	//UAnimSequence* DeadAnim;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
+	UAnimSequence* DeadAnim;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
+	UAnimSequence* DeadLoopAnim;
 };

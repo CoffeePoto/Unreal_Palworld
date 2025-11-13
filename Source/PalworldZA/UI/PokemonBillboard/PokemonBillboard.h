@@ -8,6 +8,7 @@
 
 class UPokemonBuffBillboard;
 class UPokemonDataBillboard;
+class UPokemonSkillBillboard;
 
 UCLASS()
 class PALWORLDZA_API UPokemonBillboard : public UUserWidget
@@ -19,9 +20,20 @@ public:
 
 	FORCEINLINE UPokemonDataBillboard* GetDataBB() { return WBP_Data; }
 
+	// HP바 설정
 	void SetHpBar(float Percent);
 
+	// 플레이어 소유 포켓몬 UI 세팅
+	void SetPlayerPokemonView();
+
+	// NPC 소유, 야생 포켓몬 UI 세팅
+	void SetNonPlayerPokemonView();
+
+	// 포켓몬 세팅
+	void SetPokemon(class APokemonBase* Pokemon);
+
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
 
 protected:
 	UPROPERTY()
@@ -32,6 +44,9 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<UPokemonDataBillboard> WBP_Data;
+
+	UPROPERTY()
+	TObjectPtr<UPokemonSkillBillboard> WBP_Skill;
 
 private:
 	float TargetHP = 1.f;

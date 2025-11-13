@@ -28,8 +28,6 @@ void AFireSlash::PostInitializeComponents()
 void AFireSlash::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	Data = UGameSingleton::Get().GetPokemonSkillDataByName(TEXT("FIRE_002"));
 
 	if (AttackTimeline)
 	{

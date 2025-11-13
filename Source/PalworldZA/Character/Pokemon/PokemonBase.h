@@ -12,6 +12,7 @@
 
 #define ZERO 0.0f
 
+class UPokemonSkillDataAsset;
 class ASkillBase;
 
 UENUM(BlueprintType)
@@ -32,7 +33,7 @@ struct FSkillContainer
 public:
 
 	UPROPERTY()
-	TSubclassOf<ASkillBase> Skill;
+	TObjectPtr<UPokemonSkillDataAsset> Skill;
 	
 	UPROPERTY()
 	float CoolDown;
@@ -72,6 +73,12 @@ public:	// 인터페이스 구현부 (ICommandReceiver) - 포켓몬이 받는
 	// 포켓몬 쓰러졌을 때 호출할 델리게이트 등록
 	virtual void BindOnPokemonDown(const FOnPokemonDown& InDelegate) override;
 
+	// 포켓몬 공격시 호출할 델리게이트 등록
+	virtual FDelegateHandle BindStartPokemonSkill(const FStartPokemonSkill::FDelegate& InDelegate) override;
+
+	// 포켓몬 공격시 호출할 델리게이트 해지
+	virtual void UnBindStartPokemonSkill(FDelegateHandle Handle) override;
+
 	// 포켓몬 기술 종료시 호출할 델리게이트 등록
 	virtual FDelegateHandle BindEndPokemonSkill(const FEndPokemonSkill::FDelegate& InDelegate) override;
 
@@ -94,7 +101,6 @@ public: // 인터페이스 구현부 (IHardCommandReceiver)
 
 	// 스킬 실행 함수
 	virtual void ExecuteSkill() override;
-
 
 public:	// 인터페이스 구현부 (IPokemonDataGetter) - 포켓몬이 주는
 
@@ -124,6 +130,9 @@ public:	// 인터페이스 구현부 (IPokemonDataGetter) - 포켓몬이 주는
 
 	// 포켓몬 이름 반환
 	FORCEINLINE const FString GetPokemonName() { return MyName; }
+
+	// 포켓몬 쓰러졌는지 여부 반환
+	FORCEINLINE const bool GetIsPokemonDown() { return CurrentHP == ZERO; };
 
 protected: // 오버라이딩 구현부 
 
@@ -176,6 +185,9 @@ protected: // 자체 함수 구현부
 	// 포켓몬 기절 
 	void PokemonDown();
 
+	// 포켓몬 기절 이벤트 처리 함수
+	void PokemonDownEventFunc();
+
 
 protected: // Has 변수 
 
@@ -223,11 +235,11 @@ protected: // 파라미터 변수
 	// 포켓몬 기술 종료 이벤트
 	FEndPokemonSkill PokemonSkillEndEvents;
 
+	// 포켓몬 기술 사용 이벤트
+	FStartPokemonSkill PokemonSkillStartEvents;
+
 	// 기본 포켓몬 스탯 데이터
 	FPokemonStatData DefaultStatData;
-
-	// 현재 포켓몬 스탯 데이터
-	//FPokemonStatData CurrentStatData;
 
 	// 현재 포켓몬 행동 상태
 	EPokemonAction ActionState = EPokemonAction::NonCommand;

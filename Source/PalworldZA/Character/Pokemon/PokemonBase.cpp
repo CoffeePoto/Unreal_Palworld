@@ -15,6 +15,7 @@
 
 #include "Data/Pokemon/PokemonDamageEvent.h"
 #include "Data/Pokemon/FPokemonTypeTable.h"
+#include "Data/Pokemon/PokemonSkillDataAsset.h"
 
 
 APokemonBase::APokemonBase()
@@ -32,6 +33,8 @@ APokemonBase::APokemonBase()
 	{
 		GetMesh()->SetAnimInstanceClass(PokemonAnimRef.Class);
 	}
+
+	CurrentHP = 1.0f;
 }
 
 void APokemonBase::PostInitializeComponents()
@@ -186,8 +189,7 @@ void APokemonBase::LoadAnimSequenceData(FString Path)
 
 ASkillBase* APokemonBase::SpawnSkill(int SkillIndex)
 {
-	UClass* SkillType = PokemonSkills[SkillIndex].Skill.Get();
-
+	UClass* SkillType = PokemonSkills[SkillIndex].Skill->Skill.Get();
 	FActorSpawnParameters SpawnParams;
 
 	// 파라미터 값 세팅
@@ -203,6 +205,7 @@ ASkillBase* APokemonBase::SpawnSkill(int SkillIndex)
 		SpawnParams
 	);
 
+	SpawnSk->SetSkillData(PokemonSkills[SkillIndex].Skill->Data);
 	SpawnSk->SetUser(this);
 	return SpawnSk;
 }
@@ -240,19 +243,32 @@ const FPokemonStatData APokemonBase::CalculateCurrentStat()
 
 float APokemonBase::CalculateStatParameters(EPokemonBuffStat Stat, float DefaultStat)
 {
-	float Index = static_cast<uint8>(Stat);
+	uint8 Index = static_cast<uint8>(Stat);
 
-	if (BuffOrDebuffArray[Index] != 0)
-	{
-		DefaultStat *= (1.5f * BuffOrDebuffArray[Index]);
-	}
+	if (BuffOrDebuffArray[Index] == 0) { return DefaultStat; }
+	DefaultStat *= (BuffOrDebuffArray[Index] == 1 ? 1.5f : 0.5f);
 	
 	return DefaultStat;
 }
 
 void APokemonBase::PokemonDown()
 {
-	UE_LOG(LogTemp, Log, TEXT("기절해 버렸다."));
+	BBComponent->SetValueAsBool(BBKEY_ON_DOWN, true);
+
+	FTimerHandle DeactiveTimer;
+
+	// 타이머
+	GetWorldTimerManager().SetTimer(
+		DeactiveTimer,
+		this,
+		&APokemonBase::PokemonDownEventFunc,  
+		3.0f,                     
+		false                     
+	);
+}
+
+void APokemonBase::PokemonDownEventFunc()
+{
 	Deactive();
 
 	if (PokemonDownEvents.IsBound())
@@ -263,6 +279,8 @@ void APokemonBase::PokemonDown()
 
 void APokemonBase::ExecuteSkill()
 {
+	if (ActionState == EPokemonAction::Down) { return; }
+
 	// 스킬 소환
 	SpawnedSkill = SpawnSkill(SelectSkillNumber);
 	if (!SpawnedSkill) { return; }
@@ -277,10 +295,20 @@ void APokemonBase::ExecuteSkill()
 
 	// 스킬 실행
 	SpawnSkillController->ExecuteSkill();
+
+	/*if (PokemonSkillStartEvents.IsBound())
+	{
+		PokemonSkillStartEvents.Broadcast(PokemonSkills[SelectSkillNumber].Skill->Data.Name);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("실패"));
+	}*/
 }
 
 float APokemonBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
+	if (ActionState == EPokemonAction::Down) { return ZERO; }
 	float FinalDMG = ZERO;
 
 	// 중복 충돌 방지
@@ -337,18 +365,27 @@ bool APokemonBase::UsingSkill(uint8 SkillNumber)
 	if (!PokemonSkills.IsValidIndex(SkillNumber)) { return false; }
 	if (PokemonSkills[SkillNumber].CoolDown > ZERO) { return false; }
 
-	ASkillBase* DefaultSkill = PokemonSkills[SkillNumber].Skill.Get()->GetDefaultObject<ASkillBase>();
+	ASkillBase* DefaultSkill = PokemonSkills[SkillNumber].Skill->Skill.Get()->GetDefaultObject<ASkillBase>();
 	if (!DefaultSkill) { return false; }
 	
 	SelectSkillNumber = SkillNumber;
 	ActionState = EPokemonAction::InCommand;
 
-	FPokemonSkillData SkillData = DefaultSkill->GetSkillData();
+	FPokemonSkillData SkillData = PokemonSkills[SkillNumber].Skill->Data;
 	
 	BBComponent->SetValueAsEnum(BBKEY_ACTION_TYPE, static_cast<uint8>(SkillData.ActionType));
 	if (SkillData.ActionType == EActionType::RANGE)
 	{
 		SetRangeAttackPosition();
+	}
+
+	if (PokemonSkillStartEvents.IsBound())
+	{
+		PokemonSkillStartEvents.Broadcast(PokemonSkills[SelectSkillNumber].Skill->Data.Name);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("실패"));
 	}
 
 	return true;
@@ -386,7 +423,11 @@ bool APokemonBase::SetActive(FVector Location)
 
 bool APokemonBase::Deactive()
 {
-	if (ActionState != EPokemonAction::NonCommand) { return false; }
+	if (ActionState != EPokemonAction::NonCommand &&
+		ActionState != EPokemonAction::Down) 
+	{
+		return false;
+	}
 
 	// 캐릭터 비가시화
 	SetActorHiddenInGame(true);
@@ -414,6 +455,16 @@ bool APokemonBase::Deactive()
 void APokemonBase::BindOnPokemonDown(const FOnPokemonDown& InDelegate)
 {
 	PokemonDownEvents = InDelegate;
+}
+
+FDelegateHandle APokemonBase::BindStartPokemonSkill(const FStartPokemonSkill::FDelegate& InDelegate)
+{
+	return PokemonSkillStartEvents.Add(InDelegate);
+}
+
+void APokemonBase::UnBindStartPokemonSkill(FDelegateHandle Handle)
+{
+	PokemonSkillStartEvents.Remove(Handle);
 }
 
 FDelegateHandle APokemonBase::BindEndPokemonSkill(const FEndPokemonSkill::FDelegate& InDelegate)
@@ -506,7 +557,10 @@ void APokemonBase::EndSkill()
 		SpawnSkillController = nullptr;
 		SpawnedSkill = nullptr;
 	}
-
-	PokemonSkillEndEvents.Broadcast();
+	
 	ActionState = EPokemonAction::NonCommand;
+	if (PokemonSkillEndEvents.IsBound())
+	{
+		PokemonSkillEndEvents.Broadcast();
+	}
 }

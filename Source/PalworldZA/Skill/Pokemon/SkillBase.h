@@ -40,6 +40,9 @@ public:
 	// 유저 세팅
 	virtual void SetUser(APokemonBase* NewUser) override;
 
+	// 데이터 세팅
+	virtual void SetSkillData(const FPokemonSkillData& SkillData) override;
+
 protected:
 
 	// 데미지 계산 처리 함수

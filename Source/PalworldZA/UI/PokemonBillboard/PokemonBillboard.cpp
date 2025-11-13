@@ -2,11 +2,33 @@
 
 
 #include "UI/PokemonBillboard/PokemonBillboard.h"
+#include "UI/PokemonBillboard/PokemonBuffBillboard.h"
+#include "UI/PokemonBillboard/PokemonDataBillboard.h"
+#include "UI/PokemonBillboard/PokemonSkillBillboard.h"
 #include "Components/ProgressBar.h"
 
 void UPokemonBillboard::SetHpBar(float Percent)
 {
     TargetHP = FMath::Clamp(Percent, 0.f, 1.f);
+}
+
+void UPokemonBillboard::SetPlayerPokemonView()
+{
+    PB_HpBar->SetVisibility(ESlateVisibility::Hidden);
+    WBP_Buff->SetVisibility(ESlateVisibility::Hidden);
+    WBP_Data->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UPokemonBillboard::SetNonPlayerPokemonView()
+{
+    PB_HpBar->SetVisibility(ESlateVisibility::Visible);
+    WBP_Buff->SetVisibility(ESlateVisibility::Visible);
+    WBP_Data->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UPokemonBillboard::SetPokemon(APokemonBase* Pokemon)
+{
+    WBP_Skill->BindPokemon(Pokemon);
 }
 
 void UPokemonBillboard::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -35,5 +57,7 @@ void UPokemonBillboard::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
         (DisplayedHP > 0.3f) ? HpColor_Mid :
         HpColor_Low;
 
-    PB_HpBar->WidgetStyle.FillImage.TintColor = FSlateColor(TargetColor);
+    FProgressBarStyle Style = PB_HpBar->GetWidgetStyle();
+    Style.FillImage.TintColor = FSlateColor(TargetColor);
+    PB_HpBar->SetWidgetStyle(Style);
 }

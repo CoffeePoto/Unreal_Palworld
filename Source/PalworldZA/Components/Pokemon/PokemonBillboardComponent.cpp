@@ -30,7 +30,7 @@ UPokemonBillboardComponent::UPokemonBillboardComponent()
 	SetWorldScale3D(FVector(0.08f));   
 
 	// 위젯 위치 설정 
-	SetRelativeLocation(FVector(0.0f, 0.0f, 120.f));
+	SetRelativeLocation(FVector(0.0f, 0.0f, 150.f));
 
 	static ConstructorHelpers::FClassFinder<UUserWidget> WidgetClassFinder(
 		TEXT("/Game/UI/Pokemon/WBP_PokemonBillboard.WBP_PokemonBillboard_C")
@@ -65,8 +65,8 @@ void UPokemonBillboardComponent::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("잘못된 위젯을 불러오고 있습니다."));
 	}
 
-	UpdateType();
-	UpdateName();
+	Billboard->SetPokemon(Pokemon);
+	UpdateName();	
 }
 
 void UPokemonBillboardComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -74,8 +74,14 @@ void UPokemonBillboardComponent::TickComponent(float DeltaTime, ELevelTick TickT
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	
 	LocationBillboard();
-	UpdateBuff();
-	UpdateHp();
+	//CheackOwner();
+
+	if (IsNeedViewer)
+	{
+		UpdateBuff();
+		UpdateHp();
+		UpdateType();
+	}
 }
 
 void UPokemonBillboardComponent::LocationBillboard()
@@ -135,4 +141,27 @@ void UPokemonBillboardComponent::UpdateHp()
 	if (!Getter) { return; }
 
 	Billboard->SetHpBar(Getter->GetPokemonHp() / Getter->GetPokemonDefaultStat().Hp);
+}
+
+void UPokemonBillboardComponent::CheackOwner()
+{
+	if (Pokemon)
+	{
+		IPokemonDataGetter* Getter = Cast<IPokemonDataGetter>(Pokemon);
+		if (!Getter) { return; }
+
+		const APawn* Trainer = Getter->GetTrainer();
+		if (!Trainer) { return; }
+
+		if (Trainer->GetController() == UGameplayStatics::GetPlayerController(this, 0))
+		{
+			IsNeedViewer = false;
+			Billboard->SetPlayerPokemonView();
+		}
+		else
+		{
+			IsNeedViewer = true;
+			Billboard->SetNonPlayerPokemonView();
+		}
+	}
 }

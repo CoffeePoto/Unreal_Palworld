@@ -6,14 +6,12 @@
 
 AFireBuff::AFireBuff()
 {
-	Data.ActionType = EActionType::BUFF;
 }
 
 void AFireBuff::ExecuteSkill()
 {
 	// User Null 체크
 	if (!User) { return; }
-	Data = UGameSingleton::Get().GetPokemonSkillDataByName(TEXT("FIRE_003"));
 	
 	// 동작 회복
 	FTimerHandle SkillEndTimer;
@@ -30,6 +28,6 @@ void AFireBuff::OnEndSkill()
 {
 	ICommandReceiver* PokemonController = Cast<ICommandReceiver>(User);
 	PokemonController->SetBuff(EPokemonBuffStat::ATK, 20.0f);
-
+	PokemonController->SetDeBuff(EPokemonBuffStat::DEF, 20.0f);
 	Super::OnEndSkill();
 }

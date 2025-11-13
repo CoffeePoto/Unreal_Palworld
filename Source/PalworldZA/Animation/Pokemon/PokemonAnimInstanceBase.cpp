@@ -25,6 +25,8 @@ bool UPokemonAnimInstanceBase::SetAnimSequence(const UPokemonAnimSequenceData* A
 	SKillEndAnim	=	AnimData->SkillEndAnim;
 	HitAnim			=	AnimData->HitAnim;
 	EncountAnim		=	AnimData->EncountAnim;
+	DeadAnim		=	AnimData->DeadAnim;
+	DeadLoopAnim	=	AnimData->DeadLoopAnim;
 
 	return true;
 }
@@ -56,6 +58,7 @@ void UPokemonAnimInstanceBase::NativeUpdateAnimation(float DeltaSeconds)
 		if (OwnerGetter)
 		{
 			bIsOnSkill = OwnerGetter->IsOnSkill();
+			bIsOnDead = OwnerGetter->GetIsPokemonDown();
 		}
 	}
 }

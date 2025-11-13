@@ -48,4 +48,7 @@ public:
 
 	// 포켓몬 이름 반환
 	virtual const FString GetPokemonName() = 0;
+
+	// 포켓몬 기절 여부
+	virtual const bool GetIsPokemonDown() = 0;
 };

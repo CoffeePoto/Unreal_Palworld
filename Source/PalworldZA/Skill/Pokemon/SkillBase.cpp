@@ -35,6 +35,11 @@ void ASkillBase::SetUser(APokemonBase* NewUser)
 	User = NewUser;
 }
 
+void ASkillBase::SetSkillData(const FPokemonSkillData& SkillData)
+{
+	Data = SkillData;
+}
+
 float ASkillBase::DamageCalculator()
 {
 	FPokemonStatData Stat = User->GetPokemonCurrentStat();
