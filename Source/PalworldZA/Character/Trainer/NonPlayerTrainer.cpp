@@ -3,6 +3,7 @@
 
 #include "Character/Trainer/NonPlayerTrainer.h"
 #include "AI/Trainer/NpcAIController.h"
+#include "Character/Pokemon/PokemonBase.h"
 
 ANonPlayerTrainer::ANonPlayerTrainer()
 {
@@ -13,12 +14,12 @@ ANonPlayerTrainer::ANonPlayerTrainer()
 
 float ANonPlayerTrainer::GetAIPatrolRadius()
 {
-	return 0.0f;
+	return 800.0f;
 }
 
 float ANonPlayerTrainer::GetAIDetectRange()
 {
-	return 0.0f;
+	return 400.0f;
 }
 
 UObject* ANonPlayerTrainer::GetPokemon()
