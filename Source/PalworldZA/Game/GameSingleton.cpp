@@ -2,6 +2,7 @@
 
 
 #include "GameSingleton.h"
+#include "Skill/PokemonSkillManager.h"
 
 UGameSingleton::UGameSingleton()
 {
@@ -58,6 +59,9 @@ UGameSingleton::UGameSingleton()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Inserted Skill Key: '%s'"), *Pair.Key.ToString());
 	}
+
+	// SkillManager
+	auto* SkillManager = UPokemonSkillManager::Get();
 }
 
 UGameSingleton& UGameSingleton::Get()

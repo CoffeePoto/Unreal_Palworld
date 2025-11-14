@@ -4,6 +4,18 @@
 #include "Skill/PokemonSkillManager.h"
 #include "Data/Pokemon/PokemonSkillDataAsset.h"
 
+UPokemonSkillManager* UPokemonSkillManager::Get()
+{
+	static UPokemonSkillManager* SkillManager = nullptr;
+	if (!SkillManager)
+	{
+		SkillManager = NewObject<UPokemonSkillManager>(GetTransientPackage());
+		SkillManager->AddToRoot();
+	}
+	
+	return SkillManager;
+}
+
 TSubclassOf<ASkillBase> UPokemonSkillManager::GetSkillBP(const FName InSkillName)
 {
 	if (UPokemonSkillDataAsset* const* FoundDA = SkillDataAssetMap.Find(InSkillName))
@@ -12,4 +24,3 @@ TSubclassOf<ASkillBase> UPokemonSkillManager::GetSkillBP(const FName InSkillName
 	}
 	return nullptr;
 }
-
