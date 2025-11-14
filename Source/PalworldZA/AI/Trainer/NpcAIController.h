@@ -13,5 +13,21 @@ UCLASS()
 class PALWORLDZA_API ANpcAIController : public AAIController
 {
 	GENERATED_BODY()
-	
+
+public:
+	ANpcAIController();
+
+	void RunAI();
+
+	void StopAI();
+
+protected:
+	virtual void OnPossess(APawn* InPawn) override;
+
+private:
+	UPROPERTY()
+	TObjectPtr<class UBlackboardData> BBAsset;
+
+	UPROPERTY()
+	TObjectPtr<class UBehaviorTree> BTAsset;
 };

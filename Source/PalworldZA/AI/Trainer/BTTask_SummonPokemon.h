@@ -14,4 +14,9 @@ class PALWORLDZA_API UBTTask_SummonPokemon : public UBTTaskNode
 {
 	GENERATED_BODY()
 	
+public:
+	UBTTask_SummonPokemon();
+
+protected:
+	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 };
