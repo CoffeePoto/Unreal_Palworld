@@ -147,13 +147,15 @@ void UPokemonBillboardComponent::CheackOwner()
 {
 	if (Pokemon)
 	{
+		// 인터페이스 로드
 		IPokemonDataGetter* Getter = Cast<IPokemonDataGetter>(Pokemon);
 		if (!Getter) { return; }
 
+		// 포켓몬을 소유한 트레이너 로드
 		const APawn* Trainer = Getter->GetTrainer();
-		if (!Trainer) { return; }
-
-		if (Trainer->GetController() == UGameplayStatics::GetPlayerController(this, 0))
+		
+		// 트레이너의 컨트롤러를 확인후 로직 결정
+		if (Trainer && Trainer->GetController() == UGameplayStatics::GetPlayerController(this, 0))
 		{
 			IsNeedViewer = false;
 			Billboard->SetPlayerPokemonView();

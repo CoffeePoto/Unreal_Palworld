@@ -188,6 +188,9 @@ protected: // 자체 함수 구현부
 	// 포켓몬 기절 이벤트 처리 함수
 	void PokemonDownEventFunc();
 
+	// 포켓몬이 피격받았을 때 데미지 처리 외 실행할 기능 
+	void HitInnerEvent(APawn* Attacker);
+
 
 protected: // Has 변수 
 

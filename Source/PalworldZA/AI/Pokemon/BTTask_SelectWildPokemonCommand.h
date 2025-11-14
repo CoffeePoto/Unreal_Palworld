@@ -14,4 +14,10 @@ class PALWORLDZA_API UBTTask_SelectWildPokemonCommand : public UBTTaskNode
 {
 	GENERATED_BODY()
 	
+public:
+
+
+protected:
+
+
 };

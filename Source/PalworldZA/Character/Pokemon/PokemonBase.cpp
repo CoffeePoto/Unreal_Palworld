@@ -159,7 +159,7 @@ void APokemonBase::UpdateSkillTarget()
 	if (CurrentSkillTarget == NewSkillTarget) { return; }
 
 	CurrentSkillTarget = NewSkillTarget;
-	BBComponent->SetValueAsObject(BBKEY_TARGET, CurrentSkillTarget);
+	BBComponent->SetValueAsObject(BBKEY_TARGET_OBJECT, CurrentSkillTarget);
 }
 
 void APokemonBase::UpdateBBCommand()
@@ -277,6 +277,14 @@ void APokemonBase::PokemonDownEventFunc()
 	}
 }
 
+void APokemonBase::HitInnerEvent(APawn* Attacker)
+{
+	if (!Trainer)
+	{
+		SetTarget(Attacker);
+	}
+}
+
 void APokemonBase::ExecuteSkill()
 {
 	if (ActionState == EPokemonAction::Down) { return; }
@@ -340,6 +348,12 @@ float APokemonBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 
 		// 방어력 공격력의 30% 정도 반영
 		FinalDMG = FinalDMG - (FinalDMG * 0.3f * DefenseStat);
+
+		const APawn* AttackerConst = PokemonDamage.Pokemon.Get();
+		if (AttackerConst)
+		{
+			HitInnerEvent(const_cast<APawn*>(AttackerConst));
+		}
 	}
 	else
 	{
