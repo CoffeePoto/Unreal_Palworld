@@ -1,9 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-<<<<<<< Updated upstream:Source/PalworldZA/Character/Trainer/TrainerControlData.cpp
-#include "Character/Trainer/TrainerControlData.h"
-=======
 #include "AI/Trainer/BTService_DetectTrainer.h"
 #include "NpcBBKeys.h"
 #include "AIController.h"
@@ -11,7 +8,6 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Engine/OverlapResult.h" // Ãß°¡
 #include "DrawDebugHelpers.h"
->>>>>>> Stashed changes:Source/PalworldZA/AI/Trainer/BTService_DetectTrainer.cpp
 
 UBTService_DetectTrainer::UBTService_DetectTrainer()
 {
