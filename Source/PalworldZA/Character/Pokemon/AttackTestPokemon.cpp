@@ -19,7 +19,7 @@ AAttackTestPokemon::AAttackTestPokemon()
 
 	FSkillContainer NewSkill;
 
-	// @Todo: 새로운 테스트 스킬 적용시 여기다 작성
+	// 스킬1: 
 	static ConstructorHelpers::FObjectFinder<UPokemonSkillDataAsset> NewSkillRef(TEXT("/Game/Data/Skill/Fire/DA_FireBall.DA_FireBall"));
 	if (NewSkillRef.Succeeded())
 	{

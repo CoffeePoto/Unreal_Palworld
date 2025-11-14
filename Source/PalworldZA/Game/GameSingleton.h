@@ -43,10 +43,6 @@ public:
 		return FoundSkill ? *FoundSkill : FPokemonSkillData();
 	}
 
-
-
-	
-
 	// 수치 확인을 위한 값.
 	UPROPERTY()
 	int32 NumOfPokemon;
