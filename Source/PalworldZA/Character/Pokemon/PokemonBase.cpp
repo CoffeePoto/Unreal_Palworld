@@ -38,6 +38,22 @@ APokemonBase::APokemonBase()
 	CurrentHP = 1.0f;
 }
 
+
+void APokemonBase::GetSkillData(TArray<FCurrentPokemonSkillData>& OutArray) const
+{
+	OutArray.Reset(PokemonSkills.Num());
+	OutArray.Reserve(PokemonSkills.Num());
+
+	for (const FSkillContainer& Skill : PokemonSkills)
+	{
+		FCurrentPokemonSkillData Data;
+		Data.SkillName = Skill.Skill->Data.Name;  
+		Data.CoolDown = Skill.CoolDown;
+
+		OutArray.Add(MoveTemp(Data));
+	}
+}
+
 // @Todo: 지금 당장은 안 쓰는 중
 void APokemonBase::PostInitializeComponents()
 {
@@ -81,6 +97,9 @@ void APokemonBase::Tick(float DeltaTime)
 	// 데미지 주체 큐 관리
 	DamageCauserQueueDequeue(DeltaTime);
 
+	// 타겟 유효성 검증
+	TargetActiveCheck();
+
 	// 스킬 타겟 업데이트 
 	UpdateSkillTarget();
 
@@ -90,11 +109,17 @@ void APokemonBase::Tick(float DeltaTime)
 
 void APokemonBase::SkillCoolDown(float DeltaTime)
 {
-	for (FSkillContainer& Skill : PokemonSkills)
+	for (int i = 0; i < PokemonSkills.Num(); ++i)
 	{
+		FSkillContainer& Skill = PokemonSkills[i];
+
 		if (Skill.CoolDown > ZERO)
 		{
 			Skill.CoolDown = FMath::Max(Skill.CoolDown - DeltaTime, ZERO);
+		}
+		else if (i == ReservationSkillNumber)
+		{
+			UsingSkill(i);
 		}
 	}
 }
@@ -184,6 +209,25 @@ void APokemonBase::UpdateBBCommand()
 	}
 }
 
+void APokemonBase::TargetActiveCheck()
+{
+	if (!CurrentSkillTarget) { return; }
+
+	if (!IsValid(CurrentSkillTarget))
+	{
+		SetTarget(nullptr);
+		return;
+	}
+
+	IPokemonDataGetter* Getter = Cast<IPokemonDataGetter>(CurrentSkillTarget);
+	if (!Getter) { return; }
+
+	if (Getter->GetIsPokemonDown())
+	{
+		SetTarget(nullptr);
+	}
+}
+
 void APokemonBase::LoadAnimSequenceData(FString Path)
 {
 	AnimData = LoadObject<UPokemonAnimSequenceData>(nullptr, *Path);
@@ -256,7 +300,7 @@ float APokemonBase::CalculateStatParameters(EPokemonBuffStat Stat, float Default
 void APokemonBase::PokemonDown()
 {
 	BBComponent->SetValueAsBool(BBKEY_ON_DOWN, true);
-
+	ActionState = EPokemonAction::Down;
 	FTimerHandle DeactiveTimer;
 
 	// 타이머
@@ -305,15 +349,14 @@ void APokemonBase::ExecuteSkill()
 
 	// 스킬 실행
 	SpawnSkillController->ExecuteSkill();
+}
 
-	/*if (PokemonSkillStartEvents.IsBound())
-	{
-		PokemonSkillStartEvents.Broadcast(PokemonSkills[SelectSkillNumber].Skill->Data.Name);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Log, TEXT("실패"));
-	}*/
+void APokemonBase::ReservationSkill(int SkillNumber)
+{
+	if (!CurrentSkillTarget) { return; }
+	if (ReservationSkillNumber != -1) { return; }
+
+	ReservationSkillNumber = SkillNumber;
 }
 
 float APokemonBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -565,6 +608,7 @@ void APokemonBase::EndSkill()
 		float CoolTime = SpawnSkillController->GetSkillData().Cooltime;
 		CoolTime -= ((CoolTime * 0.3f) * (GetPokemonCurrentStat().Speed * 0.01f));
 		PokemonSkills[SelectSkillNumber].CoolDown = CoolTime;
+		ReservationSkillNumber = -1;
 	}
 
 	// 스폰된 스킬 제거

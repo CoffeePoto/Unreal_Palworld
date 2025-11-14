@@ -18,9 +18,19 @@ void UPokemonSkillBillboard::OnSkillUI(const FString& SkillName)
 {
 	TEXT_SkillName->SetText(FText::FromString(SkillName));
 
-	if (Anim_PopIn)
+	if (bIsTrainer)
 	{
-		PlayAnimation(Anim_PopIn);
+		if (Anim_PopIn)
+		{
+			PlayAnimation(Anim_PopIn);
+		}
+	}
+	else
+	{
+		if (Anim_PopInEnemy)
+		{
+			PlayAnimation(Anim_PopInEnemy);
+		}
 	}
 }
 
@@ -45,4 +55,9 @@ void UPokemonSkillBillboard::BindPokemon(APokemonBase* Pokemon)
 	FEndPokemonSkill::FDelegate EndDel;
 	EndDel.BindUObject(this, &UPokemonSkillBillboard::EndSkillUI);
 	EndHandle = Controller->BindEndPokemonSkill(EndDel);
+}
+
+void UPokemonSkillBillboard::IsTrainer(bool Check)
+{
+	bIsTrainer = Check;
 }

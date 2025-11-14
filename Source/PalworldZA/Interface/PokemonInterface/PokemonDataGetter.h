@@ -7,6 +7,19 @@
 #include "Data/Pokemon/PokemonStatData.h"
 #include "PokemonDataGetter.generated.h"
 
+USTRUCT()
+struct FCurrentPokemonSkillData
+{
+	GENERATED_BODY()
+
+public:
+
+	UPROPERTY()
+	FString SkillName;
+
+	UPROPERTY()
+	float CoolDown;
+};
 
 UINTERFACE(MinimalAPI)
 class UPokemonDataGetter : public UInterface
@@ -51,4 +64,7 @@ public:
 
 	// 포켓몬 기절 여부
 	virtual const bool GetIsPokemonDown() = 0;
+
+	// 포켓몬 스킬 데이터 
+	virtual void GetSkillData(TArray<FCurrentPokemonSkillData>& OutArray) const = 0;
 };

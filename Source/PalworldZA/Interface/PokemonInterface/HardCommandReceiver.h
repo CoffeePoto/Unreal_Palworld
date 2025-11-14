@@ -19,4 +19,7 @@ class PALWORLDZA_API IHardCommandReceiver
 public:
 	// 스킬 실행
 	virtual void ExecuteSkill() = 0;
-};
+
+	// 스킬 예약
+	virtual void ReservationSkill(int SkillNum) = 0;
+ };

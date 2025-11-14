@@ -30,7 +30,7 @@ UPokemonBillboardComponent::UPokemonBillboardComponent()
 	SetWorldScale3D(FVector(0.12f));   
 
 	// 위젯 위치 설정 
-	SetRelativeLocation(FVector(0.0f, 0.0f, 150.f));
+	SetRelativeLocation(FVector(0.0f, 0.0f, 180.f));
 
 	static ConstructorHelpers::FClassFinder<UUserWidget> WidgetClassFinder(
 		TEXT("/Game/UI/Pokemon/WBP_PokemonBillboard.WBP_PokemonBillboard_C")
@@ -74,14 +74,14 @@ void UPokemonBillboardComponent::TickComponent(float DeltaTime, ELevelTick TickT
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	
 	LocationBillboard();
-	//CheackOwner();
+	CheackOwner();
 
-	if (IsNeedViewer)
-	{
+	//if (IsNeedViewer)
+	//{
 		UpdateBuff();
 		UpdateHp();
 		UpdateType();
-	}
+	//}
 }
 
 void UPokemonBillboardComponent::LocationBillboard()

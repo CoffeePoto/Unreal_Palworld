@@ -18,7 +18,7 @@ struct FPokemonSkillData : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Skill)
 	FString Name;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Skill)
 	EPokemonType Type;
 

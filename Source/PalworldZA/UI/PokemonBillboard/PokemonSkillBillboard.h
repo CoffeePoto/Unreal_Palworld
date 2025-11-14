@@ -28,6 +28,8 @@ public:
 	// 델리게이트 등록
 	void BindPokemon(class APokemonBase* Pokemon);
 
+	void IsTrainer(bool Check);
+
 protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UImage> IMG_SkillNameBound;
@@ -50,4 +52,6 @@ private:
 	
 	// 종료 델리게이트 핸들
 	FDelegateHandle EndHandle;
+
+	bool bIsTrainer = true;
 };

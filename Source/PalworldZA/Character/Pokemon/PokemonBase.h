@@ -102,6 +102,8 @@ public: // 인터페이스 구현부 (IHardCommandReceiver)
 	// 스킬 실행 함수
 	virtual void ExecuteSkill() override;
 
+	virtual void ReservationSkill(int SkillNumber) override;
+
 public:	// 인터페이스 구현부 (IPokemonDataGetter) - 포켓몬이 주는
 
 	// 현재 포켓몬이 바라보는 타겟
@@ -120,19 +122,21 @@ public:	// 인터페이스 구현부 (IPokemonDataGetter) - 포켓몬이 주는
 	FORCEINLINE virtual const FPokemonStatData GetPokemonCurrentStat() override { return CalculateCurrentStat(); }
 
 	// 포켓몬 현재 체력 반환
-	FORCEINLINE const float GetPokemonHp() override { return CurrentHP; }
+	FORCEINLINE virtual const float GetPokemonHp() override { return CurrentHP; }
 
 	// 현재 포켓몬의 트레이너 반환
-	FORCEINLINE const APawn* GetTrainer() override { return Trainer; }
+	FORCEINLINE virtual const APawn* GetTrainer() override { return Trainer; }
 
 	// 현재 포켓몬의 버프 상태 반환
-	FORCEINLINE const TArray<int8>& GetBuffState() const { return BuffOrDebuffArray; }
+	FORCEINLINE virtual const TArray<int8>& GetBuffState() const { return BuffOrDebuffArray; }
 
 	// 포켓몬 이름 반환
-	FORCEINLINE const FString GetPokemonName() { return MyName; }
+	FORCEINLINE virtual const FString GetPokemonName() { return MyName; }
 
 	// 포켓몬 쓰러졌는지 여부 반환
-	FORCEINLINE const bool GetIsPokemonDown() { return CurrentHP == ZERO; };
+	FORCEINLINE virtual const bool GetIsPokemonDown() { return CurrentHP == ZERO; };
+
+	virtual void GetSkillData(TArray<FCurrentPokemonSkillData>& OutArray) const override;
 
 protected: // 오버라이딩 구현부 
 
@@ -167,6 +171,9 @@ protected: // 자체 함수 구현부
 	// BB에 상태 업데이트
 	void UpdateBBCommand();
 
+	// 타겟 활성화 체크 
+	void TargetActiveCheck();
+
 	// 경로를 통해 애니메이션 시퀀스 로드
 	void LoadAnimSequenceData(FString Path);
 
@@ -190,6 +197,7 @@ protected: // 자체 함수 구현부
 
 	// 포켓몬이 피격받았을 때 데미지 처리 외 실행할 기능 
 	void HitInnerEvent(APawn* Attacker);
+
 
 
 protected: // Has 변수 
@@ -270,6 +278,9 @@ protected: // 파라미터 변수
 
 	// 포켓몬 이름 (임시)
 	FString MyName;
+
+	// 예약된 스킬 번호
+	int ReservationSkillNumber = -1;
 
 private: // Base내에서만 사용하는 상수
 	

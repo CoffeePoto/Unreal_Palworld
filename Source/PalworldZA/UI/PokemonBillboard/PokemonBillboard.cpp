@@ -14,9 +14,10 @@ void UPokemonBillboard::SetHpBar(float Percent)
 
 void UPokemonBillboard::SetPlayerPokemonView()
 {
-    PB_HpBar->SetVisibility(ESlateVisibility::Hidden);
-    WBP_Buff->SetVisibility(ESlateVisibility::Hidden);
-    WBP_Data->SetVisibility(ESlateVisibility::Hidden);
+    //PB_HpBar->SetVisibility(ESlateVisibility::Hidden);
+    //WBP_Buff->SetVisibility(ESlateVisibility::Hidden);
+    //WBP_Data->SetVisibility(ESlateVisibility::Hidden);
+    WBP_Skill->IsTrainer(true);
 }
 
 void UPokemonBillboard::SetNonPlayerPokemonView()
@@ -24,6 +25,7 @@ void UPokemonBillboard::SetNonPlayerPokemonView()
     PB_HpBar->SetVisibility(ESlateVisibility::Visible);
     WBP_Buff->SetVisibility(ESlateVisibility::Visible);
     WBP_Data->SetVisibility(ESlateVisibility::Visible);
+    WBP_Skill->IsTrainer(false);
 }
 
 void UPokemonBillboard::SetPokemon(APokemonBase* Pokemon)

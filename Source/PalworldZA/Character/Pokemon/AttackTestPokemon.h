@@ -21,8 +21,6 @@ protected:
 
 	virtual void BeginPlay() override;
 
-	virtual void Tick(float DeltaTime) override;
-
 	float TargetTime = 5.0f;
 	float CurrentTime = 0.0f;
 	int32 CurrentSkillNumber = 0;
