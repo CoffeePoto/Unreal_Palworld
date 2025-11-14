@@ -81,9 +81,9 @@ void AAttackTestPokemon::Tick(float DeltaTime)
 	}
 	*/
 
-	CurrentSkillTarget = UGameplayStatics::GetActorOfClass(GetWorld(), ATestPokemon::StaticClass());
-	NewSkillTarget = CurrentSkillTarget;
-	BBComponent->SetValueAsObject(BBKEY_TARGET_OBJECT, NewSkillTarget);
+	//CurrentSkillTarget = UGameplayStatics::GetActorOfClass(GetWorld(), ATestPokemon::StaticClass());
+	//NewSkillTarget = CurrentSkillTarget;
+	//BBComponent->SetValueAsObject(BBKEY_TARGET_OBJECT, NewSkillTarget);
 
 	/*
 	if (!Trainer)
