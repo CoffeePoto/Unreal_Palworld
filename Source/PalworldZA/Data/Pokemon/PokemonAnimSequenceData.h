@@ -43,4 +43,10 @@ public:
 	// 조우 모션
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
 	UAnimSequence* EncountAnim;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
+	UAnimSequence* DeadAnim;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
+	UAnimSequence* DeadLoopAnim;
 };

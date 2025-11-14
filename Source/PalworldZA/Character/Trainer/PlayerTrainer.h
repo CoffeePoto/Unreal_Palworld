@@ -28,13 +28,15 @@ public:
 	void FocusEnd();
 
 	//플레이어가 포켓몬을 선택한다.
-	void SelectPokemon(const FInputActionValue& value);
+	void SelectPokemonorSkill(const FInputActionValue& value);
 
 	//이동 로직
 	void Move(const FInputActionValue& value);
 	void Look(const FInputActionValue& value);
-	void Run();
-	void RunEnd();
+
+	//스킬 로직
+	void SkillMode(const FInputActionValue& value);
+	void ReleaseSkillMode(UAnimMontage* TargetMontage, bool IsProperlyEnded);
 
 	// 공격 로직
 	void Throw(const FInputActionValue& value);
@@ -54,26 +56,31 @@ protected:
 	TObjectPtr<class UInputAction> LookAction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> MoveAction;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class UInputAction> RunAction;
+	TObjectPtr<class UInputAction> SkillAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	TObjectPtr<class UAnimMontage> SkillActionMontage;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> FocusAction;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> SelectAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> ThrowAction;
 
-	//focus 여부 판단 
-	bool isFocusing;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TObjectPtr<class UAnimMontage> ThrowActionMontage;
+
+	//focus 여부 판단 
+	bool IsFocusing;
 
 	// 던지기 스킬 중인지 판단.
 	bool IsThrowing;
 
-	// 라인트레이스 컴포넌트
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Trace", meta = (AllowPrivateAccess = "true"))
-	ULineTraceComponent* LineTraceComponent = nullptr;
+	//skill 입력 모드
+	bool UseSkill;
 };

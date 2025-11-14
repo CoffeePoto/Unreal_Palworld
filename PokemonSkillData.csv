@@ -1,4 +1,0 @@
-RowName,Name,Type,DMG,Cooltime,ActionType,Range
-FIRE_001,FireBall,FIRE,0.4,3,RANGE,800
-FIRE_002,FireSlash,FIRE,0.7,4,MELEE,400
-FIRE_003,FireBuff,Fire,0,5,BUFF,60

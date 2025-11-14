@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+О╩©// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -13,35 +13,39 @@ struct FPokemonStatData : public FTableRowBase
 {
 	GENERATED_BODY()
 
-	// а╕ 1 е╦ют
+	// М▐╛Л╪⌠К╙╛ Л²╢К╕└
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stat)
+	FName RowName;
+
+	// Л═° 1 М┐─Л·┘
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stat)
 	EPokemonType Type1;
 
-	// а╕ 2 е╦ют
+	// Л═° 2 М┐─Л·┘
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stat)
 	EPokemonType Type2;
 
-	// ц╪╥б
+	// Л╡╢К═╔
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stat)
 	float Hp;
 
-	// ╟Ь╟щ
+	// ЙЁ╣Й╡╘
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stat)
 	float ATK;
 
-	// ╧Ф╬Н
+	// К╟╘Л√╢
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stat)
 	float DEF;
 
-	// ф╞╪Ж ╟Ь╟щ
+	// М┼╧Л┬≤ ЙЁ╣Й╡╘
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stat)
 	float SPA;
 
-	// ф╞╪Ж ╧Ф╬Н
+	// М┼╧Л┬≤ К╟╘Л√╢
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stat)
 	float SPD;
 
-	// ╪с╣╣ 
+	// Л├█К▐└ 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stat)
 	float Speed;
 };

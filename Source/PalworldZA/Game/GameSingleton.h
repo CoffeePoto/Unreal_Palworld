@@ -31,6 +31,18 @@ public:
 		return PokemonSkillTable.IsValidIndex(InNum - 1) ? PokemonSkillTable[InNum - 1] : FPokemonSkillData();
 	}
 
+	// TMap으로 저장해서 FName이름으로 데이터 찾기
+	FORCEINLINE FPokemonStatData GetPokemonStatDataByName(const FName& InName) const
+	{
+		const FPokemonStatData* FoundStat = PokemonStatMap.Find(InName);
+		return FoundStat ? *FoundStat : FPokemonStatData();
+	}
+	FORCEINLINE FPokemonSkillData GetPokemonSkillDataByName(const FName& InName) const
+	{
+		const FPokemonSkillData* FoundSkill = PokemonSkillMap.Find(InName);
+		return FoundSkill ? *FoundSkill : FPokemonSkillData();
+	}
+
 	// 수치 확인을 위한 값.
 	UPROPERTY()
 	int32 NumOfPokemon;
@@ -42,5 +54,9 @@ private:
 	// 모든 포켓몬 스탯, 스킬 데이터 배열로 가져오기.
 	TArray<FPokemonStatData> PokemonStatTable;
 	TArray<FPokemonSkillData> PokemonSkillTable;
+
+	// 이름으로 빠르게 접근하기 위한 TMAP.
+	TMap<FName, FPokemonStatData> PokemonStatMap;
+	TMap<FName, FPokemonSkillData> PokemonSkillMap;
 	
 };

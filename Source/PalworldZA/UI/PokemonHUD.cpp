@@ -30,7 +30,6 @@ void UPokemonHUD::SelectUI(uint8 Index)
 	UISlot = Cast<UPokemonSlot>(GetWidgetFromName(FName(*WidgetName)));
 	if (UISlot)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Can't Find Slot"));
 		UISlot->Select();
 	}
 }

@@ -2,6 +2,7 @@
 
 
 #include "Character/Trainer/PlayerTrainer.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -16,12 +17,13 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 
-#include "Components/LineTraceComponent.h"
-
 
 APlayerTrainer::APlayerTrainer()
-	:isFocusing(false)
+	:IsFocusing(false)
 {
+	// 콜리전 프로파일 설정하는 함수.
+	//GetCapsuleComponent()->SetCollisionProfileName(TEXT(""));
+
 	//Camera
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
@@ -45,10 +47,10 @@ APlayerTrainer::APlayerTrainer()
 		MoveAction = MoveActionRef.Object;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UInputAction> RunActionRef(TEXT("/Game/Input/Trainer/IA_Run.IA_Run"));
-	if (RunActionRef.Succeeded())
+	static ConstructorHelpers::FObjectFinder<UInputAction> SkillActionRef(TEXT("/Game/Input/Trainer/IA_Skill.IA_Skill"));
+	if (SkillActionRef.Succeeded())
 	{
-		RunAction = RunActionRef.Object;
+		SkillAction = SkillActionRef.Object;
 	}
 
 	static ConstructorHelpers::FObjectFinder<UInputAction> FocusActionRef(TEXT("/Game/Input/Trainer/IA_Focus.IA_Focus"));
@@ -62,9 +64,6 @@ APlayerTrainer::APlayerTrainer()
 	{
 		SelectAction = SelectActionRef.Object;
 	}
-
-	// LineTraceComponent 생성
-	LineTraceComponent = CreateDefaultSubobject<ULineTraceComponent>(TEXT("LineTraceComponent"));
 }
 
 void APlayerTrainer::BeginPlay()
@@ -88,9 +87,9 @@ void APlayerTrainer::Tick(float DeltaTime)
 	if (FindPokemon)
 	{
 		//UE_LOG(LogTemp, Log, TEXT("Find Pokemon"));
+		FindPokemon->SetTrainer(this);
 		Pokemons.Add(FindPokemon);
 	}
-
 }
 
 void APlayerTrainer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -102,11 +101,10 @@ void APlayerTrainer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	{
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &APlayerTrainer::Look);
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerTrainer::Move);
-		EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Triggered, this, &APlayerTrainer::Run);
-		EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Completed, this, &APlayerTrainer::RunEnd);
+		EnhancedInputComponent->BindAction(SkillAction, ETriggerEvent::Triggered, this, &APlayerTrainer::SkillMode);
 		EnhancedInputComponent->BindAction(FocusAction, ETriggerEvent::Triggered, this, &APlayerTrainer::FocusOn);
 		EnhancedInputComponent->BindAction(FocusAction, ETriggerEvent::Completed, this, &APlayerTrainer::FocusEnd);
-		EnhancedInputComponent->BindAction(SelectAction, ETriggerEvent::Started, this, &APlayerTrainer::SelectPokemon);
+		EnhancedInputComponent->BindAction(SelectAction, ETriggerEvent::Triggered, this, &APlayerTrainer::SelectPokemonorSkill);
 		EnhancedInputComponent->BindAction(ThrowAction, ETriggerEvent::Triggered, this, &APlayerTrainer::Throw);
 	}
 
@@ -127,46 +125,124 @@ void APlayerTrainer::FocusOn()
 	//키입력 F가 입력되고 있으면 FocusOn 함수 호출
 	//Test
 	UE_LOG(LogTemp, Log, TEXT("FocusOn 함수 호출"));
-	if (LineTraceComponent)
-		LineTraceComponent->PerformLineTrace();
 
+	const float DetectRange = 600.0f;
+	const float DetectRadius = 50.0f;
 
-	//주시할 포켓몬을 찾았을 경우에만 isFocusing 변수를 true로 만들 것.
-	//주시할 포켓몬
-	//APokemonBase* FocusedPokemon;
-	//line trace 시작 지점 - 캐릭터가 소유한 카메라
-	
+	FHitResult HitTarget;
+	FVector Start = GetActorLocation() 
+		+ GetActorForwardVector() 
+		* GetCapsuleComponent()->GetScaledCapsuleRadius();
+	//FVector Start =
+	FVector End = Start + GetActorForwardVector() * DetectRange;//감지거리 hardcoding
 
-	//if (GetWorld()->LineTraceSingleByChannel())
-	//{
+	FCollisionQueryParams Params(
+		SCENE_QUERY_STAT(TrainerDetect),
+		false,
+		this
+	);
 
-	//}
+	bool HitDetected = GetWorld()->SweepSingleByChannel
+	(
+		HitTarget,
+		Start,
+		End,
+		FQuat::Identity,
+		ECollisionChannel::ECC_GameTraceChannel1,// == pokemon trace channel
+		FCollisionShape::MakeSphere(DetectRadius),
+		Params
+	);
+
+	//충돌 발생
+	if (HitDetected)
+	{
+		UE_LOG(LogTemp, Log, TEXT("충돌 확인"));
+		//충돌 결과를 포켓몬으로 캐스팅
+		APokemonBase* TargetPokemon = Cast<APokemonBase>(HitTarget.GetActor());
+		if (TargetPokemon)
+		{
+			UE_LOG(LogTemp, Log, TEXT("포켓몬 탐색 성공"));
+			Pokemons[SelectedPokemon]->SetTarget(TargetPokemon);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Log, TEXT("캐스팅 실패"));
+		}
+	}
+
+	// 디버그 모드일 때만 그리도록.
+#if ENABLE_DRAW_DEBUG
+
+	// 캡슐의 중심 위치.
+	FVector CapsuleOrigin = Start + (End - Start) * 0.5f;
+
+	// 캡슐 높이의 절반 값.
+	float CapsuleHalfHeight = DetectRange * 0.5f;
+
+	// 색상 (그리기 색상).
+	FColor DrawColor = HitDetected ? FColor::Green : FColor::Red;
+
+	// 충돌 디버그 (시각적 도구 활용).
+	DrawDebugCapsule(
+		GetWorld(),
+		CapsuleOrigin,
+		CapsuleHalfHeight,
+		DetectRadius,
+		FRotationMatrix::MakeFromZ(GetActorForwardVector()).ToQuat(),
+		DrawColor,
+		false,
+		5.0f
+	); 
+#endif
 }
 
 void APlayerTrainer::FocusEnd()
 {
-	isFocusing = false;
+	IsFocusing = false;
 }
 
-void APlayerTrainer::SelectPokemon(const FInputActionValue& value)
+void APlayerTrainer::SelectPokemonorSkill(const FInputActionValue& value)
 {
 	float SelectedIndex = value.Get<float>() - 1;
 	uint8 intIndex = (uint8)SelectedIndex;
-	//전과 같은 번호를 입력했다면, 입력 무시
-	if (SelectedPokemon == intIndex) return;
-	SetSelectedPokemon(intIndex);
-	SelectedPokemon = (uint8)SelectedIndex;
-	
-	//UI에 변경사항 반영
-	ATrainerController* MyController = Cast<ATrainerController>(GetController());
-	if (MyController)
+	if (UseSkill)
 	{
-		UPokemonHUD* UI = MyController->GetHUDWidget();
-		UI->SelectUI(intIndex);
-	}
+		if (intIndex < 4)
+		{
+			//for test
+			UE_LOG(LogTemp, Log, TEXT("Skill Mode : %d"), intIndex);
+			//Pokemons[SelectedPokemon]->UsingSkill(intIndex);
+			CommandSkills(intIndex);
+			// 걷다가 멈추고 skill
+			GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 
-	//for test 
-	UE_LOG(LogTemp, Log, TEXT("Current Index : %d"), SelectedPokemon);
+			// Todo. 몽타주
+			UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+			AnimInstance->Montage_Play(SkillActionMontage, 1.5f);
+
+			FOnMontageEnded EndDelegate;
+			EndDelegate.BindUObject(this, &APlayerTrainer::ReleaseSkillMode);
+			AnimInstance->Montage_SetEndDelegate(EndDelegate, SkillActionMontage);
+		}
+	}
+	else
+	{
+		//전과 같은 번호를 입력했다면, 입력 무시
+		if (SelectedPokemon == intIndex) return;
+		SetSelectedPokemon(intIndex);
+		SelectedPokemon = (uint8)SelectedIndex;
+
+		//UI에 변경사항 반영
+		ATrainerController* MyController = Cast<ATrainerController>(GetController());
+		if (MyController)
+		{
+			UPokemonHUD* UI = MyController->GetHUDWidget();
+			UI->SelectUI(intIndex);
+		}
+
+		//for test 
+		UE_LOG(LogTemp, Log, TEXT("Current Index : %d"), SelectedPokemon);
+	}
 }
 
 void APlayerTrainer::Move(const FInputActionValue& value)
@@ -214,14 +290,38 @@ void APlayerTrainer::Look(const FInputActionValue& value)
 	AddControllerPitchInput(LookValue.Y * CameraSpeed);
 }
 
-void APlayerTrainer::Run()
+void APlayerTrainer::SkillMode(const FInputActionValue& value)
 {
-	GetCharacterMovement()->MaxWalkSpeed = 700.0f;
+	// UseSkill = true;
+
+	// 이미 스킬 진행 중이면 종료.
+	if (UseSkill)
+	{
+		return;
+	}
+
+	// 스킬 시작.
+	UseSkill = true;
+
+	//// 걷다가 멈추고 skill
+	//GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+
+	//// Todo. 몽타주
+	//UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	//AnimInstance->Montage_Play(SkillActionMontage, 1.5f);
+
+	//FOnMontageEnded EndDelegate;
+	//EndDelegate.BindUObject(this, &APlayerTrainer::ReleaseSkillMode);
+	//AnimInstance->Montage_SetEndDelegate(EndDelegate, SkillActionMontage);
 }
 
-void APlayerTrainer::RunEnd()
+void APlayerTrainer::ReleaseSkillMode(UAnimMontage* TargetMontage, bool IsProperlyEnded)
 {
-	GetCharacterMovement()->MaxWalkSpeed = 500.0f;
+	//UseSkill = false;
+
+	// skill 종료.
+	UseSkill = false;
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 }
 
 void APlayerTrainer::Throw(const FInputActionValue& value)
@@ -231,15 +331,6 @@ void APlayerTrainer::Throw(const FInputActionValue& value)
 	{
 		return;
 	}
-
-	//UE_LOG(LogTemp, Log, TEXT("IA Throw"));
-
-	// 입력 비활성화.
-	//APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	//if (PlayerController)
-	//{
-	//	DisableInput(PlayerController);
-	//}
 
 	// 던지기 시작.
 	IsThrowing = true;
@@ -258,15 +349,6 @@ void APlayerTrainer::Throw(const FInputActionValue& value)
 
 void APlayerTrainer::ThrowActionEnd(UAnimMontage* TargetMontage, bool IsProperlyEnded)
 {
-	// ensure(CurrentCombo != 0);
-	// CurrentCombo = 0;
-	// 입력 다시 활성화.
-	//APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	//if (PlayerController)
-	//{
-	//	EnableInput(PlayerController);
-	//}
-
 	// 던지기 종료.
 	IsThrowing = false;
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);

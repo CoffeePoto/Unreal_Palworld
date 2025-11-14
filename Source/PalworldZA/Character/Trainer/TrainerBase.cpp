@@ -22,7 +22,7 @@ ATrainerBase::ATrainerBase()
 
 	//캐릭터 이동 설정
 	GetCharacterMovement()->bOrientRotationToMovement = true;
-	GetCharacterMovement()->MaxWalkSpeed = 500.0f;
+	GetCharacterMovement()->MaxWalkSpeed = 700.0f;
 	GetCharacterMovement()->JumpZVelocity = 700.0f;
 
 	//Mesh 설정
@@ -36,7 +36,12 @@ void ATrainerBase::SummonPokemon()
 	//Todo : Pokemons 배열에 담긴 포켓몬 객체 생성
 	//플레이어 위치 + 조정값을 포켓몬 객체에 넘겨준다.
 	FVector SummonLocation = GetActorLocation() + FVector(200.0f, 200.0f, 0.0f);
-	Pokemons[SelectedPokemon]->SetActive(SummonLocation);
+	
+	//유효성 검사
+	if (Pokemons.IsValidIndex(SelectedPokemon))
+	{
+		Pokemons[SelectedPokemon]->SetActive(SummonLocation);
+	}
 }
 
 void ATrainerBase::CommandSkills(uint8 SkillIndex)

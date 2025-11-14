@@ -10,6 +10,9 @@
 #include "Data/Pokemon/PokemonStatData.h"
 #include "PokemonBase.generated.h"
 
+#define ZERO 0.0f
+
+class UPokemonSkillDataAsset;
 class ASkillBase;
 
 UENUM(BlueprintType)
@@ -18,7 +21,7 @@ enum class EPokemonAction : uint8
 	NonCommand UMETA(DisplayName = "명령 수행 안함"),
 	InCommand  UMETA(DisplayName = "명령 수행 중"),
 	OnSkill    UMETA(DisplayName = "스킬 사용 중"),
-	Down	   UMETA(DispalyName = "포켓몬 기절")
+	Down	   UMETA(DisplayName = "포켓몬 기절")
 };
 
 
@@ -30,7 +33,7 @@ struct FSkillContainer
 public:
 
 	UPROPERTY()
-	TSubclassOf<ASkillBase> Skill;
+	TObjectPtr<UPokemonSkillDataAsset> Skill;
 	
 	UPROPERTY()
 	float CoolDown;
@@ -70,6 +73,12 @@ public:	// 인터페이스 구현부 (ICommandReceiver) - 포켓몬이 받는
 	// 포켓몬 쓰러졌을 때 호출할 델리게이트 등록
 	virtual void BindOnPokemonDown(const FOnPokemonDown& InDelegate) override;
 
+	// 포켓몬 공격시 호출할 델리게이트 등록
+	virtual FDelegateHandle BindStartPokemonSkill(const FStartPokemonSkill::FDelegate& InDelegate) override;
+
+	// 포켓몬 공격시 호출할 델리게이트 해지
+	virtual void UnBindStartPokemonSkill(FDelegateHandle Handle) override;
+
 	// 포켓몬 기술 종료시 호출할 델리게이트 등록
 	virtual FDelegateHandle BindEndPokemonSkill(const FEndPokemonSkill::FDelegate& InDelegate) override;
 
@@ -85,21 +94,45 @@ public:	// 인터페이스 구현부 (ICommandReceiver) - 포켓몬이 받는
 	// 버프 설정 / 매개 변수 : (버프 스탯, 시간, 버프 덮어쓰기 여부)
 	virtual void SetBuff(EPokemonBuffStat Stat, float Time, bool IsCover = true) override;
 
+	// 디버프 설정 / 매개 변수 : (디버프 스탯, 시간, 디버프 덮어쓰기 여부)
+	virtual void SetDeBuff(EPokemonBuffStat Stat, float Time, bool IsCover = true) override;
 
 public: // 인터페이스 구현부 (IHardCommandReceiver)
 
 	// 스킬 실행 함수
 	virtual void ExecuteSkill() override;
 
-
 public:	// 인터페이스 구현부 (IPokemonDataGetter) - 포켓몬이 주는
 
+	// 현재 포켓몬이 바라보는 타겟
 	FORCEINLINE virtual AActor* GetTarget() override { return CurrentSkillTarget; }
 
+	// 현재 포켓몬이 공격하는지 판단
 	FORCEINLINE virtual uint8 IsOnSkill() override { return ActionState == EPokemonAction::OnSkill; }
 
+	// 포켓몬 발사체 발사 위치
 	FORCEINLINE virtual FVector GetShootPoint() override { return GetActorLocation(); }
 
+	// 포켓몬 기본 스텟 정보 
+	FORCEINLINE virtual const FPokemonStatData& GetPokemonDefaultStat() override { return DefaultStatData; }
+
+	// 포켓몬 현재 스텟 정보
+	FORCEINLINE virtual const FPokemonStatData GetPokemonCurrentStat() override { return CalculateCurrentStat(); }
+
+	// 포켓몬 현재 체력 반환
+	FORCEINLINE const float GetPokemonHp() override { return CurrentHP; }
+
+	// 현재 포켓몬의 트레이너 반환
+	FORCEINLINE const APawn* GetTrainer() override { return Trainer; }
+
+	// 현재 포켓몬의 버프 상태 반환
+	FORCEINLINE const TArray<int8>& GetBuffState() const { return BuffOrDebuffArray; }
+
+	// 포켓몬 이름 반환
+	FORCEINLINE const FString GetPokemonName() { return MyName; }
+
+	// 포켓몬 쓰러졌는지 여부 반환
+	FORCEINLINE const bool GetIsPokemonDown() { return CurrentHP == ZERO; };
 
 protected: // 오버라이딩 구현부 
 
@@ -125,6 +158,9 @@ protected: // 자체 함수 구현부
 	// 버프 남은 시간 감소 함수
 	void DownRemainingBuffTime(float DeltaTime);
 
+	// 데미지 커서 큐 꺼내는 함수 
+	void DamageCauserQueueDequeue(float DeltaTime);
+
 	// 스킬 타겟 업데이트
 	void UpdateSkillTarget();
 
@@ -139,6 +175,21 @@ protected: // 자체 함수 구현부
 
 	// 원거리 공격 이동 위치 설정 함수
 	void SetRangeAttackPosition();
+
+	// 현재 스탯 데이터 계산
+	const FPokemonStatData CalculateCurrentStat();
+
+	// 각각 파라미터 계산
+	float CalculateStatParameters(EPokemonBuffStat Stat, float DefaultStat);
+
+	// 포켓몬 기절 
+	void PokemonDown();
+
+	// 포켓몬 기절 이벤트 처리 함수
+	void PokemonDownEventFunc();
+
+	// 포켓몬이 피격받았을 때 데미지 처리 외 실행할 기능 
+	void HitInnerEvent(APawn* Attacker);
 
 
 protected: // Has 변수 
@@ -175,6 +226,9 @@ protected: // Has 변수
 	UPROPERTY()
 	TScriptInterface<class IPokemonSkill> SpawnSkillController;
 
+	// 데미지를 준 주체를 저장하는 배열
+	UPROPERTY()
+	TArray<TObjectPtr<AActor>> DamageCauserArray;
 
 protected: // 파라미터 변수
 
@@ -184,11 +238,11 @@ protected: // 파라미터 변수
 	// 포켓몬 기술 종료 이벤트
 	FEndPokemonSkill PokemonSkillEndEvents;
 
+	// 포켓몬 기술 사용 이벤트
+	FStartPokemonSkill PokemonSkillStartEvents;
+
 	// 기본 포켓몬 스탯 데이터
 	FPokemonStatData DefaultStatData;
-
-	// 현재 포켓몬 스탯 데이터
-	FPokemonStatData CurrentStatData;
 
 	// 현재 포켓몬 행동 상태
 	EPokemonAction ActionState = EPokemonAction::NonCommand;
@@ -198,4 +252,30 @@ protected: // 파라미터 변수
 
 	// 현재 버프 쿨타임
 	TArray<float> RemainingBuffTimes;
+
+	// 현재 버프 디버프 판별
+	TArray<int8> BuffOrDebuffArray;
+
+	// 현재 남은 체력
+	float CurrentHP;
+
+	// 지울 데미지 커서 인덱스
+	int32 DamageCauserIndex;
+
+	// 현재 더미지 커서 지우는 주기 시간
+	float CurrentDCDCycleTime;
+
+	// 현재 더미지 커서 지우는 시작 시간
+	float CurrentDCDStartTime;
+
+	// 포켓몬 이름 (임시)
+	FString MyName;
+
+private: // Base내에서만 사용하는 상수
+	
+	// 데미지 커서 제거 시작 시간
+	static constexpr float DAMAGE_CAUSER_DEQUEUE_START_TIME = 1.0f;
+
+	// 데미지 커서 제거 주기 시간
+	static constexpr float DAMAGE_CAUSER_DEQUEUE_CYCLE_TIME = 0.5f;
 };

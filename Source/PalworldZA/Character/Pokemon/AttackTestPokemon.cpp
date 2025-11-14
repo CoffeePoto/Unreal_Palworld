@@ -7,7 +7,9 @@
 #include "Character/Trainer/PlayerTrainer.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AI/Pokemon/PokemonBBKeys.h"
+#include "Game/GameSingleton.h"
 #include "Kismet/GameplayStatics.h"
+#include "Data/Pokemon/PokemonSkillDataAsset.h"
 
 AAttackTestPokemon::AAttackTestPokemon()
 {
@@ -17,33 +19,50 @@ AAttackTestPokemon::AAttackTestPokemon()
 
 	FSkillContainer NewSkill;
 
-	// @Todo: 새로운 테스트 스킬 적용시 여기다 작성
-	static ConstructorHelpers::FClassFinder<AActor> NewSkillRef(TEXT("/Game/BluePrint/PokemonSkill/BP_FireSlash.BP_FireSlash_C"));
+	// 스킬1: 
+	static ConstructorHelpers::FObjectFinder<UPokemonSkillDataAsset> NewSkillRef(TEXT("/Game/Data/Skill/Fire/DA_FireBall.DA_FireBall"));
 	if (NewSkillRef.Succeeded())
 	{
-		NewSkill.Skill = NewSkillRef.Class;
+		NewSkill.Skill = NewSkillRef.Object;
 	}
 
 	PokemonSkills.Add(NewSkill);
 
-	static ConstructorHelpers::FClassFinder<AActor> NewSkillRef2(TEXT("/Game/BluePrint/PokemonSkill/BP_FireBall.BP_FireBall_C"));
+	
+	static ConstructorHelpers::FObjectFinder<UPokemonSkillDataAsset> NewSkillRef2(TEXT("/Game/Data/Skill/Fire/DA_FireSlash.DA_FireSlash"));
 	if (NewSkillRef2.Succeeded())
 	{
-		NewSkill.Skill = NewSkillRef2.Class;
+		NewSkill.Skill = NewSkillRef2.Object;
 	}
 
 	PokemonSkills.Add(NewSkill);
 
-	static ConstructorHelpers::FClassFinder<AActor> NewSkillRef3(TEXT("/Game/BluePrint/PokemonSkill/BP_FireBuff.BP_FireBuff_C"));
+	static ConstructorHelpers::FObjectFinder<UPokemonSkillDataAsset> NewSkillRef3(TEXT("/Game/Data/Skill/Fire/DA_FireBuff.DA_FireBuff"));
 	if (NewSkillRef3.Succeeded())
 	{
-		NewSkill.Skill = NewSkillRef3.Class;
+		NewSkill.Skill = NewSkillRef3.Object;
 	}
 
 	PokemonSkills.Add(NewSkill);
+
+	//static ConstructorHelpers::FClassFinder<AActor> NewSkillRef4(TEXT("/Game/BluePrint/TestPokemon/BP_TestFourthSkill.BP_TestFourthSkill_C"));
+	//if (NewSkillRef4.Succeeded())
+	//{
+	//	NewSkill.Skill = NewSkillRef4.Class;
+	//}
+	//
+	//PokemonSkills.Add(NewSkill);
+
+	MyName = TEXT("파이어 폭스");
 }
 
-
+void AAttackTestPokemon::BeginPlay()
+{
+	Super::BeginPlay();
+	DefaultStatData = UGameSingleton::Get().GetPokemonStatData(1);
+	
+	CurrentHP = DefaultStatData.Hp;
+}
 
 void AAttackTestPokemon::Tick(float DeltaTime)
 {
@@ -62,9 +81,9 @@ void AAttackTestPokemon::Tick(float DeltaTime)
 	}
 	*/
 
-	CurrentSkillTarget = UGameplayStatics::GetActorOfClass(GetWorld(), ATestPokemon::StaticClass());
-	NewSkillTarget = CurrentSkillTarget;
-	BBComponent->SetValueAsObject(BBKEY_TARGET_OBJECT, NewSkillTarget);
+	//CurrentSkillTarget = UGameplayStatics::GetActorOfClass(GetWorld(), ATestPokemon::StaticClass());
+	//NewSkillTarget = CurrentSkillTarget;
+	//BBComponent->SetValueAsObject(BBKEY_TARGET_OBJECT, NewSkillTarget);
 
 	/*
 	if (!Trainer)

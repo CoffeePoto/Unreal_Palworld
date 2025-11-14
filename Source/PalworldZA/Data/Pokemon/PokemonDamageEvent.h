@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/DamageType.h"
 #include "Engine/DamageEvents.h"
+#include "Data/Pokemon/PokemonEnum.h"
 #include "PokemonDamageEvent.generated.h"
 
 USTRUCT()
@@ -19,10 +20,22 @@ public:
 public:
 	// 공격 속성 
 	UPROPERTY()
-	FString Type;
+	EPokemonType Type;
 
 	// 공격 위력
 	UPROPERTY()
 	float Power;
+
+	// 특수 공격 여부
+	UPROPERTY()
+	bool IsSpecial;
+
+	// 지시 트레이너
+	UPROPERTY()
+	TObjectPtr<const class APawn> Trainer;
+
+	// 공격 포켓몬
+	UPROPERTY()
+	TObjectPtr<const class APawn> Pokemon;
 
 };

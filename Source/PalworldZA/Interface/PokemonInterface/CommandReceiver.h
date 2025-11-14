@@ -9,6 +9,7 @@
 
 DECLARE_DELEGATE(FOnPokemonDown);
 DECLARE_MULTICAST_DELEGATE(FEndPokemonSkill);
+DECLARE_MULTICAST_DELEGATE_OneParam(FStartPokemonSkill, const FString&);
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
@@ -36,6 +37,12 @@ public:
 	// 포켓몬 쓰러졌을 때 호출할 델리게이트 등록 
 	virtual void BindOnPokemonDown(const FOnPokemonDown& InDelegate) = 0;
 
+	// 포켓몬 공격시 호출할 델리게이트 등록
+	virtual FDelegateHandle BindStartPokemonSkill(const FStartPokemonSkill::FDelegate& InDelegate) = 0;
+
+	// 포켓몬 공격시 호출할 델리게이트 해지
+	virtual void UnBindStartPokemonSkill(FDelegateHandle Handle) = 0;
+
 	// 포켓몬 공격 종료시 호출할 델리게이트 등록
 	virtual FDelegateHandle BindEndPokemonSkill(const FEndPokemonSkill::FDelegate& InDelegate) = 0;
 
@@ -50,6 +57,9 @@ public:
 
 	// 버프 설정 / 매개 변수 : (버프 스탯, 시간, 버프 덮어쓰기 여부)
 	virtual void SetBuff(EPokemonBuffStat Stat, float Time, bool IsCover = true) = 0;
+
+	// 디버프 설정 / 매개 변수 : (디버프 스탯, 시간, 디버프 덮어쓰기 여부)
+	virtual void SetDeBuff(EPokemonBuffStat Stat, float Time, bool IsCover = true) = 0;
 
 	//virtual void UsingItem() = 0;
 };

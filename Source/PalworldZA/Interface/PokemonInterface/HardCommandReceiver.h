@@ -6,16 +6,12 @@
 #include "UObject/Interface.h"
 #include "HardCommandReceiver.generated.h"
 
-// This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class UHardCommandReceiver : public UInterface
 {
 	GENERATED_BODY()
 };
 
-/**
- * 
- */
 class PALWORLDZA_API IHardCommandReceiver
 {
 	GENERATED_BODY()

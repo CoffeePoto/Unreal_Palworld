@@ -2,6 +2,7 @@
 
 
 #include "GameSingleton.h"
+#include "Skill/PokemonSkillManager.h"
 
 UGameSingleton::UGameSingleton()
 {
@@ -14,22 +15,15 @@ UGameSingleton::UGameSingleton()
 		// 재확인.
 		ensureAlways(StatTable->GetRowMap().Num() > 0);
 
-		// 편의를 위해 배열로 변환해서 처리.
-		TArray<uint8*> StatValueArray;
-		StatTable->GetRowMap().GenerateValueArray(StatValueArray);
-
-		// 형변환해서 배열에 추가.
-		Algo::Transform(StatValueArray, PokemonStatTable, [](uint8* Value)
-			{
-				return *reinterpret_cast<FPokemonStatData*>(Value);
-			}
-		);
-
-		// 확인.
-		NumOfPokemon = PokemonStatTable.Num();
-		ensureAlways(NumOfPokemon > 0);
-	}
-	
+		// 스탯의 Table(TArray)과 Map(TMap)에 csv 파일 데이터를 채움.
+		for (const auto& RowPair : StatTable->GetRowMap())
+		{
+			FName RowName = RowPair.Key;
+			FPokemonStatData* RowData = reinterpret_cast<FPokemonStatData*>(RowPair.Value);
+			PokemonStatTable.Add(*RowData);
+			PokemonStatMap.Add(RowName, *RowData);
+		}
+	}	
 
 	// DT_PokemonSkillTable 로드.
 	static ConstructorHelpers::FObjectFinder<UDataTable> SkillTableRef(TEXT("/Game/Data/Pokemon/DT_PokemonSkillTable.DT_PokemonSkillTable"));
@@ -40,22 +34,34 @@ UGameSingleton::UGameSingleton()
 		// 재확인.
 		ensureAlways(SkillTable->GetRowMap().Num() > 0);
 
-		// 편의를 위해 배열로 변환해서 처리.
-		TArray<uint8*> SkillValueArray;
-		SkillTable->GetRowMap().GenerateValueArray(SkillValueArray);
-
-		// 형변환해서 배열에 추가.
-		Algo::Transform(SkillValueArray, PokemonSkillTable, [](uint8* Value)
-			{
-				return *reinterpret_cast<FPokemonSkillData*>(Value);
-			}
-		);
-
-		// 확인.
-		NumOfSkill= PokemonSkillTable.Num();
-		ensureAlways(NumOfSkill > 0);
+		// 스킬의 Table(TArray)과 Map(TMap)에 csv 파일 데이터를 채움.
+		for (const auto& RowPair : SkillTable->GetRowMap())
+		{
+			FName RowName = RowPair.Key;
+			FPokemonSkillData* RowData = reinterpret_cast<FPokemonSkillData*>(RowPair.Value);
+			PokemonSkillTable.Add(*RowData);
+			PokemonSkillMap.Add(RowName, *RowData);
+		}
 	}
-		
+	
+	// 확인.
+	NumOfPokemon = PokemonStatTable.Num();
+	ensureAlways(NumOfPokemon > 0);
+	NumOfSkill = PokemonSkillTable.Num();
+	ensureAlways(NumOfSkill > 0);
+
+	// 확인차 LogTemp 출력.
+	for (const auto& Pair : PokemonStatMap)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Inserted Stat Key: '%s'"), *Pair.Key.ToString());
+	}
+	for (const auto& Pair : PokemonSkillMap)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Inserted Skill Key: '%s'"), *Pair.Key.ToString());
+	}
+
+	// SkillManager
+	auto* SkillManager = UPokemonSkillManager::Get();
 }
 
 UGameSingleton& UGameSingleton::Get()

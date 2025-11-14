@@ -7,7 +7,7 @@
 #include "TestPokemon.generated.h"
 
 /**
- * 
+ * 적 포켓몬.
  */
 UCLASS()
 class PALWORLDZA_API ATestPokemon : public APokemonBase
