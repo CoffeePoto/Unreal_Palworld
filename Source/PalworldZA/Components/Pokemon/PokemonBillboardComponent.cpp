@@ -81,6 +81,7 @@ void UPokemonBillboardComponent::TickComponent(float DeltaTime, ELevelTick TickT
 		UpdateBuff();
 		UpdateHp();
 		UpdateType();
+		UpdateWild();
 	//}
 }
 
@@ -141,6 +142,14 @@ void UPokemonBillboardComponent::UpdateHp()
 	if (!Getter) { return; }
 
 	Billboard->SetHpBar(Getter->GetPokemonHp() / Getter->GetPokemonDefaultStat().Hp);
+}
+
+void UPokemonBillboardComponent::UpdateWild()
+{
+	IPokemonDataGetter* Getter = Cast<IPokemonDataGetter>(Pokemon);
+	if (!Getter) { return; }
+
+	Billboard->GetDataBB()->UpdateWilde(Getter->GetTrainer() == nullptr);
 }
 
 void UPokemonBillboardComponent::CheackOwner()

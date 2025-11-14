@@ -26,6 +26,9 @@ public:
     // 타입 업데이트 
     void UpdateType(EPokemonType NewType1, EPokemonType NewType2);
 
+    // 야생 업데이트
+    void UpdateWilde(bool IsWild);
+
     // 포켓몬 델리게이트 연결
     void SetPokemonSkillEvent(class APokemonBase* Pokemon);
 
@@ -48,6 +51,9 @@ protected:
 	
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<class UImage> IMG_Type2;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<class UImage> IMG_Wild;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pokemon Info")
     TMap<EPokemonType, UTexture2D*> TypeIcons;

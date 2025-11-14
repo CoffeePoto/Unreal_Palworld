@@ -49,6 +49,9 @@ protected:
 	// HP바 업데이트
 	void UpdateHp();
 
+	// 야생 업데이트
+	void UpdateWild();
+
 	// 소유자 확인후 노출 정보 업데이트
 	void CheackOwner();
 

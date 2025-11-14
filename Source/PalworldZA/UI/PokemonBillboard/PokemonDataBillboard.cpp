@@ -46,6 +46,18 @@ void UPokemonDataBillboard::UpdateType(EPokemonType NewType1, EPokemonType NewTy
     }
 }
 
+void UPokemonDataBillboard::UpdateWilde(bool IsWild)
+{
+    if (IsWild)
+    {
+        IMG_Wild->SetVisibility(ESlateVisibility::Visible);
+    }
+    else
+    {
+        IMG_Wild->SetVisibility(ESlateVisibility::Hidden);
+    }
+}
+
 void UPokemonDataBillboard::SetPokemonSkillEvent(APokemonBase* Pokemon)
 {
     ICommandReceiver* Controller = Cast<ICommandReceiver>(Pokemon);
