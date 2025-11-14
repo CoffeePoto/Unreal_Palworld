@@ -83,4 +83,7 @@ protected:
 
 	//skill 입력 모드
 	bool UseSkill;
+
+	//지금 포켓몬을 소환한 상태인지 체크
+	bool isPokemonOut;
 };

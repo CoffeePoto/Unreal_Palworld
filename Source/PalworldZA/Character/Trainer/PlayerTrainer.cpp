@@ -161,8 +161,18 @@ void APlayerTrainer::FocusOn()
 		APokemonBase* TargetPokemon = Cast<APokemonBase>(HitTarget.GetActor());
 		if (TargetPokemon)
 		{
-			UE_LOG(LogTemp, Log, TEXT("포켓몬 탐색 성공"));
-			Pokemons[SelectedPokemon]->SetTarget(TargetPokemon);
+			const APawn* Trainer = TargetPokemon->GetTrainer();
+			{
+				if (Trainer)
+				{
+					if (Trainer->GetController() == UGameplayStatics::GetPlayerController(this, 0)) return;
+				}
+				else
+				{
+					UE_LOG(LogTemp, Log, TEXT("포켓몬 탐색 성공"));
+					Pokemons[SelectedPokemon]->SetTarget(TargetPokemon);
+				}
+			}
 		}
 		else
 		{
