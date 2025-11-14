@@ -378,6 +378,7 @@ float APokemonBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 bool APokemonBase::UsingSkill(uint8 SkillNumber)
 {
 	if (ActionState != EPokemonAction::NonCommand) { return false; }
+	if (!CurrentSkillTarget) { return false; }
 	if (!PokemonSkills.IsValidIndex(SkillNumber)) { return false; }
 	if (PokemonSkills[SkillNumber].CoolDown > ZERO) { return false; }
 
