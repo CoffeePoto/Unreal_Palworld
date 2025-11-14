@@ -22,12 +22,13 @@ APokemonBase::APokemonBase()
 {
 	//PrimaryActorTick.bCanEverTick = true;
 
-	// 포켓몬 AI 컨트롤러 생성
+	// 포켓몬 AI 컨트롤러를 APokemonAIController로 지정.
 	AIControllerClass = APokemonAIController::StaticClass();
 	
 	// 모두 AIController에 빙의되도록 설정.
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
+	// ABP_PokemonBase를 따르도록 설정.
 	static ConstructorHelpers::FClassFinder<UAnimInstance> PokemonAnimRef(TEXT("/Game/Animation/Pokemon/ABP_PokemonBase.ABP_PokemonBase_C"));
 	if (PokemonAnimRef.Succeeded())
 	{
@@ -37,6 +38,7 @@ APokemonBase::APokemonBase()
 	CurrentHP = 1.0f;
 }
 
+// @Todo: 지금 당장은 안 쓰는 중
 void APokemonBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
