@@ -36,7 +36,7 @@ public:
 	TObjectPtr<UPokemonSkillDataAsset> Skill;
 	
 	UPROPERTY()
-	float CoolDown;
+	float CoolDown = ZERO;
 };
 
 
@@ -102,7 +102,7 @@ public: // 인터페이스 구현부 (IHardCommandReceiver)
 	// 스킬 실행 함수
 	virtual void ExecuteSkill() override;
 
-	virtual void ReservationSkill(int SkillNumber) override;
+	virtual void ReservationSkill(int32 SkillNumber) override;
 
 public:	// 인터페이스 구현부 (IPokemonDataGetter) - 포켓몬이 주는
 
@@ -156,6 +156,9 @@ protected: // 오버라이딩 구현부
 
 protected: // 자체 함수 구현부
 
+	// 포켓몬 초기화
+	void PokemonInit();
+
 	// 스킬 쿨타임 감소 함수
 	void SkillCoolDown(float DeltaTime);
 
@@ -178,7 +181,7 @@ protected: // 자체 함수 구현부
 	void LoadAnimSequenceData(FString Path);
 
 	// 스킬 소환 함수
-	ASkillBase* SpawnSkill(int SkillIndex);
+	ASkillBase* SpawnSkill(int32 SkillIndex);
 
 	// 원거리 공격 이동 위치 설정 함수
 	void SetRangeAttackPosition();
@@ -199,8 +202,10 @@ protected: // 자체 함수 구현부
 	void HitInnerEvent(APawn* Attacker);
 
 
-
 protected: // Has 변수 
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<class UPokemonSkillSet> InitData;
 
 	// 자신을 소유한 트레이너 
 	UPROPERTY()
@@ -237,6 +242,7 @@ protected: // Has 변수
 	// 데미지를 준 주체를 저장하는 배열
 	UPROPERTY()
 	TArray<TObjectPtr<AActor>> DamageCauserArray;
+
 
 protected: // 파라미터 변수
 

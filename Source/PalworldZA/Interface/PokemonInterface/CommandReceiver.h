@@ -11,6 +11,9 @@ DECLARE_DELEGATE(FOnPokemonDown);
 DECLARE_MULTICAST_DELEGATE(FEndPokemonSkill);
 DECLARE_MULTICAST_DELEGATE_OneParam(FStartPokemonSkill, const FString&);
 
+class UPokemonSkillDataAsset;
+class UPokemonAnimSequenceData;
+
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class UCommandReceiver : public UInterface
@@ -61,5 +64,4 @@ public:
 	// 디버프 설정 / 매개 변수 : (디버프 스탯, 시간, 디버프 덮어쓰기 여부)
 	virtual void SetDeBuff(EPokemonBuffStat Stat, float Time, bool IsCover = true) = 0;
 
-	//virtual void UsingItem() = 0;
 };

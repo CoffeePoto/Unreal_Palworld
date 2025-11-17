@@ -25,7 +25,7 @@ void UPokemonDataBillboard::UpdateLevel(int NewLevel)
 
 void UPokemonDataBillboard::UpdateType(EPokemonType NewType1, EPokemonType NewType2)
 {
-    if (NewType1 == EPokemonType::NONE || NewType1 == EPokemonType::COUNT)
+    if (NewType1 == EPokemonType::NONE || NewType1 == EPokemonType::COUNT || !TypeIcons.Contains(NewType1))
     {
         IMG_Type1->SetVisibility(ESlateVisibility::Hidden);
     }
@@ -35,7 +35,7 @@ void UPokemonDataBillboard::UpdateType(EPokemonType NewType1, EPokemonType NewTy
         IMG_Type1->SetBrushFromTexture(TypeIcons[NewType1]);
     }
 
-    if (NewType2 == EPokemonType::NONE || NewType2 == EPokemonType::COUNT)
+    if (NewType2 == EPokemonType::NONE || NewType2 == EPokemonType::COUNT || !TypeIcons.Contains(NewType1))
     {
         IMG_Type2->SetVisibility(ESlateVisibility::Hidden);
     }

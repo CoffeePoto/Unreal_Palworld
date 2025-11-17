@@ -66,7 +66,7 @@ void UPokemonBillboardComponent::BeginPlay()
 	}
 
 	Billboard->SetPokemon(Pokemon);
-	UpdateName();	
+	
 }
 
 void UPokemonBillboardComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -82,6 +82,7 @@ void UPokemonBillboardComponent::TickComponent(float DeltaTime, ELevelTick TickT
 		UpdateHp();
 		UpdateType();
 		UpdateWild();
+		UpdateName();
 	//}
 }
 
