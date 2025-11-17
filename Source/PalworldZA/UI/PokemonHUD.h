@@ -17,6 +17,8 @@ class PALWORLDZA_API UPokemonHUD : public UUserWidget
 public:
 	void SelectUI(uint8 Index);
 
+	FORCEINLINE class UPokemonStat* GetStatUI() { return PokemonInfo; }
+
 protected:
 	virtual void NativeConstruct() override;
 
@@ -26,4 +28,7 @@ protected:
 	UPROPERTY()
 	//선택 해제 전 visible한 선택 영역을 hidden하기 위한 변수
 	TObjectPtr<class UPokemonSlot> UISlot;
+
+	UPROPERTY()
+	TObjectPtr<class UPokemonStat> PokemonInfo;
 };

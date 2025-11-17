@@ -31,7 +31,11 @@ protected:
 	//트레이너가 소유하고 있는 포켓몬 list
 	TArray<class APokemonBase*> Pokemons;
 
-	//배열 안에서 포켓몬을 선택하기 위한 변수
+	//지금 포켓몬을 소환한 상태인지 체크
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Possess)
+	TObjectPtr<class APokemonBase> CurrentPokemon;
+
+	//배열 안에서 포켓몬을 선택하기 위한 변수
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Possess)
 	uint8 SelectedPokemon;
 };

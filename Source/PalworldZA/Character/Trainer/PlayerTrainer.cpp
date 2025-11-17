@@ -11,8 +11,10 @@
 
 #include "Game/TrainerController.h"
 #include "UI/PokemonHUD.h"
+#include "UI/PokemonStat.h"
 
 #include "Character/Pokemon/AttackTestPokemon.h"
+#include "Character/Pokemon/PokemonBase.h"
 
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
@@ -75,6 +77,15 @@ void APlayerTrainer::BeginPlay()
 	{
 		EnableInput(PlayerController);
 	}
+
+	//UI
+	ATrainerController* MyController = Cast<ATrainerController>(GetController());
+	if (MyController)
+	{
+		UPokemonHUD* UI = MyController->GetHUDWidget();
+		PokemonUI = Cast<UPokemonHUD>(MyController->GetHUDWidget());
+		ensureAlways(PokemonUI);
+	}
 }
 
 void APlayerTrainer::Tick(float DeltaTime)
@@ -126,11 +137,11 @@ void APlayerTrainer::FocusOn()
 	//Test
 	UE_LOG(LogTemp, Log, TEXT("FocusOn 함수 호출"));
 
-	const float DetectRange = 600.0f;
-	const float DetectRadius = 50.0f;
+	const float DetectRange = 800.0f;
+	const float DetectRadius = 150.0f;
 
 	FHitResult HitTarget;
-	FVector Start = GetActorLocation() 
+	FVector Start = GetActorLocation()
 		+ GetActorForwardVector() 
 		* GetCapsuleComponent()->GetScaledCapsuleRadius();
 	//FVector Start =
@@ -243,12 +254,7 @@ void APlayerTrainer::SelectPokemonorSkill(const FInputActionValue& value)
 		SelectedPokemon = (uint8)SelectedIndex;
 
 		//UI에 변경사항 반영
-		ATrainerController* MyController = Cast<ATrainerController>(GetController());
-		if (MyController)
-		{
-			UPokemonHUD* UI = MyController->GetHUDWidget();
-			UI->SelectUI(intIndex);
-		}
+		PokemonUI->SelectUI(intIndex);
 
 		//for test 
 		UE_LOG(LogTemp, Log, TEXT("Current Index : %d"), SelectedPokemon);
@@ -300,7 +306,7 @@ void APlayerTrainer::Look(const FInputActionValue& value)
 	AddControllerPitchInput(LookValue.Y * CameraSpeed);
 }
 
-void APlayerTrainer::SkillMode(const FInputActionValue& value)
+void APlayerTrainer::SkillMode()
 {
 	// UseSkill = true;
 
@@ -334,8 +340,27 @@ void APlayerTrainer::ReleaseSkillMode(UAnimMontage* TargetMontage, bool IsProper
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 }
 
-void APlayerTrainer::Throw(const FInputActionValue& value)
+void APlayerTrainer::Throw()
 {
+	//포켓몬 위치 잡고 소환
+	//이미 소환된 포켓몬과 소환할 포켓몬이 같은 경우 무시
+	if (CurrentPokemon == Pokemons[SelectedPokemon]) return;
+	//이미 소환된 포켓몬을 deactivate
+	if (CurrentPokemon)
+	{
+		CurrentPokemon->Deactive();
+	}
+
+	//새로운 포켓몬을 소환
+	SummonPokemon();
+	//UI에 포켓몬 정보 반영
+
+	UPokemonStat* PokemonInfo = PokemonUI->GetStatUI();
+	PokemonInfo->SetPokemonNameandThumbnail(CurrentPokemon->GetPokemonName());
+	PokemonInfo->SetMaxHp(CurrentPokemon->GetPokemonHp());
+	PokemonInfo->UpdateCurrentHp((int)CurrentPokemon->GetPokemonCurrentStat().Hp);
+
+	// 애니메이션 part
 	// 이미 던지기 진행 중이면 종료.
 	if (IsThrowing)
 	{

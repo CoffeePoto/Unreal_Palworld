@@ -41,6 +41,7 @@ void ATrainerBase::SummonPokemon()
 	if (Pokemons.IsValidIndex(SelectedPokemon))
 	{
 		Pokemons[SelectedPokemon]->SetActive(SummonLocation);
+		CurrentPokemon = Pokemons[SelectedPokemon];
 	}
 }
 

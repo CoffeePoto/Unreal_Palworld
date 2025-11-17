@@ -35,11 +35,11 @@ public:
 	void Look(const FInputActionValue& value);
 
 	//스킬 로직
-	void SkillMode(const FInputActionValue& value);
+	void SkillMode();
 	void ReleaseSkillMode(UAnimMontage* TargetMontage, bool IsProperlyEnded);
 
 	// 공격 로직
-	void Throw(const FInputActionValue& value);
+	void Throw();
 	void ThrowActionEnd(UAnimMontage* TargetMontage, bool IsProperlyEnded);
 
 protected:
@@ -48,6 +48,10 @@ protected:
 	TObjectPtr<class USpringArmComponent> SpringArm;
 	UPROPERTY(VisibleAnywhere, BluePrintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UCameraComponent> Camera;
+
+	//UI Section
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = UI)
+	TObjectPtr<class UPokemonHUD> PokemonUI;
 
 	//Input Section
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -74,7 +78,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TObjectPtr<class UAnimMontage> ThrowActionMontage;
-
+	
 	//focus 여부 판단 
 	bool IsFocusing;
 
@@ -83,7 +87,4 @@ protected:
 
 	//skill 입력 모드
 	bool UseSkill;
-
-	//지금 포켓몬을 소환한 상태인지 체크
-	bool isPokemonOut;
 };
