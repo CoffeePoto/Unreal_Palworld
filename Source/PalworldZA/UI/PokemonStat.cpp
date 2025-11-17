@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/PokemonStat.h"
@@ -12,18 +12,22 @@ void UPokemonStat::NativeConstruct()
 {
 	PokemonThumbnail = Cast<UImage>(GetWidgetFromName(TEXT("PokemonThumbnail")));
 	ensureAlways(PokemonThumbnail);
+	PokemonThumbnail->SetVisibility(ESlateVisibility::Hidden);
 
 	PokemonName = Cast<UTextBlock>(GetWidgetFromName(TEXT("PokemonName")));
 	ensureAlways(PokemonName);
+	PokemonName->SetVisibility(ESlateVisibility::Hidden);
 
 	HpBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("HpBar")));
 	ensureAlways(HpBar);
 
 	TypeImage1 = Cast<UImage>(GetWidgetFromName(TEXT("Type1")));
 	ensureAlways(TypeImage1);
+	TypeImage1->SetVisibility(ESlateVisibility::Hidden);
 
 	TypeImage2 = Cast<UImage>(GetWidgetFromName(TEXT("Type2")));
 	ensureAlways(TypeImage2);
+	TypeImage2->SetVisibility(ESlateVisibility::Hidden);
 
 	LevelText = Cast<UTextBlock>(GetWidgetFromName(TEXT("LevelText")));
 	ensureAlways(LevelText);
@@ -39,6 +43,7 @@ void UPokemonStat::SetPokemonNameandThumbnail(const FString NewPokemonName)
 {
 	FText Name = FText::FromString(NewPokemonName);
 	PokemonName->SetText(Name);
+	PokemonName->SetVisibility(ESlateVisibility::Visible);
 
 	if (UTexture2D** TryThumbnail = PokemonIcons.Find(NewPokemonName))
 	{
@@ -46,6 +51,7 @@ void UPokemonStat::SetPokemonNameandThumbnail(const FString NewPokemonName)
 		if (ThumbnailImage && PokemonThumbnail)
 		{
 			PokemonThumbnail->SetBrushFromTexture(ThumbnailImage);
+			PokemonThumbnail->SetVisibility(ESlateVisibility::Visible);
 		}
 	}
 }

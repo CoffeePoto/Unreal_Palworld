@@ -359,6 +359,7 @@ void APlayerTrainer::Throw()
 	PokemonInfo->SetPokemonNameandThumbnail(CurrentPokemon->GetPokemonName());
 	PokemonInfo->SetMaxHp(CurrentPokemon->GetPokemonHp());
 	PokemonInfo->UpdateCurrentHp((int)CurrentPokemon->GetPokemonCurrentStat().Hp);
+	PokemonInfo->SetTypeImage(CurrentPokemon->GetPokemonDefaultStat().Type1, CurrentPokemon->GetPokemonDefaultStat().Type2);
 
 	// 애니메이션 part
 	// 이미 던지기 진행 중이면 종료.
