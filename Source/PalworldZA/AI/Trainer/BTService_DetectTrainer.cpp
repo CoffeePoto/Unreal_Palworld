@@ -61,7 +61,7 @@ void UBTService_DetectTrainer::TickNode(UBehaviorTreeComponent& OwnerComp, uint8
 			if (Pawn && Pawn->GetController()->IsPlayerController())
 			{
 				// 기존에 Target을 설정하던 부분을 MyPokemon으로 변경
-				OwnerComp.GetBlackboardComponent()->SetValueAsObject(BBKEY_MYPOKEMON, Pawn);
+				OwnerComp.GetBlackboardComponent()->SetValueAsObject(BBKEY_MYTARGETPOKEMON, Pawn);
 				DrawDebugSphere(World, PawnLocation, DetectRange, 16, FColor::Green, false, 0.2f); // PawnLocation / DetectRange 사용
 
 				DrawDebugPoint(World, Pawn->GetActorLocation(), 10.0f, FColor::Green, false, 0.2f);
@@ -72,6 +72,6 @@ void UBTService_DetectTrainer::TickNode(UBehaviorTreeComponent& OwnerComp, uint8
 	}
 
 	// 인식 실패 시 nullptr로 초기화
-	OwnerComp.GetBlackboardComponent()->SetValueAsObject(BBKEY_MYPOKEMON, nullptr);
+	OwnerComp.GetBlackboardComponent()->SetValueAsObject(BBKEY_MYTARGETPOKEMON, nullptr);
 	DrawDebugSphere(World, PawnLocation, DetectRange, 16, FColor::Red, false, 0.2f);	
 }
