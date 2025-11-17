@@ -45,13 +45,13 @@ AAttackTestPokemon::AAttackTestPokemon()
 
 	PokemonSkills.Add(NewSkill);
 
-	//static ConstructorHelpers::FClassFinder<AActor> NewSkillRef4(TEXT("/Game/BluePrint/TestPokemon/BP_TestFourthSkill.BP_TestFourthSkill_C"));
-	//if (NewSkillRef4.Succeeded())
-	//{
-	//	NewSkill.Skill = NewSkillRef4.Class;
-	//}
-	//
-	//PokemonSkills.Add(NewSkill);
+	static ConstructorHelpers::FObjectFinder<UPokemonSkillDataAsset> NewSkillRef4(TEXT("/Game/Data/Skill/Fire/DA_FireLightning.DA_FireLightning"));
+	if (NewSkillRef4.Succeeded())
+	{
+		NewSkill.Skill = NewSkillRef4.Object;
+	}
+	
+	PokemonSkills.Add(NewSkill);
 
 	MyName = TEXT("파이어 폭스");
 }

@@ -14,15 +14,5 @@ class PALWORLDZA_API ATestFourthSkill : public ASkillBase
 {
 	GENERATED_BODY()
 	
-public:
-	ATestFourthSkill();
-
-	// 스킬 실행
-	virtual void ExecuteSkill() override;
-
-protected:
-
-	UPROPERTY()
-	TSubclassOf<AActor> asdf;
 
 };
