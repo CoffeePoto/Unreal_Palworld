@@ -97,15 +97,6 @@ public:	// 인터페이스 구현부 (ICommandReceiver) - 포켓몬이 받는
 	// 디버프 설정 / 매개 변수 : (디버프 스탯, 시간, 디버프 덮어쓰기 여부)
 	virtual void SetDeBuff(EPokemonBuffStat Stat, float Time, bool IsCover = true) override;
 
-	// 포켓몬 스킬 세팅
-	virtual void SetPokemonSkills(const TArray<UPokemonSkillDataAsset*>& NewSkills) override;
-
-	// 포켓몬 애니메이션 세팅
-	virtual void SetPokemonAnimData(UPokemonAnimSequenceData* NewAnimData) override;
-
-	// 포켓몬 정보 세팅
-	virtual void SetPokemonData(FName PokemonCodeName, FString PokemonName) override;
-
 public: // 인터페이스 구현부 (IHardCommandReceiver)
 
 	// 스킬 실행 함수
@@ -165,6 +156,9 @@ protected: // 오버라이딩 구현부
 
 protected: // 자체 함수 구현부
 
+	// 포켓몬 초기화
+	void PokemonInit();
+
 	// 스킬 쿨타임 감소 함수
 	void SkillCoolDown(float DeltaTime);
 
@@ -208,8 +202,10 @@ protected: // 자체 함수 구현부
 	void HitInnerEvent(APawn* Attacker);
 
 
-
 protected: // Has 변수 
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<class UPokemonSkillSet> InitData;
 
 	// 자신을 소유한 트레이너 
 	UPROPERTY()
@@ -246,6 +242,7 @@ protected: // Has 변수
 	// 데미지를 준 주체를 저장하는 배열
 	UPROPERTY()
 	TArray<TObjectPtr<AActor>> DamageCauserArray;
+
 
 protected: // 파라미터 변수
 

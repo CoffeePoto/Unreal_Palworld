@@ -22,9 +22,6 @@ public:
 	FString PokemonName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PokemonSkillSetData")
-	TSubclassOf<class APokemonBase> Pokemon;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PokemonSkillSetData")
 	TArray<TObjectPtr<class UPokemonSkillDataAsset>> Skill;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PokemonSkillSetData")

@@ -17,6 +17,7 @@
 #include "Data/Pokemon/FPokemonTypeTable.h"
 #include "Data/Pokemon/PokemonSkillDataAsset.h"
 #include "Data/Pokemon/PokemonAnimSequenceData.h"
+#include "Data/Pokemon/PokemonSkillSet.h"
 
 
 APokemonBase::APokemonBase()
@@ -71,6 +72,8 @@ void APokemonBase::BeginPlay()
 	// 애니메이션 시퀀스 전달
 	if (AnimData) { animInstance->SetAnimSequence(AnimData); }
 
+	if (InitData) { PokemonInit(); }
+
 	// 버프 타이머 초기화 
 	RemainingBuffTimes.SetNum((uint8)EPokemonBuffStat::COUNT);
 	BuffOrDebuffArray.SetNum((uint8)EPokemonBuffStat::COUNT);
@@ -106,6 +109,29 @@ void APokemonBase::Tick(float DeltaTime)
 
 	// 블랙 보드 업데이트 
 	UpdateBBCommand();
+}
+
+void APokemonBase::PokemonInit()
+{
+	// 기본 데이터 설정
+	DefaultStatData = UGameSingleton::Get().GetPokemonStatDataByName(InitData->PokemonCodeName);
+	MyName = InitData->PokemonName;
+	CurrentHP = DefaultStatData.Hp;
+
+	// 애니메이션 시퀀스 연결
+	UPokemonAnimInstanceBase* animInstance = Cast<UPokemonAnimInstanceBase>(GetMesh()->GetAnimInstance());
+
+	AnimData = InitData->Anim;
+	if (AnimData) { animInstance->SetAnimSequence(AnimData); }
+
+	// 스킬 연결
+	for (UPokemonSkillDataAsset* SkillClass : InitData->Skill)
+	{
+		FSkillContainer NewSkill;
+
+		NewSkill.Skill = SkillClass;
+		PokemonSkills.Add(NewSkill);
+	}
 }
 
 void APokemonBase::SkillCoolDown(float DeltaTime)
@@ -599,33 +625,6 @@ void APokemonBase::SetDeBuff(EPokemonBuffStat Stat, float Time, bool IsCover)
 	}
 
 	if (RemainingBuffTimes[StatNumber] < 0) { RemainingBuffTimes[StatNumber] = 0; }
-}
-
-void APokemonBase::SetPokemonSkills(const TArray<UPokemonSkillDataAsset*>& NewSkills)
-{
-	for (UPokemonSkillDataAsset* SkillData : NewSkills)
-	{
-		FSkillContainer NewSkill;
-
-		NewSkill.Skill = SkillData;
-		PokemonSkills.Add(NewSkill);
-	}
-}
-
-void APokemonBase::SetPokemonAnimData(UPokemonAnimSequenceData* NewAnimData)
-{
-	UPokemonAnimInstanceBase* animInstance = Cast<UPokemonAnimInstanceBase>(GetMesh()->GetAnimInstance());
-
-	AnimData = NewAnimData;
-	if (AnimData) { animInstance->SetAnimSequence(AnimData); }
-}
-
-void APokemonBase::SetPokemonData(FName PokemonCodeName, FString PokemonName)
-{
-	DefaultStatData = UGameSingleton::Get().GetPokemonStatDataByName(PokemonCodeName);
-
-	CurrentHP = DefaultStatData.Hp;
-	MyName = PokemonName;
 }
 
 void APokemonBase::EndSkill()

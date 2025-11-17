@@ -46,12 +46,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<TSubclassOf<class APokemonBase>> SpawnPokemonTypes;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<TObjectPtr<class UPokemonSkillSet>> SpawnPokemonSets;
-
 	// 현재 포켓몬 수
 	int32 CurrentPokemonSpawnCount = 0;
-
-
-
 };
