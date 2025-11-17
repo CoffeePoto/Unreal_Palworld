@@ -1,17 +1,19 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Skill/Pokemon/Grass/GrassBall.h"
+#include "GrassBall.h"
+#include "Skill/Pokemon/ProjectileBase.h"
+#include "Interface/PokemonInterface/ProjectileController.h"
+#include "Game/GameSingleton.h"
 
 AGrassBall::AGrassBall()
 {
-	static ConstructorHelpers::FClassFinder<AActor> GrassBallRef(TEXT("/Game/BluePrint/PokemonSkill/BP_GrassBallProjectile.BP_GrassBallProjectile_C"));
+	static ConstructorHelpers::FClassFinder<AProjectileBase> GrassBallRef(TEXT("/Game/BluePrint/PokemonSkill/Grass/BP_GrassBallProjectile.BP_GrassBallProjectile_C"));
+
 	if (GrassBallRef.Succeeded())
 	{
 		GrassBallClass = GrassBallRef.Class;
 	}
-
-	Data.ActionType = EActionType::RANGE;
 }
 
 void AGrassBall::ExecuteSkill()
@@ -33,7 +35,11 @@ void AGrassBall::ExecuteSkill()
 
 	// 발사체 생성 및 생명 주기 설정
 	GrassBall = SpawnProjectile(UserPos, Rotation);
-	GrassBall->SetLifeSpan(2.0f);
+
+	IProjectileController* PController = Cast<IProjectileController>(GrassBall);
+
+	PController->SetDamageEvent(MakeDamageEvent());
+	PController->SetDestroyTimer(2.0f);
 
 	FTimerHandle SkillEndTimer;
 
@@ -47,7 +53,7 @@ void AGrassBall::ExecuteSkill()
 	);
 }
 
-AActor* AGrassBall::SpawnProjectile(FVector Pos, FRotator Rot)
+AProjectileBase* AGrassBall::SpawnProjectile(FVector Pos, FRotator Rot)
 {
 	FActorSpawnParameters SpawnParams;
 
@@ -55,7 +61,7 @@ AActor* AGrassBall::SpawnProjectile(FVector Pos, FRotator Rot)
 	SpawnParams.Instigator = GetInstigator();
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
-	AActor* Projectile = GetWorld()->SpawnActor<AActor>(
+	AProjectileBase* Projectile = GetWorld()->SpawnActor<AProjectileBase>(
 		GrassBallClass,
 		Pos,
 		Rot,

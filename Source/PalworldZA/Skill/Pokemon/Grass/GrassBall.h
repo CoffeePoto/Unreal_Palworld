@@ -6,9 +6,8 @@
 #include "Skill/Pokemon/SkillBase.h"
 #include "GrassBall.generated.h"
 
-/**
- * 
- */
+class AProjectileBase;
+
 UCLASS()
 class PALWORLDZA_API AGrassBall : public ASkillBase
 {
@@ -23,12 +22,12 @@ public:
 protected:
 
 	// 발사체 소환
-	AActor* SpawnProjectile(FVector Pos, FRotator Rot);
+	AProjectileBase* SpawnProjectile(FVector Pos, FRotator Rot);
 
 protected:
 	UPROPERTY()
-	TSubclassOf<AActor> GrassBallClass;
+	TSubclassOf<AProjectileBase> GrassBallClass;
 
 	UPROPERTY()
-	TObjectPtr<AActor> GrassBall;
+	TObjectPtr<AProjectileBase> GrassBall;
 };

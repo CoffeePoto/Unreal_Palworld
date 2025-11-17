@@ -1,23 +1,22 @@
-Ôªø// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Skill/Pokemon/Water/WaterBall.h"
+#include "Skill/Pokemon/Dark/DarkBall.h"
 #include "Skill/Pokemon/ProjectileBase.h"
 #include "Interface/PokemonInterface/ProjectileController.h"
 #include "Game/GameSingleton.h"
 
-AWaterBall::AWaterBall()
+ADarkBall::ADarkBall()
 {
-	static ConstructorHelpers::FClassFinder<AActor> WaterBallRef(TEXT("/Game/BluePrint/PokemonSkill/Water/BP_WaterBallProjectile.BP_WaterBallProjectile_C"));
-	if (WaterBallRef.Succeeded())
-	{
-		WaterBallClass = WaterBallRef.Class;
-	}
+	static ConstructorHelpers::FClassFinder<AProjectileBase> DarkBallRef(TEXT("/Game/BluePrint/PokemonSkill/Dark/BP_DarkBallProjectile.BP_DarkBallProjectile_C"));
 
-	Data.ActionType = EActionType::RANGE;
+	if (DarkBallRef.Succeeded())
+	{
+		DarkBallClass = DarkBallRef.Class;
+	}
 }
 
-void AWaterBall::ExecuteSkill()
+void ADarkBall::ExecuteSkill()
 {
 	if (!User) { return; }
 	IPokemonDataGetter* Getter = Cast<IPokemonDataGetter>(User);
@@ -25,36 +24,36 @@ void AWaterBall::ExecuteSkill()
 	AActor* Target = Getter->GetTarget();
 	if (!Target) { return; }
 
-	// ÏúÑÏπò Í∞í Ï∂îÏ∂ú
+	// ¿ßƒ° ∞™ √ﬂ√‚
 	FVector UserPos = Getter->GetShootPoint();
 	FVector TargetPos = Target->GetActorLocation();
 
-	// Î∞©Ìñ• Í∞í ÏÉùÏÑ±
+	// πÊ«‚ ∞™ ª˝º∫
 	FVector RotationVector = TargetPos - UserPos;
 	RotationVector.Normalize();
 	FRotator Rotation = RotationVector.Rotation();
 
-	// Î∞úÏÇ¨Ï≤¥ ÏÉùÏÑ± Î∞è ÏÉùÎ™Ö Ï£ºÍ∏∞ ÏÑ§Ï†ï
-	WaterBall = SpawnProjectile(UserPos, Rotation);
+	// πﬂªÁ√º ª˝º∫ π◊ ª˝∏Ì ¡÷±‚ º≥¡§
+	DarkBall = SpawnProjectile(UserPos, Rotation);
 
-	IProjectileController* PController = Cast<IProjectileController>(WaterBall);
+	IProjectileController* PController = Cast<IProjectileController>(DarkBall);
 
 	PController->SetDamageEvent(MakeDamageEvent());
 	PController->SetDestroyTimer(2.0f);
 
 	FTimerHandle SkillEndTimer;
 
-	// ÌÉÄÏù¥Î®∏
+	// ≈∏¿Ã∏”
 	GetWorldTimerManager().SetTimer(
 		SkillEndTimer,
 		this,
-		&ASkillBase::OnEndSkill,  // 2Ï¥à Îí§ Ïã§ÌñâÌï† Ìï®Ïàò
-		2.0f,                     // 2Ï¥à Îí§
-		false                     // Î∞òÎ≥µ Ïó¨Î∂Ä (false = Ìïú Î≤àÎßå)
+		&ASkillBase::OnEndSkill,  // 2√  µ⁄ Ω««‡«“ «‘ºˆ
+		2.0f,                     // 2√  µ⁄
+		false                     // π›∫π ø©∫Œ (false = «— π¯∏∏)
 	);
 }
 
-AProjectileBase* AWaterBall::SpawnProjectile(FVector Pos, FRotator Rot)
+AProjectileBase* ADarkBall::SpawnProjectile(FVector Pos, FRotator Rot)
 {
 	FActorSpawnParameters SpawnParams;
 
@@ -63,7 +62,7 @@ AProjectileBase* AWaterBall::SpawnProjectile(FVector Pos, FRotator Rot)
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
 	AProjectileBase* Projectile = GetWorld()->SpawnActor<AProjectileBase>(
-		WaterBallClass,
+		DarkBallClass,
 		Pos,
 		Rot,
 		SpawnParams
