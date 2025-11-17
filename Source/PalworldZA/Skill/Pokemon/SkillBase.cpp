@@ -43,7 +43,7 @@ void ASkillBase::SetSkillData(const FPokemonSkillData& SkillData)
 float ASkillBase::DamageCalculator()
 {
 	FPokemonStatData Stat = User->GetPokemonCurrentStat();
-	float AttackTypeDMGStat;
+	float AttackTypeDMGStat = 0.0f;
 
 	if (Data.ActionType == EActionType::MELEE)
 	{

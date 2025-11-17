@@ -36,7 +36,7 @@ public:
 	TObjectPtr<UPokemonSkillDataAsset> Skill;
 	
 	UPROPERTY()
-	float CoolDown;
+	float CoolDown = ZERO;
 };
 
 
@@ -97,12 +97,21 @@ public:	// 인터페이스 구현부 (ICommandReceiver) - 포켓몬이 받는
 	// 디버프 설정 / 매개 변수 : (디버프 스탯, 시간, 디버프 덮어쓰기 여부)
 	virtual void SetDeBuff(EPokemonBuffStat Stat, float Time, bool IsCover = true) override;
 
+	// 포켓몬 스킬 세팅
+	virtual void SetPokemonSkills(const TArray<UPokemonSkillDataAsset*>& NewSkills) override;
+
+	// 포켓몬 애니메이션 세팅
+	virtual void SetPokemonAnimData(UPokemonAnimSequenceData* NewAnimData) override;
+
+	// 포켓몬 정보 세팅
+	virtual void SetPokemonData(FName PokemonCodeName, FString PokemonName) override;
+
 public: // 인터페이스 구현부 (IHardCommandReceiver)
 
 	// 스킬 실행 함수
 	virtual void ExecuteSkill() override;
 
-	virtual void ReservationSkill(int SkillNumber) override;
+	virtual void ReservationSkill(int32 SkillNumber) override;
 
 public:	// 인터페이스 구현부 (IPokemonDataGetter) - 포켓몬이 주는
 
@@ -178,7 +187,7 @@ protected: // 자체 함수 구현부
 	void LoadAnimSequenceData(FString Path);
 
 	// 스킬 소환 함수
-	ASkillBase* SpawnSkill(int SkillIndex);
+	ASkillBase* SpawnSkill(int32 SkillIndex);
 
 	// 원거리 공격 이동 위치 설정 함수
 	void SetRangeAttackPosition();

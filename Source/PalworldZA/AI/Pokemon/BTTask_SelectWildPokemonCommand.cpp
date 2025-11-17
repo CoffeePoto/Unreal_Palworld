@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "AI/Pokemon/BTTask_SelectWildPokemonCommand.h"
@@ -12,7 +12,7 @@ EBTNodeResult::Type UBTTask_SelectWildPokemonCommand::ExecuteTask(UBehaviorTreeC
 	APawn* ControllingPawn = OwnerComp.GetAIOwner()->GetPawn();
 	if (!ControllingPawn) { return EBTNodeResult::Failed; }
 
-	// ¸í·É ÀÎÅÍÆäÀÌ½º ·Îµå
+	// ëª…ë ¹ ì¸í„°í˜ì´ìŠ¤ ë¡œë“œ
 	ICommandReceiver* Controller = Cast<ICommandReceiver>(ControllingPawn);
 	if (!Controller) { return EBTNodeResult::Failed; }
 

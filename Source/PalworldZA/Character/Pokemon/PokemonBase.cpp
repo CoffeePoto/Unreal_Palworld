@@ -16,6 +16,7 @@
 #include "Data/Pokemon/PokemonDamageEvent.h"
 #include "Data/Pokemon/FPokemonTypeTable.h"
 #include "Data/Pokemon/PokemonSkillDataAsset.h"
+#include "Data/Pokemon/PokemonAnimSequenceData.h"
 
 
 APokemonBase::APokemonBase()
@@ -233,7 +234,7 @@ void APokemonBase::LoadAnimSequenceData(FString Path)
 	AnimData = LoadObject<UPokemonAnimSequenceData>(nullptr, *Path);
 }
 
-ASkillBase* APokemonBase::SpawnSkill(int SkillIndex)
+ASkillBase* APokemonBase::SpawnSkill(int32 SkillIndex)
 {
 	UClass* SkillType = PokemonSkills[SkillIndex].Skill->Skill.Get();
 	FActorSpawnParameters SpawnParams;
@@ -351,7 +352,7 @@ void APokemonBase::ExecuteSkill()
 	SpawnSkillController->ExecuteSkill();
 }
 
-void APokemonBase::ReservationSkill(int SkillNumber)
+void APokemonBase::ReservationSkill(int32 SkillNumber)
 {
 	if (!CurrentSkillTarget) { return; }
 	if (ReservationSkillNumber != -1) { return; }
@@ -598,6 +599,33 @@ void APokemonBase::SetDeBuff(EPokemonBuffStat Stat, float Time, bool IsCover)
 	}
 
 	if (RemainingBuffTimes[StatNumber] < 0) { RemainingBuffTimes[StatNumber] = 0; }
+}
+
+void APokemonBase::SetPokemonSkills(const TArray<UPokemonSkillDataAsset*>& NewSkills)
+{
+	for (UPokemonSkillDataAsset* SkillData : NewSkills)
+	{
+		FSkillContainer NewSkill;
+
+		NewSkill.Skill = SkillData;
+		PokemonSkills.Add(NewSkill);
+	}
+}
+
+void APokemonBase::SetPokemonAnimData(UPokemonAnimSequenceData* NewAnimData)
+{
+	UPokemonAnimInstanceBase* animInstance = Cast<UPokemonAnimInstanceBase>(GetMesh()->GetAnimInstance());
+
+	AnimData = NewAnimData;
+	if (AnimData) { animInstance->SetAnimSequence(AnimData); }
+}
+
+void APokemonBase::SetPokemonData(FName PokemonCodeName, FString PokemonName)
+{
+	DefaultStatData = UGameSingleton::Get().GetPokemonStatDataByName(PokemonCodeName);
+
+	CurrentHP = DefaultStatData.Hp;
+	MyName = PokemonName;
 }
 
 void APokemonBase::EndSkill()
