@@ -18,10 +18,18 @@ void UPokemonHUD::NativeConstruct()
 	ensureAlways(UISlot);
 	PokemonInfo = Cast<UPokemonStat>(GetWidgetFromName(TEXT("PokemonStat")));
 	ensureAlways(PokemonInfo);
-	//this is for test
-	UISlot->SetPokemonThumbnail(FIREFOX);
+	////this is for test
+	//UISlot->SetPokemonThumbnail(FIREFOX);
 
-	UISlot->Select();
+	//UISlot->Select();
+}
+
+void UPokemonHUD::SetSlotThumbnail(uint8 Index, const FString newPokemonName)
+{
+	FString WidgetName = FString::Printf(TEXT("Pokemon%d"), Index + 1);
+	//새롭게 선택된 UI슬롯 할당
+	UISlot = Cast<UPokemonSlot>(GetWidgetFromName(FName(*WidgetName)));
+	UISlot->SetPokemonThumbnail(newPokemonName);
 }
 
 void UPokemonHUD::SelectUI(uint8 Index)

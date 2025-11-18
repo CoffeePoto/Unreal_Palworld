@@ -23,14 +23,16 @@ void UPokemonSlot::NativeConstruct()
 	KeyCode->SetVisibility(ESlateVisibility::Hidden);
 }
 
-void UPokemonSlot::SetPokemonThumbnail(const FString& FilePath)
+void UPokemonSlot::SetPokemonThumbnail(const FString NewPokemonThumbnail)
 {
-	PokemonImage = LoadObject<UTexture2D>(nullptr, *FilePath);
-	if (PokemonThumbnail && PokemonImage)
+	if (UTexture2D** TryThumbnail = PokemonIcons.Find(NewPokemonThumbnail))
 	{
-		PokemonThumbnail->SetVisibility(ESlateVisibility::Visible);
-		PokemonThumbnail->SetBrushFromTexture(PokemonImage);
-		//PokemonThumbnail->InvalidateLayoutAndVolatility(); // 즉시 반영
+		UTexture2D* ThumbnailImage = *TryThumbnail;
+		if (ThumbnailImage && PokemonThumbnail)
+		{
+			PokemonThumbnail->SetBrushFromTexture(ThumbnailImage);
+			PokemonThumbnail->SetVisibility(ESlateVisibility::Visible);
+		}
 	}
 }
 

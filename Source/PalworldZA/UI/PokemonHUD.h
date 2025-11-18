@@ -15,8 +15,10 @@ class PALWORLDZA_API UPokemonHUD : public UUserWidget
 	GENERATED_BODY()
 	
 public:
+	void SetSlotThumbnail(uint8 Index, const FString newPokemonName);
 	void SelectUI(uint8 Index);
 
+	FORCEINLINE class UPokemonSlot* GetUISlot() { return UISlot; }
 	FORCEINLINE class UPokemonStat* GetStatUI() { return PokemonInfo; }
 
 protected:

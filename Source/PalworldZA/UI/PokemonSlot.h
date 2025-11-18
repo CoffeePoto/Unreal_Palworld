@@ -18,7 +18,7 @@ protected:
 	virtual void NativeConstruct() override;
 
 public:
-	void SetPokemonThumbnail(const FString& FilePath);
+	void SetPokemonThumbnail(const FString NewPokemonThumbnail);
 
 	void Select();
 	void UnSelect();
@@ -35,4 +35,7 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<class UImage> KeyCode;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ThumbnailInfo")
+	TMap<FString, UTexture2D*> PokemonIcons;
 };

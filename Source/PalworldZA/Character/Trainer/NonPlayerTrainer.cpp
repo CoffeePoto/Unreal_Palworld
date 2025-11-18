@@ -10,6 +10,33 @@ ANonPlayerTrainer::ANonPlayerTrainer()
 	//AIController 할당
 	AIControllerClass = ANpcAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+	//for (int i = 0; i < 3; ++i)
+	//{
+	//	FActorSpawnParameters SpawnParams;
+
+	//	// 파라미터 값 세팅
+	//	SpawnParams.Owner = this;
+	//	SpawnParams.Instigator = GetInstigator();
+	//	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+	//	//uint8 randPokemonIndex = FMath::RandRange(0, 5);
+	//	// 포켓몬 스폰 
+	//	CurrentPokemon = GetWorld()->SpawnActor<APokemonBase>(
+	//		PokemonClassArray[i],
+	//		this->GetActorLocation(),
+	//		GetActorRotation(),
+	//		SpawnParams
+	//	);
+
+	//	if (CurrentPokemon)
+	//	{
+	//		CurrentPokemon->SetTrainer(this);
+	//		CurrentPokemon->Deactive();
+
+	//		Pokemons.Add(CurrentPokemon);
+	//	}
+	//}
 }
 
 float ANonPlayerTrainer::GetAIPatrolRadius()
@@ -35,13 +62,13 @@ UObject* ANonPlayerTrainer::GetPokemon()
 
 void ANonPlayerTrainer::AISummonPokemon()
 {
-	uint8 randomSelect = (uint8)FMath::FRandRange(0.0f, Pokemons.Num());
+	uint8 randomSelect = FMath::RandRange(0, Pokemons.Num());
 	SelectedPokemon = randomSelect;
 	SummonPokemon();
 }
 
 void ANonPlayerTrainer::AICommandSkills()
 {
-	uint8 randomSelect = (uint8)FMath::FRandRange(0.0f, 3.0f);
+	uint8 randomSelect = FMath::RandRange(0, 3);
 	CommandSkills(randomSelect);
 }

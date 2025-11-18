@@ -159,4 +159,17 @@ void UPokemonStat::SetHpBarPortion(float DeltaTime)
 
 	float Ratio = (float)CurrentHp / MaxHp;
 	HpBar->SetPercent(Ratio);
+
+	static const FLinearColor HpColor_High = FLinearColor::FromSRGBColor(FColor::FromHex(TEXT("B4FFABFF")));
+	static const FLinearColor HpColor_Mid = FLinearColor::FromSRGBColor(FColor::FromHex(TEXT("FFF08AFF")));
+	static const FLinearColor HpColor_Low = FLinearColor::FromSRGBColor(FColor::FromHex(TEXT("FF574CFF")));
+
+	const FLinearColor& TargetColor =
+		(Ratio > 0.5f) ? HpColor_High :
+		(Ratio > 0.3f) ? HpColor_Mid :
+		HpColor_Low;
+
+	FProgressBarStyle Style = HpBar->GetWidgetStyle();
+	Style.FillImage.TintColor = FSlateColor(TargetColor);
+	HpBar->SetWidgetStyle(Style);
 }

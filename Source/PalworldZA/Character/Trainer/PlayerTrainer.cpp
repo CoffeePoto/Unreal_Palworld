@@ -11,6 +11,7 @@
 
 #include "Game/TrainerController.h"
 #include "UI/PokemonHUD.h"
+#include "UI/PokemonSlot.h"
 #include "UI/PokemonStat.h"
 
 #include "Character/Pokemon/AttackTestPokemon.h"
@@ -26,13 +27,6 @@ APlayerTrainer::APlayerTrainer()
 {
 	// 콜리전 프로파일 설정하는 함수.
 	//GetCapsuleComponent()->SetCollisionProfileName(TEXT(""));
-
-	//포켓몬 생성자에서 지정
-	//for (int i = 0; i < 3; ++i)
-	//{
-	//	APokemonBase* PossessedPokemon;
-	//}
-
 
 	//Camera
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
@@ -95,16 +89,7 @@ void APlayerTrainer::BeginPlay()
 		ensureAlways(PokemonUI);
 	}
 
-	// Todo: 포켓몬 소환 (객체 생성).
-	/*CurrentPokemon  = GetWorld()->SpawnActor<APokemonBase>(PokemonClassArray[0]);
-	if (CurrentPokemon)
-	{
-		CurrentPokemon->SetTrainer(this);
-		Pokemons.Add(CurrentPokemon);
-		UE_LOG(LogTemp, Log, TEXT("포켓몬 생성 완료."));
-	}*/
-
-	for (UClass* PokemonClass : PokemonClassArray)
+	for (int i = 0; i < 6; ++i)
 	{
 		//CurrentPokemon = GetWorld()->SpawnActor<APokemonBase>(PokemonClass);
 
@@ -117,7 +102,7 @@ void APlayerTrainer::BeginPlay()
 
 		// 포켓몬 스폰 
 		CurrentPokemon = GetWorld()->SpawnActor<APokemonBase>(
-			PokemonClass,
+			PokemonClassArray[i],
 			this->GetActorLocation(),
 			GetActorRotation(),
 			SpawnParams
@@ -129,27 +114,21 @@ void APlayerTrainer::BeginPlay()
 			CurrentPokemon->Deactive();
 
 			Pokemons.Add(CurrentPokemon);
-			UE_LOG(LogTemp, Log, TEXT("포켓몬 생성 완료."));
 		}
+
+		//UI 정보 반영
+		PokemonUI->SetSlotThumbnail(i, CurrentPokemon->GetPokemonName());
 	}
 
 	CurrentPokemon = nullptr;
-	SelectedPokemon = 0;
+	SelectedPokemon = -1;
 }
 
 void APlayerTrainer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//AAttackTestPokemon* FindPokemon = Cast<AAttackTestPokemon>(
-	//	UGameplayStatics::GetActorOfClass(GetWorld(), AAttackTestPokemon::StaticClass())
-	//);
-	//if (FindPokemon)
-	//{
-	//	//UE_LOG(LogTemp, Log, TEXT("Find Pokemon"));
-	//	FindPokemon->SetTrainer(this);
-	//	Pokemons.Add(FindPokemon);
-	//}
+	//이젠 필요없음.
 }
 
 void APlayerTrainer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -297,13 +276,17 @@ void APlayerTrainer::SelectPokemonorSkill(const FInputActionValue& value)
 	}
 	else
 	{
+		//현재 트레이너가 가지고 있는 포켓몬 개수만큼만 이동 가능
+		uint8 Num = static_cast<uint8>(Pokemons.Num());
+		uint8 ClampIndex = (intIndex < Num) ? intIndex : (Num > 0 ? Num - 1 : 0);
+
 		//전과 같은 번호를 입력했다면, 입력 무시
-		if (SelectedPokemon == intIndex) return;
-		SetSelectedPokemon(intIndex);
-		SelectedPokemon = (uint8)SelectedIndex;
+		if (SelectedPokemon == ClampIndex) return;
+		SetSelectedPokemon(ClampIndex);
+		SelectedPokemon = ClampIndex;
 
 		//UI에 변경사항 반영
-		PokemonUI->SelectUI(intIndex);
+		PokemonUI->SelectUI(ClampIndex);
 
 		//for test 
 		UE_LOG(LogTemp, Log, TEXT("Current Index : %d"), SelectedPokemon);
@@ -399,7 +382,10 @@ void APlayerTrainer::Throw()
 	//이미 소환된 포켓몬을 deactivate
 	if (CurrentPokemon)
 	{
-		CurrentPokemon->Deactive();
+		if (!CurrentPokemon->Deactive())
+		{
+			return;
+		}
 	}
 
 	//새로운 포켓몬을 소환
@@ -409,9 +395,9 @@ void APlayerTrainer::Throw()
 	UPokemonStat* PokemonInfo = PokemonUI->GetStatUI();
 	PokemonInfo->SetDeadInfoOff();
 	PokemonInfo->SetPokemonNameandThumbnail(CurrentPokemon->GetPokemonName());
-	PokemonInfo->SetMaxHp(CurrentPokemon->GetPokemonHp());
+	PokemonInfo->SetMaxHp((int)CurrentPokemon->GetPokemonCurrentStat().Hp);
 	PokemonInfo->SetLevel(100);
-	PokemonInfo->UpdateCurrentHp((int)CurrentPokemon->GetPokemonCurrentStat().Hp);
+	PokemonInfo->UpdateCurrentHp(CurrentPokemon->GetPokemonHp());
 	PokemonInfo->SetTypeImage(CurrentPokemon->GetPokemonDefaultStat().Type1, CurrentPokemon->GetPokemonDefaultStat().Type2);
 
 	//델리게이트 연결
