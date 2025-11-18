@@ -9,6 +9,7 @@
 
 DECLARE_DELEGATE(FOnPokemonDown);
 DECLARE_MULTICAST_DELEGATE(FEndPokemonSkill);
+DECLARE_MULTICAST_DELEGATE(FHitPokemon);
 DECLARE_MULTICAST_DELEGATE_OneParam(FStartPokemonSkill, const FString&);
 
 class UPokemonSkillDataAsset;
@@ -51,6 +52,12 @@ public:
 
 	// 포켓몬 공격 종료시 호출할 델리게이트 해지
 	virtual void UnBindEndPokemonSkill(FDelegateHandle Handle) = 0;
+
+	// 포켓몬 피격시 호출할 델리게이트 등록
+	virtual FDelegateHandle BindHitPokemon(const FHitPokemon::FDelegate& InDelegate) = 0;
+
+	// 포켓몬 피격시 호출할 델리게이트 해지
+	virtual void UnBindBindHitPokemon(FDelegateHandle Handle) = 0;
 
 	// 포켓몬 타겟 설정
 	virtual void SetTarget(AActor* NewTarget) = 0;

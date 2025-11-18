@@ -170,6 +170,8 @@ void APokemonBase::DownRemainingBuffTime(float DeltaTime)
 
 void APokemonBase::DamageCauserQueueDequeue(float DeltaTime)
 {
+	CurrentDCDCycleTime += DeltaTime;
+
 	// 비워져 있으면 리턴
 	if (DamageCauserArray.IsEmpty())
 	{
@@ -179,7 +181,7 @@ void APokemonBase::DamageCauserQueueDequeue(float DeltaTime)
 	// 만약 인덱스가 개수를 넘어가면 초기화 
 	if (DamageCauserArray.Num() <= DamageCauserIndex)
 	{
-		DamageCauserArray.Reset();
+		DamageCauserArray.Empty();
 		DamageCauserIndex = 0;
 		
 		CurrentDCDStartTime = ZERO;
@@ -201,10 +203,9 @@ void APokemonBase::DamageCauserQueueDequeue(float DeltaTime)
 		DamageCauserArray[DamageCauserIndex] = nullptr;
 		++DamageCauserIndex;
 		CurrentDCDCycleTime = ZERO;
+		UE_LOG(LogTemp, Log, TEXT("큐 나감"));
 		return;
 	}
-
-	CurrentDCDCycleTime += DeltaTime;
 }
 
 void APokemonBase::UpdateSkillTarget()
@@ -442,6 +443,8 @@ float APokemonBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 	UE_LOG(LogTemp, Log, TEXT("맞은 데미지: %f"), FinalDMG);
 	DamageCauserArray.Add(DamageCauser);
 
+	if (PokemonHitEvents.IsBound()) { PokemonHitEvents.Broadcast(); }
+
 	return FinalDMG;
 }
 
@@ -562,6 +565,16 @@ FDelegateHandle APokemonBase::BindEndPokemonSkill(const FEndPokemonSkill::FDeleg
 void APokemonBase::UnBindEndPokemonSkill(FDelegateHandle Handle)
 {
 	PokemonSkillEndEvents.Remove(Handle);
+}
+
+FDelegateHandle APokemonBase::BindHitPokemon(const FHitPokemon::FDelegate& InDelegate)
+{
+	return PokemonHitEvents.Add(InDelegate);
+}
+
+void APokemonBase::UnBindBindHitPokemon(FDelegateHandle Handle)
+{
+	PokemonHitEvents.Remove(Handle);
 }
 
 void APokemonBase::SetTarget(AActor* NewTarget)

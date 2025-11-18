@@ -1,27 +1,33 @@
-ï»¿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Skill/Pokemon/SkillBase.h"
-#include "Slash.generated.h"
+#include "AuraBase.generated.h"
 
-
+/**
+ * 
+ */
 UCLASS()
-class PALWORLDZA_API ASlash : public ASkillBase
+class PALWORLDZA_API AAuraBase : public ASkillBase
 {
 	GENERATED_BODY()
 
 public:
-	ASlash();
+	AAuraBase();
 
 	virtual void PostInitializeComponents() override;
 
-	
+
 	virtual void BeginPlay() override;
 
-	// ìŠ¤í‚¬ ì‹¤í–‰
+	virtual void Tick(float DeltaTime) override;
+
+	// ½ºÅ³ ½ÇÇà
 	virtual void ExecuteSkill() override;
+
+	virtual void DamageTransfer();
 
 protected:
 
@@ -35,7 +41,15 @@ protected:
 		const FHitResult& SweepResult
 	);
 
-	// ì½œë¦¬ì „ í™œì„±í™” 
+	UFUNCTION()
+	void OnSkillEndOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex
+	);
+
+	// ÄÝ¸®Àü È°¼ºÈ­ 
 	UFUNCTION()
 	void ActivateCollision();
 
@@ -46,4 +60,8 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<class UTimelineComponent> AttackTimeline;
+
+	UPROPERTY()
+	TArray<TObjectPtr<AActor>> OtherArray;
+	
 };

@@ -85,6 +85,12 @@ public:	// 인터페이스 구현부 (ICommandReceiver) - 포켓몬이 받는
 	// 포켓몬 기술 종료 호출 델리게이트 해지
 	virtual void UnBindEndPokemonSkill(FDelegateHandle Handle) override;
 
+	// 포켓몬 피격시 호출할 델리게이트 등록
+	virtual FDelegateHandle BindHitPokemon(const FHitPokemon::FDelegate& InDelegate) override;
+
+	// 포켓몬 피격시 호출할 델리게이트 해지
+	virtual void UnBindBindHitPokemon(FDelegateHandle Handle) override;
+
 	// 새 타겟 설정
 	virtual void SetTarget(AActor* NewTarget) override;
 
@@ -254,6 +260,9 @@ protected: // 파라미터 변수
 
 	// 포켓몬 기술 사용 이벤트
 	FStartPokemonSkill PokemonSkillStartEvents;
+
+	// 포켓몬 피격 이벤트
+	FHitPokemon PokemonHitEvents;
 
 	// 기본 포켓몬 스탯 데이터
 	FPokemonStatData DefaultStatData;
