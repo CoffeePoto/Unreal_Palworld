@@ -5,7 +5,6 @@
 #include "Components/HorizontalBox.h"
 #include "UI/PokemonSlot.h"
 #include "UI/PokemonStat.h"
-#include "UI/ThumbnailPath.h"
 
 
 void UPokemonHUD::NativeConstruct()
@@ -18,10 +17,6 @@ void UPokemonHUD::NativeConstruct()
 	ensureAlways(UISlot);
 	PokemonInfo = Cast<UPokemonStat>(GetWidgetFromName(TEXT("PokemonStat")));
 	ensureAlways(PokemonInfo);
-	////this is for test
-	//UISlot->SetPokemonThumbnail(FIREFOX);
-
-	//UISlot->Select();
 }
 
 void UPokemonHUD::SetSlotThumbnail(uint8 Index, const FString newPokemonName)
