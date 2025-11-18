@@ -22,6 +22,7 @@ void AAuraBase::PostInitializeComponents()
 	{
 		HitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		HitCollision->OnComponentBeginOverlap.AddDynamic(this, &AAuraBase::OnSkillOverlap);
+		HitCollision->OnComponentEndOverlap.AddDynamic(this, &AAuraBase::OnSkillEndOverlap);
 	}
 }
 
@@ -31,6 +32,7 @@ void AAuraBase::BeginPlay()
 
 	if (AttackTimeline)
 	{
+		this->SetActorRotation(FRotator::ZeroRotator);
 		// 타임 라인 기간 설정
 		AttackTimeline->SetTimelineLength(10.0f);
 		AttackTimeline->SetTimelineLengthMode(ETimelineLengthMode::TL_TimelineLength);
@@ -44,7 +46,7 @@ void AAuraBase::BeginPlay()
 
 		// 구간에 함수 배치
 		AttackTimeline->AddEvent(0.2f, E1);
-		AttackTimeline->AddEvent(9.5f, E2);
+		AttackTimeline->AddEvent(7.0f, E2);
 	}
 }
 

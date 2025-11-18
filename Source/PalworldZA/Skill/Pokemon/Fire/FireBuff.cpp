@@ -27,7 +27,5 @@ void AFireBuff::ExecuteSkill()
 void AFireBuff::OnEndSkill()
 {
 	ICommandReceiver* PokemonController = Cast<ICommandReceiver>(User);
-	PokemonController->SetBuff(EPokemonBuffStat::ATK, 20.0f);
-	PokemonController->SetDeBuff(EPokemonBuffStat::DEF, 20.0f);
 	Super::OnEndSkill();
 }

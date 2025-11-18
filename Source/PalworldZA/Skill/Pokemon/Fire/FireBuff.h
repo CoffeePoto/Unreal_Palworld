@@ -6,9 +6,7 @@
 #include "Skill/Pokemon/SkillBase.h"
 #include "FireBuff.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class PALWORLDZA_API AFireBuff : public ASkillBase
 {
@@ -24,6 +22,5 @@ public:
 
 
 protected:
-	UPROPERTY()
-	TSubclassOf<AActor> FireBuff;
+
 };
