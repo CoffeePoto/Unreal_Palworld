@@ -15,6 +15,7 @@
 
 #include "Character/Pokemon/AttackTestPokemon.h"
 #include "Character/Pokemon/PokemonBase.h"
+#include "Interface/PokemonInterface/CommandReceiver.h"
 
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
@@ -25,6 +26,13 @@ APlayerTrainer::APlayerTrainer()
 {
 	// 콜리전 프로파일 설정하는 함수.
 	//GetCapsuleComponent()->SetCollisionProfileName(TEXT(""));
+
+	//포켓몬 생성자에서 지정
+	//for (int i = 0; i < 3; ++i)
+	//{
+	//	APokemonBase* PossessedPokemon;
+	//}
+
 
 	//Camera
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
@@ -86,21 +94,62 @@ void APlayerTrainer::BeginPlay()
 		PokemonUI = Cast<UPokemonHUD>(MyController->GetHUDWidget());
 		ensureAlways(PokemonUI);
 	}
+
+	// Todo: 포켓몬 소환 (객체 생성).
+	/*CurrentPokemon  = GetWorld()->SpawnActor<APokemonBase>(PokemonClassArray[0]);
+	if (CurrentPokemon)
+	{
+		CurrentPokemon->SetTrainer(this);
+		Pokemons.Add(CurrentPokemon);
+		UE_LOG(LogTemp, Log, TEXT("포켓몬 생성 완료."));
+	}*/
+
+	for (UClass* PokemonClass : PokemonClassArray)
+	{
+		//CurrentPokemon = GetWorld()->SpawnActor<APokemonBase>(PokemonClass);
+
+		FActorSpawnParameters SpawnParams;
+
+		// 파라미터 값 세팅
+		SpawnParams.Owner = this;
+		SpawnParams.Instigator = GetInstigator();
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+		// 포켓몬 스폰 
+		CurrentPokemon = GetWorld()->SpawnActor<APokemonBase>(
+			PokemonClass,
+			this->GetActorLocation(),
+			GetActorRotation(),
+			SpawnParams
+		);
+
+		if (CurrentPokemon)
+		{
+			CurrentPokemon->SetTrainer(this);
+			CurrentPokemon->Deactive();
+
+			Pokemons.Add(CurrentPokemon);
+			UE_LOG(LogTemp, Log, TEXT("포켓몬 생성 완료."));
+		}
+	}
+
+	CurrentPokemon = nullptr;
+	SelectedPokemon = 0;
 }
 
 void APlayerTrainer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	AAttackTestPokemon* FindPokemon = Cast<AAttackTestPokemon>(
-		UGameplayStatics::GetActorOfClass(GetWorld(), AAttackTestPokemon::StaticClass())
-	);
-	if (FindPokemon)
-	{
-		//UE_LOG(LogTemp, Log, TEXT("Find Pokemon"));
-		FindPokemon->SetTrainer(this);
-		Pokemons.Add(FindPokemon);
-	}
+	//AAttackTestPokemon* FindPokemon = Cast<AAttackTestPokemon>(
+	//	UGameplayStatics::GetActorOfClass(GetWorld(), AAttackTestPokemon::StaticClass())
+	//);
+	//if (FindPokemon)
+	//{
+	//	//UE_LOG(LogTemp, Log, TEXT("Find Pokemon"));
+	//	FindPokemon->SetTrainer(this);
+	//	Pokemons.Add(FindPokemon);
+	//}
 }
 
 void APlayerTrainer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -342,6 +391,8 @@ void APlayerTrainer::ReleaseSkillMode(UAnimMontage* TargetMontage, bool IsProper
 
 void APlayerTrainer::Throw()
 {
+	//아무것도 없으면 return
+	if (Pokemons.IsEmpty()) return;
 	//포켓몬 위치 잡고 소환
 	//이미 소환된 포켓몬과 소환할 포켓몬이 같은 경우 무시
 	if (CurrentPokemon == Pokemons[SelectedPokemon]) return;
@@ -353,13 +404,24 @@ void APlayerTrainer::Throw()
 
 	//새로운 포켓몬을 소환
 	SummonPokemon();
-	//UI에 포켓몬 정보 반영
 
+	//UI에 포켓몬 정보 반영
 	UPokemonStat* PokemonInfo = PokemonUI->GetStatUI();
+	PokemonInfo->SetDeadInfoOff();
 	PokemonInfo->SetPokemonNameandThumbnail(CurrentPokemon->GetPokemonName());
 	PokemonInfo->SetMaxHp(CurrentPokemon->GetPokemonHp());
+	PokemonInfo->SetLevel(100);
 	PokemonInfo->UpdateCurrentHp((int)CurrentPokemon->GetPokemonCurrentStat().Hp);
 	PokemonInfo->SetTypeImage(CurrentPokemon->GetPokemonDefaultStat().Type1, CurrentPokemon->GetPokemonDefaultStat().Type2);
+
+	//델리게이트 연결
+	ICommandReceiver* Commander = Cast<ICommandReceiver>(CurrentPokemon);
+	FHitPokemon::FDelegate HitEventDelegate;
+	HitEventDelegate.BindUObject(this,&APlayerTrainer::HitDelegateEntrance);
+	FDelegateHandle Handle = Commander->BindHitPokemon(HitEventDelegate);
+	FOnPokemonDown DownEventDelegate;
+	DownEventDelegate.BindLambda([PokemonInfo]() { PokemonInfo->ShowDeadEvent(); });
+	Commander->BindOnPokemonDown(DownEventDelegate);
 
 	// 애니메이션 part
 	// 이미 던지기 진행 중이면 종료.
@@ -388,4 +450,13 @@ void APlayerTrainer::ThrowActionEnd(UAnimMontage* TargetMontage, bool IsProperly
 	// 던지기 종료.
 	IsThrowing = false;
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+}
+
+void APlayerTrainer::HitDelegateEntrance()
+{
+	UPokemonStat* PokemonInfo = PokemonUI->GetStatUI();
+	//변화된 포켓몬의 현재 체력을 읽어온다.
+	//공격받았다는 델리게이트가 호출된 후 실행되므로,
+	//UI의 CurrentHp와 포켓몬의 CurrentHp는 다를 것이다.
+	PokemonInfo->OnHpChanged(CurrentPokemon->GetPokemonHp());
 }

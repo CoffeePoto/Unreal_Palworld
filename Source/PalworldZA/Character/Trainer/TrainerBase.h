@@ -27,9 +27,13 @@ protected:
 	void CommandSkills(/*어떤 스킬을 사용할지 결정하는 매개변수*/ uint8 SkillIndex);
 
 protected:
+	//트레이너가 생성할 포켓몬 클래스 정보.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Possess)
+	TArray<TSubclassOf<class APokemonBase>> PokemonClassArray;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Possess)
 	//트레이너가 소유하고 있는 포켓몬 list
-	TArray<class APokemonBase*> Pokemons;
+	TArray<TObjectPtr<class APokemonBase>/*class APokemonBase**/> Pokemons;
 
 	//지금 포켓몬을 소환한 상태인지 체크
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Possess)

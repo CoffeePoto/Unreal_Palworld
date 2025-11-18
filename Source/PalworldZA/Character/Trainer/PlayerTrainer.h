@@ -41,6 +41,11 @@ public:
 	// 공격 로직
 	void Throw();
 	void ThrowActionEnd(UAnimMontage* TargetMontage, bool IsProperlyEnded);
+	
+private:
+	//델리게이트 바인딩을 위한 함수
+	void HitDelegateEntrance();
+	void DeadDelegateEntrance();
 
 protected:
 	//Camera Section

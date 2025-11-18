@@ -24,6 +24,7 @@ float ANonPlayerTrainer::GetAIDetectRange()
 
 UObject* ANonPlayerTrainer::GetPokemon()
 {
+	if (Pokemons.IsEmpty()) return nullptr;
 	UObject* PokemonObject = Cast<UObject>(Pokemons[SelectedPokemon]);
 	if (PokemonObject)
 	{

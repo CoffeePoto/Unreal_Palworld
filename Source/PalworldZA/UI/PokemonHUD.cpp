@@ -17,6 +17,7 @@ void UPokemonHUD::NativeConstruct()
 	UISlot = Cast<UPokemonSlot>(GetWidgetFromName(TEXT("Pokemon1")));
 	ensureAlways(UISlot);
 	PokemonInfo = Cast<UPokemonStat>(GetWidgetFromName(TEXT("PokemonStat")));
+	ensureAlways(PokemonInfo);
 	//this is for test
 	UISlot->SetPokemonThumbnail(FIREFOX);
 

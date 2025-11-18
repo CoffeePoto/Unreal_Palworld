@@ -28,13 +28,13 @@ bool UBTDecorator_TrainerInRange::CalculateRawConditionValue(UBehaviorTreeCompon
 		return false;
 	}
 
-	APawn* MyTargetPokemon = Cast<APawn>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(BBKEY_MYTARGETPOKEMON));
-	if (!MyTargetPokemon)
+	APawn* TargetPokemon = Cast<APawn>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(BBKEY_TARGETPOKEMON));
+	if (!TargetPokemon)
 	{
 		return false;
 	}
 
-	float DistacnceToTarget = ControllingPawn->GetDistanceTo(MyTargetPokemon);
+	float DistacnceToTarget = ControllingPawn->GetDistanceTo(TargetPokemon);
 	float AttackRangeWithRadius = AIPawn->GetAIPatrolRadius();
 	bResult = DistacnceToTarget <= AttackRangeWithRadius;
 	return bResult;

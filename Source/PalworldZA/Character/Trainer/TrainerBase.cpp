@@ -40,8 +40,8 @@ void ATrainerBase::SummonPokemon()
 	//유효성 검사
 	if (Pokemons.IsValidIndex(SelectedPokemon))
 	{
-		Pokemons[SelectedPokemon]->SetActive(SummonLocation);
 		CurrentPokemon = Pokemons[SelectedPokemon];
+		Pokemons[SelectedPokemon]->SetActive(SummonLocation);
 	}
 }
 
