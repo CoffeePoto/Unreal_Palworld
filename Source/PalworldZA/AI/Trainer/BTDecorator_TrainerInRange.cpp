@@ -2,4 +2,40 @@
 
 
 #include "AI/Trainer/BTDecorator_TrainerInRange.h"
+#include "NpcBBKeys.h"
+#include "AIController.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "Interface/TrainerInterface/NPTrainerAIInterface.h"
 
+UBTDecorator_TrainerInRange::UBTDecorator_TrainerInRange()
+{
+	NodeName = TEXT("TrainerInRange");
+}
+
+bool UBTDecorator_TrainerInRange::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
+{
+	bool bResult = Super::CalculateRawConditionValue(OwnerComp, NodeMemory);
+
+	APawn* ControllingPawn = OwnerComp.GetAIOwner()->GetPawn();
+	if (!ControllingPawn)
+	{
+		return false;
+	}
+
+	INPTrainerAIInterface* AIPawn = Cast<INPTrainerAIInterface>(ControllingPawn);
+	if (!AIPawn)
+	{
+		return false;
+	}
+
+	APawn* MyTargetPokemon = Cast<APawn>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(BBKEY_MYTARGETPOKEMON));
+	if (!MyTargetPokemon)
+	{
+		return false;
+	}
+
+	float DistacnceToTarget = ControllingPawn->GetDistanceTo(MyTargetPokemon);
+	float AttackRangeWithRadius = AIPawn->GetAIPatrolRadius();
+	bResult = DistacnceToTarget <= AttackRangeWithRadius;
+	return bResult;
+}

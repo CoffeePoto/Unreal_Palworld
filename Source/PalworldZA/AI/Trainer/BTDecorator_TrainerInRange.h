@@ -14,4 +14,9 @@ class PALWORLDZA_API UBTDecorator_TrainerInRange : public UBTDecorator
 {
 	GENERATED_BODY()
 	
+public:
+	UBTDecorator_TrainerInRange();
+
+protected:
+	virtual bool CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const override;
 };
