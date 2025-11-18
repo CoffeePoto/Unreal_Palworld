@@ -48,7 +48,7 @@ void ALightningBase::ExecuteSkill()
 		SkillEndTimer,
 		this,
 		&ASkillBase::OnEndSkill,  // 2초 뒤 실행할 함수
-		0.5f,                     // 0.5초 뒤
+		1.0f,                     // 1초 뒤
 		false                     // 반복 여부 (false = 한 번만)
 	);
 }

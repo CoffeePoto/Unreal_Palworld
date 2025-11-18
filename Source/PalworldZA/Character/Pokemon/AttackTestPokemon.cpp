@@ -37,7 +37,7 @@ AAttackTestPokemon::AAttackTestPokemon()
 
 	PokemonSkills.Add(NewSkill);
 
-	static ConstructorHelpers::FObjectFinder<UPokemonSkillDataAsset> NewSkillRef3(TEXT("/Game/Data/Skill/Normal/DA_SPABuff.DA_SPABuff"));
+	static ConstructorHelpers::FObjectFinder<UPokemonSkillDataAsset> NewSkillRef3(TEXT("/Game/Data/Skill/Fire/DA_FireTornado.DA_FireTornado"));
 	if (NewSkillRef3.Succeeded())
 	{
 		NewSkill.Skill = NewSkillRef3.Object;

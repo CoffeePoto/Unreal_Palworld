@@ -1,27 +1,33 @@
-ï»¿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Skill/Pokemon/SkillBase.h"
-#include "FireSlash.generated.h"
+#include "FireTornado.generated.h"
 
-
+/**
+ * 
+ */
 UCLASS()
-class PALWORLDZA_API AFireSlash : public ASkillBase
+class PALWORLDZA_API AFireTornado : public ASkillBase
 {
 	GENERATED_BODY()
-
 public:
-	AFireSlash();
+	AFireTornado();
 
 	virtual void PostInitializeComponents() override;
 
-	
+
 	virtual void BeginPlay() override;
 
-	// ìŠ¤í‚¬ ì‹¤í–‰
+	virtual void Tick(float DeltaTime) override;
+
+	// ½ºÅ³ ½ÇÇà
 	virtual void ExecuteSkill() override;
+
+	// ½ºÅ³ Á¾·á
+	virtual void OnEndSkill() override;
 
 protected:
 
@@ -35,15 +41,25 @@ protected:
 		const FHitResult& SweepResult
 	);
 
-	// ì½œë¦¬ì „ í™œì„±í™” 
+	// ÄÝ¸®Àü È°¼ºÈ­ 
 	UFUNCTION()
 	void ActivateCollision();
 
 protected:
 
-	UPROPERTY()
-	TObjectPtr<class USphereComponent> HitCollision;
+	TObjectPtr<class UCapsuleComponent> HitCollision;
 
 	UPROPERTY()
 	TObjectPtr<class UTimelineComponent> AttackTimeline;
+
+private:
+	
+	
+
+	const FVector START_SIZE = FVector(1.0f, 1.0f, 40.0f);
+	const FVector MAX_SIZE = FVector(40.0f, 40.0f, 40.0f);
+	FVector CurrentSize;
+
+	float InterpSpeed = 1.0f;
+	
 };
