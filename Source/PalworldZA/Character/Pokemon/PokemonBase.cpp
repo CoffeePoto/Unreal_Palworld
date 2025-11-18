@@ -246,11 +246,11 @@ void APokemonBase::TargetActiveCheck()
 		SetTarget(nullptr);
 		return;
 	}
-
+	
 	IPokemonDataGetter* Getter = Cast<IPokemonDataGetter>(CurrentSkillTarget);
 	if (!Getter) { return; }
 
-	if (Getter->GetIsPokemonDown())
+	if (Getter->GetIsPokemonDown() || !Getter->GetIsActive())
 	{
 		SetTarget(nullptr);
 	}
@@ -484,6 +484,7 @@ bool APokemonBase::UsingSkill(uint8 SkillNumber)
 bool APokemonBase::SetActive(FVector Location)
 {
 	if (ActionState != EPokemonAction::NonCommand) { return false; }
+	if (CurrentHP <= ZERO) { return false; }
 
 	// 지정 위치로 이동
 	SetActorLocation(Location);
@@ -508,6 +509,7 @@ bool APokemonBase::SetActive(FVector Location)
 		}
 	}
 
+	IsActive = true;
 	return true;
 }
 
@@ -539,6 +541,12 @@ bool APokemonBase::Deactive()
 		}
 	}
 
+	if (!Trainer)
+	{
+		Destroy();
+	}
+
+	IsActive = false;
 	return true;
 }
 

@@ -65,6 +65,9 @@ public:
 	// 포켓몬 기절 여부
 	virtual const bool GetIsPokemonDown() = 0;
 
+	// 포켓몬 활성 여부
+	virtual const bool GetIsActive() = 0;
+
 	// 포켓몬 스킬 데이터 
 	virtual void GetSkillData(TArray<FCurrentPokemonSkillData>& OutArray) const = 0;
 };
