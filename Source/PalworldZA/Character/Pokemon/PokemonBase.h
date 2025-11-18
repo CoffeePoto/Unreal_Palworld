@@ -140,7 +140,10 @@ public:	// 인터페이스 구현부 (IPokemonDataGetter) - 포켓몬이 주는
 	FORCEINLINE virtual const FString GetPokemonName() { return MyName; }
 
 	// 포켓몬 쓰러졌는지 여부 반환
-	FORCEINLINE virtual const bool GetIsPokemonDown() { return CurrentHP == ZERO; };
+	FORCEINLINE virtual const bool GetIsPokemonDown() { return CurrentHP == ZERO; }
+
+	// 포켓몬 활성 여부
+	FORCEINLINE virtual const bool GetIsActive() { return IsActive; }
 
 	virtual void GetSkillData(TArray<FCurrentPokemonSkillData>& OutArray) const override;
 
@@ -199,7 +202,7 @@ protected: // 자체 함수 구현부
 	float CalculateStatParameters(EPokemonBuffStat Stat, float DefaultStat);
 
 	// 포켓몬 기절 
-	void PokemonDown();
+	virtual void PokemonDown();
 
 	// 포켓몬 기절 이벤트 처리 함수
 	void PokemonDownEventFunc();
@@ -296,6 +299,9 @@ protected: // 파라미터 변수
 
 	// 예약된 스킬 번호
 	int ReservationSkillNumber = -1;
+
+	// 활성 비활성 확인
+	bool IsActive = true;
 
 private: // Base내에서만 사용하는 상수
 	

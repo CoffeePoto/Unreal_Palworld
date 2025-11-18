@@ -26,6 +26,7 @@ EBTNodeResult::Type UBTTask_TurnToTarget::ExecuteTask(UBehaviorTreeComponent& Ow
 
 	// NPC가 바라볼 방향 구하기.
 	LookVector = TargetPawn->GetActorLocation() - ControllingPawn->GetActorLocation();
+	LookVector.Z = 0.0f;
 
 	// 회전 값 구하기.
 	TargetRot = FRotationMatrix::MakeFromX(LookVector).Rotator();
