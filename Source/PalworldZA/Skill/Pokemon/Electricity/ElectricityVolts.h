@@ -4,22 +4,21 @@
 
 #include "CoreMinimal.h"
 #include "Skill/Pokemon/SkillBase.h"
-#include "FireSlash.generated.h"
+#include "ElectricityVolts.generated.h"
 
-
+/**
+ * 
+ */
 UCLASS()
-class PALWORLDZA_API AFireSlash : public ASkillBase
+class PALWORLDZA_API AElectricityVolts : public ASkillBase
 {
 	GENERATED_BODY()
 
 public:
-	AFireSlash();
+	AElectricityVolts();
 
-	virtual void PostInitializeComponents() override;
-	
 	virtual void BeginPlay() override;
 
-	// 스킬 실행
 	virtual void ExecuteSkill() override;
 
 protected:
@@ -45,4 +44,5 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<class UTimelineComponent> AttackTimeline;
+	
 };

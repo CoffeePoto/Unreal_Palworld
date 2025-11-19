@@ -19,6 +19,8 @@
 #include "Data/Pokemon/PokemonAnimSequenceData.h"
 #include "Data/Pokemon/PokemonSkillSet.h"
 
+#include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystemComponent.h"
 
 APokemonBase::APokemonBase()
 {
@@ -38,6 +40,13 @@ APokemonBase::APokemonBase()
 	}
 
 	CurrentHP = 1.0f;
+
+	// 포켓몬 등장시 이펙트 설정.
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> ShowUpEffectRef(TEXT("/Game/Asset/FXVarietyPack/Particles/Others/P_ky_hit2.P_ky_hit2"));
+	if (ShowUpEffectRef.Succeeded())
+	{
+		ShowUpEffect = ShowUpEffectRef.Object;
+	}
 }
 
 
@@ -488,6 +497,16 @@ bool APokemonBase::SetActive(FVector Location)
 
 	// 지정 위치로 이동
 	SetActorLocation(Location);
+
+	// 포켓몬 등장시 나올 이펙트 소환.
+	UParticleSystemComponent* PSC = UGameplayStatics::SpawnEmitterAtLocation(
+		GetWorld(),
+		ShowUpEffect,
+		Location,
+		FRotator::ZeroRotator,
+		true // AutoDestroy
+	);
+
 
 	// 캐릭터 가시화
 	SetActorHiddenInGame(false);

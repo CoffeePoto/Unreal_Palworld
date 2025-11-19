@@ -108,6 +108,7 @@ public: // 인터페이스 구현부 (IHardCommandReceiver)
 	// 스킬 실행 함수
 	virtual void ExecuteSkill() override;
 
+	// 스킬 예약.
 	virtual void ReservationSkill(int32 SkillNumber) override;
 
 public:	// 인터페이스 구현부 (IPokemonDataGetter) - 포켓몬이 주는
@@ -252,6 +253,9 @@ protected: // Has 변수
 	UPROPERTY()
 	TArray<TObjectPtr<AActor>> DamageCauserArray;
 
+	// 포켓몬 등장시 발생할 이펙트
+	UPROPERTY(EditAnywhere, Category = "Effect")
+	UParticleSystem* ShowUpEffect;
 
 protected: // 파라미터 변수
 

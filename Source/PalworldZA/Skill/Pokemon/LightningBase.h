@@ -30,7 +30,7 @@ protected:
 	AProjectileBase* SpawnProjectile(FVector Pos, FRotator Rot);
 
 protected:
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill")
 	TSubclassOf<AProjectileBase> LightningClass;
 
 	UPROPERTY()

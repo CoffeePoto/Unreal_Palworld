@@ -10,7 +10,7 @@ ALightningBase::ALightningBase()
 {
 	// 이펙트 로드.
 	static ConstructorHelpers::FClassFinder<AProjectileBase> LightningRef(TEXT(
-		"/Game/BluePrint/PokemonSkill/Fire/BP_FireLightningProjectile.BP_FireLightningProjectile_C"
+		"/Game/BluePrint/PokemonSkill/Electricity/BP_ElectricityLightningProjectile.BP_ElectricityLightningProjectile_C"
 	));
 
 	if (LightningRef.Succeeded())
