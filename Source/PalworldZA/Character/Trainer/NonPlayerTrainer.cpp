@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Character/Trainer/NonPlayerTrainer.h"
@@ -7,7 +7,7 @@
 
 ANonPlayerTrainer::ANonPlayerTrainer()
 {
-	//AIController ÇÒ´ç
+	//AIController í• ë‹¹
 	AIControllerClass = ANpcAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
@@ -15,13 +15,13 @@ ANonPlayerTrainer::ANonPlayerTrainer()
 	//{
 	//	FActorSpawnParameters SpawnParams;
 
-	//	// ÆÄ¶ó¹ÌÅÍ °ª ¼¼ÆÃ
+	//	// íŒŒë¼ë¯¸í„° ê°’ ì„¸íŒ…
 	//	SpawnParams.Owner = this;
 	//	SpawnParams.Instigator = GetInstigator();
 	//	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
 	//	//uint8 randPokemonIndex = FMath::RandRange(0, 5);
-	//	// Æ÷ÄÏ¸ó ½ºÆù 
+	//	// í¬ì¼“ëª¬ ìŠ¤í° 
 	//	CurrentPokemon = GetWorld()->SpawnActor<APokemonBase>(
 	//		PokemonClassArray[i],
 	//		this->GetActorLocation(),
@@ -47,12 +47,12 @@ void ANonPlayerTrainer::BeginPlay()
 	{
 		FActorSpawnParameters SpawnParams;
 
-		// ÆÄ¶ó¹ÌÅÍ °ª ¼¼ÆÃ
+		// íŒŒë¼ë¯¸í„° ê°’ ì„¸íŒ…
 		SpawnParams.Owner = this;
 		SpawnParams.Instigator = GetInstigator();
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
-		// Æ÷ÄÏ¸ó ½ºÆù 
+		// í¬ì¼“ëª¬ ìŠ¤í° 
 		CurrentPokemon = GetWorld()->SpawnActor<APokemonBase>(
 			PokemonClassArray[i],
 			this->GetActorLocation(),
@@ -95,6 +95,16 @@ UObject* ANonPlayerTrainer::GetPokemon()
 		return PokemonObject;
 	}
 	return nullptr;
+}
+
+void ANonPlayerTrainer::SetAITarget(UObject* TargetPokemon)
+{
+	APokemonBase* Target = Cast<APokemonBase>(TargetPokemon);
+	if (Target)
+	{
+		UE_LOG(LogTemp, Log, TEXT("ì í¬ì¼“ëª¬ ì§€ì • ì™„ë£Œ."))
+		CurrentPokemon->SetTarget(Target);
+	}
 }
 
 void ANonPlayerTrainer::AISummonPokemon()

@@ -28,6 +28,7 @@ protected:
 	virtual float GetAIDetectRange() override;
 	virtual float GetAITurnSpeed() override;
 	virtual UObject* GetPokemon() override;
+	virtual void SetAITarget(UObject* TargetPokemon) override;
 	virtual void AISummonPokemon() override;
 	virtual void AICommandSkills() override;
 };
