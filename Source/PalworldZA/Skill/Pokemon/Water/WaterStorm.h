@@ -34,5 +34,4 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<AProjectileBase> WaterStorm;
-
 };

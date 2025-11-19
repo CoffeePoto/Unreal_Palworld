@@ -39,7 +39,7 @@ void AGrassStorm::ExecuteSkill()
 	IProjectileController* PController = Cast<IProjectileController>(GrassStorm);
 
 	PController->SetDamageEvent(MakeDamageEvent());
-	PController->SetDestroyTimer(2.0f);
+	PController->SetDestroyTimer(3.0f);
 
 	FTimerHandle SkillEndTimer;
 
@@ -47,8 +47,8 @@ void AGrassStorm::ExecuteSkill()
 	GetWorldTimerManager().SetTimer(
 		SkillEndTimer,
 		this,
-		&ASkillBase::OnEndSkill,  // 2초 뒤 실행할 함수
-		2.0f,                     // 2초 뒤
+		&ASkillBase::OnEndSkill,  // 3초 뒤 실행할 함수
+		3.0f,                     // 3초 뒤
 		false                     // 반복 여부 (false = 한 번만)
 	);
 }

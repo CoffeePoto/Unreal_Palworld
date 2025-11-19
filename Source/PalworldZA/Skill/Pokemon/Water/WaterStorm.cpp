@@ -39,7 +39,7 @@ void AWaterStorm::ExecuteSkill()
 	IProjectileController* PController = Cast<IProjectileController>(WaterStorm);
 
 	PController->SetDamageEvent(MakeDamageEvent());
-	PController->SetDestroyTimer(2.0f);
+	PController->SetDestroyTimer(3.0f);
 
 	FTimerHandle SkillEndTimer;
 
@@ -47,8 +47,8 @@ void AWaterStorm::ExecuteSkill()
 	GetWorldTimerManager().SetTimer(
 		SkillEndTimer,
 		this,
-		&ASkillBase::OnEndSkill,  // 2초 뒤 실행할 함수
-		2.0f,                     // 2초 뒤
+		&ASkillBase::OnEndSkill,  // 2.5초 뒤 실행할 함수
+		3.0f,                     // 2.5초 뒤
 		false                     // 반복 여부 (false = 한 번만)
 	);
 }
