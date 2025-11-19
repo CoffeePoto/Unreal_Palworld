@@ -78,7 +78,7 @@ float ANonPlayerTrainer::GetAIPatrolRadius()
 
 float ANonPlayerTrainer::GetAIDetectRange()
 {
-	return 800.0f;
+	return 2000.0f;
 }
 
 float ANonPlayerTrainer::GetAITurnSpeed()
