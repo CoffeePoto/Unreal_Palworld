@@ -117,7 +117,6 @@ void ANonPlayerTrainer::AISummonPokemon()
 	if (!CurrentPokemon) return;
 	FOnPokemonDown CheckPokemonDown;
 	CheckPokemonDown.BindUObject(this, &ANonPlayerTrainer::ClearBlackBoardTargetPokemon);
-	CheckPokemonDown.ExecuteIfBound();
 
 	Commander->BindOnPokemonDown(CheckPokemonDown);
 }
