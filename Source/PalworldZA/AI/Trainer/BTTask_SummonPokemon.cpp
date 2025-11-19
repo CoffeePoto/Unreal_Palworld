@@ -11,9 +11,7 @@ UBTTask_SummonPokemon::UBTTask_SummonPokemon()
 {
 }
 
-EBTNodeResult::Type UBTTask_SummonPokemon::ExecuteTask(
-	UBehaviorTreeComponent& OwnerComp, 
-	uint8* NodeMemory)
+EBTNodeResult::Type UBTTask_SummonPokemon::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	EBTNodeResult::Type Result = Super::ExecuteTask(OwnerComp, NodeMemory);
 
@@ -32,6 +30,7 @@ EBTNodeResult::Type UBTTask_SummonPokemon::ExecuteTask(
 
 	AIPawn->AISummonPokemon();
 	OwnerComp.GetBlackboardComponent()->SetValueAsObject(BBKEY_MYPOKEMON, AIPawn->GetPokemon());
+	AIPawn->SetAITarget(OwnerComp.GetBlackboardComponent()->GetValueAsObject(BBKEY_TARGETPOKEMON));
 
-	return EBTNodeResult::Type();
+	return EBTNodeResult::Succeeded;
 }
