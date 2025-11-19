@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -27,39 +27,39 @@ public:
 
 	void InitializeSkill(APokemonBase* InUser);
 
-	// ½ºÅ³ ½ÇÇà
+	// ìŠ¤í‚¬ ì‹¤í–‰
 	virtual void ExecuteSkill() override;
 
-	// ½ºÅ³ Á¾·á ½Ã
+	// ìŠ¤í‚¬ ì¢…ë£Œ ì‹œ
 	UFUNCTION()
 	virtual void OnEndSkill() override;
 
-	// ½ºÅ³ Á¤º¸ ¹İÈ¯
+	// ìŠ¤í‚¬ ì •ë³´ ë°˜í™˜
 	virtual const FPokemonSkillData& GetSkillData() override;
 
-	// À¯Àú ¼¼ÆÃ
+	// ìœ ì € ì„¸íŒ…
 	virtual void SetUser(APokemonBase* NewUser) override;
 
-	// µ¥ÀÌÅÍ ¼¼ÆÃ
+	// ë°ì´í„° ì„¸íŒ…
 	virtual void SetSkillData(const FPokemonSkillData& SkillData) override;
 
 protected:
 
-	// µ¥¹ÌÁö °è»ê Ã³¸® ÇÔ¼ö
+	// ë°ë¯¸ì§€ ê³„ì‚° ì²˜ë¦¬ í•¨ìˆ˜
 	float DamageCalculator();
 
-	// µ¥ÀÌÅÍ ·Îµå ÇÔ¼ö
+	// ë°ì´í„° ë¡œë“œ í•¨ìˆ˜
 	bool SkillDataLoad();
 
-	// Äİ¸®Àü °Ë»ö ÇÔ¼ö
+	// ì½œë¦¬ì „ ê²€ìƒ‰ í•¨ìˆ˜
 	UShapeComponent* SearchCollision(FString Name);
 
-	// µ¥¹ÌÁö ÀÌº¥Æ® »ı¼º ÇÔ¼ö
+	// ë°ë¯¸ì§€ ì´ë²¤íŠ¸ ìƒì„± í•¨ìˆ˜
 	FPokemonDamageEvent MakeDamageEvent();
 
 protected:
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<APokemonBase> User;
 
 	UPROPERTY()

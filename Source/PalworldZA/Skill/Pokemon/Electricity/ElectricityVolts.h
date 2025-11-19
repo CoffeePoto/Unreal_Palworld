@@ -9,40 +9,31 @@
 /**
  * 
  */
+
+class AProjectileBase;
+
 UCLASS()
 class PALWORLDZA_API AElectricityVolts : public ASkillBase
 {
 	GENERATED_BODY()
 
-//public:
-//	AElectricityVolts();
-//
-//	virtual void BeginPlay() override;
-//
-//	virtual void ExecuteSkill() override;
-//
-//protected:
-//
-//	UFUNCTION()
-//	void OnSkillOverlap(
-//		UPrimitiveComponent* OverlappedComp,
-//		AActor* OtherActor,
-//		UPrimitiveComponent* OtherComp,
-//		int32 OtherBodyIndex,
-//		bool bFromSweep,
-//		const FHitResult& SweepResult
-//	);
-//
-//	// 콜리전 활성화 
-//	UFUNCTION()
-//	void ActivateCollision();
-//
-//protected:
-//
-//	UPROPERTY()
-//	TObjectPtr<class USphereComponent> HitCollision;
-//
-//	UPROPERTY()
-//	TObjectPtr<class UTimelineComponent> AttackTimeline;
+public:
+	AElectricityVolts();
+
+	// 스킬 실행
+	virtual void ExecuteSkill() override;
+
+protected:
+
+	// 발사체 소환
+	AProjectileBase* SpawnProjectile(FVector Pos, FRotator Rot);
+
+protected:
+
+	UPROPERTY()
+	TSubclassOf<AProjectileBase> ElectricityVoltsClass;
+
+	UPROPERTY()
+	TObjectPtr<AProjectileBase> ElectricityVolts;
 	
 };

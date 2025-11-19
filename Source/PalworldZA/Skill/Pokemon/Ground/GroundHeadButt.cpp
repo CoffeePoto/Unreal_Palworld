@@ -1,30 +1,33 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Slash.h"
+
+#include "Skill/Pokemon/Ground/GroundHeadButt.h"
+#include "GroundHeadButt.h"
 #include "Components/SphereComponent.h"
 #include "Components/TimelineComponent.h"
 #include "Game/GameSingleton.h"
+#include "Interface/PokemonInterface/ProjectileController.h"
 
-ASlash::ASlash()
+AGroundHeadButt::AGroundHeadButt()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	AttackTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("AttackTimeline"));
 }
 
-void ASlash::PostInitializeComponents()
+void AGroundHeadButt::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	
+
 	// 타임 라인 생성
 	HitCollision = Cast<USphereComponent>(SearchCollision(TEXT("HitBox")));
 	if (HitCollision)
 	{
 		HitCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		HitCollision->OnComponentBeginOverlap.AddDynamic(this, &ASlash::OnSkillOverlap);
+		HitCollision->OnComponentBeginOverlap.AddDynamic(this, &AGroundHeadButt::OnSkillOverlap);
 	}
 }
 
-void ASlash::BeginPlay()
+void AGroundHeadButt::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -47,7 +50,7 @@ void ASlash::BeginPlay()
 	}
 }
 
-void ASlash::ExecuteSkill()
+void AGroundHeadButt::ExecuteSkill()
 {
 	// User Null 체크
 	if (!User) { return; }
@@ -65,26 +68,25 @@ void ASlash::ExecuteSkill()
 	AttackTimeline->PlayFromStart();
 }
 
-void ASlash::OnSkillOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AGroundHeadButt::OnSkillOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (!OtherActor || OtherActor == this || OtherActor == GetOwner()) { return; }
 
 	UE_LOG(LogTemp, Log, TEXT("전달한 데미지: %f"), DamageCalculator());
-	
+
 	// 충돌 물체에 데이터 전달 
 	OtherActor->TakeDamage(
-		DamageCalculator(),          
-		MakeDamageEvent(),           
-		GetInstigatorController(),    
-		this                          
+		DamageCalculator(),
+		MakeDamageEvent(),
+		GetInstigatorController(),
+		this
 	);
 }
 
-void ASlash::ActivateCollision()
+void AGroundHeadButt::ActivateCollision()
 {
 	if (HitCollision)
 	{
 		HitCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	}
 }
-
