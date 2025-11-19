@@ -14,35 +14,35 @@ class PALWORLDZA_API AElectricityVolts : public ASkillBase
 {
 	GENERATED_BODY()
 
-public:
-	AElectricityVolts();
-
-	virtual void BeginPlay() override;
-
-	virtual void ExecuteSkill() override;
-
-protected:
-
-	UFUNCTION()
-	void OnSkillOverlap(
-		UPrimitiveComponent* OverlappedComp,
-		AActor* OtherActor,
-		UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex,
-		bool bFromSweep,
-		const FHitResult& SweepResult
-	);
-
-	// 콜리전 활성화 
-	UFUNCTION()
-	void ActivateCollision();
-
-protected:
-
-	UPROPERTY()
-	TObjectPtr<class USphereComponent> HitCollision;
-
-	UPROPERTY()
-	TObjectPtr<class UTimelineComponent> AttackTimeline;
+//public:
+//	AElectricityVolts();
+//
+//	virtual void BeginPlay() override;
+//
+//	virtual void ExecuteSkill() override;
+//
+//protected:
+//
+//	UFUNCTION()
+//	void OnSkillOverlap(
+//		UPrimitiveComponent* OverlappedComp,
+//		AActor* OtherActor,
+//		UPrimitiveComponent* OtherComp,
+//		int32 OtherBodyIndex,
+//		bool bFromSweep,
+//		const FHitResult& SweepResult
+//	);
+//
+//	// 콜리전 활성화 
+//	UFUNCTION()
+//	void ActivateCollision();
+//
+//protected:
+//
+//	UPROPERTY()
+//	TObjectPtr<class USphereComponent> HitCollision;
+//
+//	UPROPERTY()
+//	TObjectPtr<class UTimelineComponent> AttackTimeline;
 	
 };

@@ -3,14 +3,14 @@
 
 #include "Skill/Pokemon/Electricity/ElectricityVolts.h"
 
-AElectricityVolts::AElectricityVolts()
-{
-}
-
-void AElectricityVolts::BeginPlay()
-{
-}
-
-void AElectricityVolts::ExecuteSkill()
-{
-}
+//AElectricityVolts::AElectricityVolts()
+//{
+//}
+//
+//void AElectricityVolts::BeginPlay()
+//{
+//}
+//
+//void AElectricityVolts::ExecuteSkill()
+//{
+//}
