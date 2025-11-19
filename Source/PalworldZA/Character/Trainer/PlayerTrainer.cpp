@@ -129,6 +129,7 @@ void APlayerTrainer::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	//이젠 필요없음.
+
 }
 
 void APlayerTrainer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -340,7 +341,6 @@ void APlayerTrainer::Look(const FInputActionValue& value)
 
 void APlayerTrainer::SkillMode()
 {
-	// UseSkill = true;
 
 	// 이미 스킬 진행 중이면 종료.
 	if (UseSkill)
@@ -351,25 +351,75 @@ void APlayerTrainer::SkillMode()
 	// 스킬 시작.
 	UseSkill = true;
 
-	//// 걷다가 멈추고 skill
-	//GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 
-	//// Todo. 몽타주
-	//UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	//AnimInstance->Montage_Play(SkillActionMontage, 1.5f);
 
-	//FOnMontageEnded EndDelegate;
-	//EndDelegate.BindUObject(this, &APlayerTrainer::ReleaseSkillMode);
-	//AnimInstance->Montage_SetEndDelegate(EndDelegate, SkillActionMontage);
+	// 1) 지금 선택된 내 포켓몬 가져오기
+	APokemonBase* MyPokemon = nullptr;
+	if (Pokemons.IsValidIndex(SelectedPokemon))
+	{
+		MyPokemon = Pokemons[SelectedPokemon];
+	}
+
+	// 2) 그 포켓몬이 바라보고 있는 타겟 포켓몬 가져오기
+	if (MyPokemon)
+	{
+		APokemonBase* TargetPokemon = Cast<APokemonBase>(MyPokemon->GetTarget()); 
+
+		if (TargetPokemon && IsValid(TargetPokemon))
+		{
+			FVector MyLoc = GetActorLocation();
+			FVector TargetLoc = TargetPokemon->GetActorLocation();
+
+			// 수평 방향만 사용 (위/아래 각도는 무시)
+			FVector Dir = TargetLoc - MyLoc;
+			Dir.Z = 0.0f;
+
+			if (!Dir.IsNearlyZero())
+			{
+				FRotator LookRot = Dir.Rotation();
+				LookRot.Pitch = 0.0f;
+				LookRot.Roll = 0.0f;
+
+				SetActorRotation(LookRot);
+			}
+		}
+	}
+
+
+	// 입력 통째로 막기
+	if (APlayerController* PC = Cast<APlayerController>(GetController()))
+	{
+		DisableInput(PC);
+	}
+
+	// 걷다가 멈추고 skill
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+
+	//몽타주 애니메이션
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	AnimInstance->Montage_Play(SkillActionMontage, 1.5f);
+
+	FOnMontageEnded EndDelegate;
+	EndDelegate.BindUObject(this, &APlayerTrainer::ReleaseSkillMode);
+	AnimInstance->Montage_SetEndDelegate(EndDelegate, SkillActionMontage);
 }
 
 void APlayerTrainer::ReleaseSkillMode(UAnimMontage* TargetMontage, bool IsProperlyEnded)
 {
-	//UseSkill = false;
-
 	// skill 종료.
 	UseSkill = false;
-	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+
+	// 입력 다시 켜기
+	if (APlayerController* PC = Cast<APlayerController>(GetController()))
+	{
+		EnableInput(PC);
+	}
+
+	 // 걷기 모드로 복귀.
+    if (UCharacterMovementComponent* MoveComp = GetCharacterMovement())
+    {
+        MoveComp->SetMovementMode(EMovementMode::MOVE_Walking);
+    }
 }
 
 void APlayerTrainer::Throw()
