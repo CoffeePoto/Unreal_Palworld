@@ -55,6 +55,17 @@ void ANpcAIController::StopAI()
 	}
 }
 
+void ANpcAIController::FlushBlackBoardKey()
+{
+	//사용할 블랙보드 지정
+	UBlackboardComponent* BlackboardComponent = Blackboard.Get();
+
+	if (UseBlackboard(BBAsset, BlackboardComponent))
+	{
+		Blackboard->SetValueAsObject(BBKEY_MYPOKEMON, nullptr);
+	}
+}
+
 void ANpcAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);

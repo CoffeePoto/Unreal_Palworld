@@ -352,12 +352,13 @@ void APokemonBase::PokemonDown()
 
 void APokemonBase::PokemonDownEventFunc()
 {
-	Deactive();
 
 	if (PokemonDownEvents.IsBound())
 	{
 		PokemonDownEvents.Execute();
 	}
+
+	Deactive();
 }
 
 void APokemonBase::HitInnerEvent(APawn* Attacker)

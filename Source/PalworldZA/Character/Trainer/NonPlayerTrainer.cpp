@@ -4,6 +4,7 @@
 #include "Character/Trainer/NonPlayerTrainer.h"
 #include "AI/Trainer/NpcAIController.h"
 #include "Character/Pokemon/PokemonBase.h"
+#include "Interface/PokemonInterface/CommandReceiver.h"
 
 ANonPlayerTrainer::ANonPlayerTrainer()
 {
@@ -109,13 +110,35 @@ void ANonPlayerTrainer::SetAITarget(UObject* TargetPokemon)
 
 void ANonPlayerTrainer::AISummonPokemon()
 {
-	uint8 randomSelect = FMath::RandRange(0, Pokemons.Num());
-	SelectedPokemon = randomSelect;
+	//uint8 randomSelect = FMath::RandRange(0, Pokemons.Num());
+	//SelectedPokemon = randomSelect;
 	SummonPokemon();
+	ICommandReceiver* Commander = Cast<ICommandReceiver>(CurrentPokemon);
+	if (!CurrentPokemon) return;
+	FOnPokemonDown CheckPokemonDown;
+	CheckPokemonDown.BindUObject(this, &ANonPlayerTrainer::ClearBlackBoardTargetPokemon);
+	CheckPokemonDown.ExecuteIfBound();
+
+	Commander->BindOnPokemonDown(CheckPokemonDown);
 }
 
 void ANonPlayerTrainer::AICommandSkills()
 {
 	uint8 randomSelect = FMath::RandRange(0, 3);
 	CommandSkills(randomSelect);
+}
+
+void ANonPlayerTrainer::ClearBlackBoardTargetPokemon()
+{
+	ANpcAIController* AIController = Cast<ANpcAIController>(GetController());
+	if (AIController)
+	{
+		AIController->FlushBlackBoardKey();
+	}
+	SelectedPokemon++;
+
+	if (Pokemons.Num() <= SelectedPokemon)
+	{
+		Destroy();
+	}
 }

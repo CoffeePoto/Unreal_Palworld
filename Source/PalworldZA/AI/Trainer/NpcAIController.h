@@ -21,6 +21,8 @@ public:
 
 	void StopAI();
 
+	void FlushBlackBoardKey();
+
 protected:
 	virtual void OnPossess(APawn* InPawn) override;
 

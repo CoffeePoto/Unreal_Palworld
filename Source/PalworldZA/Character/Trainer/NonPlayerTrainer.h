@@ -24,6 +24,7 @@ protected:
 	virtual void BeginPlay() override;
 
 protected:
+	//Interface
 	virtual float GetAIPatrolRadius() override;
 	virtual float GetAIDetectRange() override;
 	virtual float GetAITurnSpeed() override;
@@ -31,4 +32,7 @@ protected:
 	virtual void SetAITarget(UObject* TargetPokemon) override;
 	virtual void AISummonPokemon() override;
 	virtual void AICommandSkills() override;
+
+private:
+	void ClearBlackBoardTargetPokemon();
 };

@@ -17,7 +17,6 @@
 #include "Character/Pokemon/PokemonBase.h"
 #include "Interface/PokemonInterface/CommandReceiver.h"
 //안넣고 싶었지만 타게팅을 위해서
-//#include "Character/Trainer/NonPlayerTrainer.h"
 #include "Interface/TrainerInterface/NPTrainerAIInterface.h"
 
 #include "EnhancedInputSubsystems.h"
@@ -164,6 +163,7 @@ void APlayerTrainer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 void APlayerTrainer::FocusOn()
 {
+	if (CurrentPokemon == nullptr) return;
 	//키입력 F가 입력되고 있으면 FocusOn 함수 호출
 	//Test
 	UE_LOG(LogTemp, Log, TEXT("FocusOn 함수 호출"));
@@ -175,8 +175,11 @@ void APlayerTrainer::FocusOn()
 	FVector Start = GetActorLocation()
 		+ GetActorForwardVector() 
 		* GetCapsuleComponent()->GetScaledCapsuleRadius();
-	//FVector Start =
+
 	FVector End = Start + GetActorForwardVector() * DetectRange;//감지거리 hardcoding
+
+	//FVector Start = Camera->GetComponentLocation() + FVector(0.0f, 0.0f, 40.0f);
+	//FVector End = Start + Camera->GetForwardVector() * DetectRange;
 
 	FCollisionQueryParams Params(
 		SCENE_QUERY_STAT(TrainerDetect),
@@ -208,6 +211,11 @@ void APlayerTrainer::FocusOn()
 				if (Trainer)
 				{
 					if (Trainer->GetController() == UGameplayStatics::GetPlayerController(this, 0)) return;
+					else
+					{
+						UE_LOG(LogTemp, Log, TEXT("NPC포켓몬 탐색 성공"));
+						CurrentPokemon->SetTarget(TargetPokemon);
+					}
 				}
 				else
 				{
@@ -223,12 +231,11 @@ void APlayerTrainer::FocusOn()
 			INPTrainerAIInterface* OpponentPlayer = Cast<INPTrainerAIInterface>(HitTarget.GetActor());
 			if (OpponentPlayer)
 			{
+				if (OpponentPlayer->GetPokemon() == nullptr) return;
 				APokemonBase* NPCPokemon = Cast<APokemonBase>(OpponentPlayer->GetPokemon());
-				if (NPCPokemon)
-				{
-					UE_LOG(LogTemp, Log, TEXT("NPC 트레이너 소유 포켓몬 주시"));
-					CurrentPokemon->SetTarget(NPCPokemon);
-				}
+				if (!NPCPokemon) return;
+				UE_LOG(LogTemp, Log, TEXT("NPC 트레이너 소유 포켓몬 주시"));
+				CurrentPokemon->SetTarget(NPCPokemon);
 			}
 		}
 	}
@@ -251,6 +258,7 @@ void APlayerTrainer::FocusOn()
 		CapsuleOrigin,
 		CapsuleHalfHeight,
 		DetectRadius,
+		//FRotationMatrix::MakeFromZ(Camera->GetForwardVector()).ToQuat(),
 		FRotationMatrix::MakeFromZ(GetActorForwardVector()).ToQuat(),
 		DrawColor,
 		false,
@@ -399,14 +407,15 @@ void APlayerTrainer::SkillMode()
 	}
 
 
-	// 입력 통째로 막기
-	if (APlayerController* PC = Cast<APlayerController>(GetController()))
-	{
-		DisableInput(PC);
-	}
+	//// 입력 통째로 막기
+	//if (APlayerController* PC = Cast<APlayerController>(GetController()))
+	//{
+	//	DisableInput(PC);
+	//}
 
 	// 걷다가 멈추고 skill
-	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+	//GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+	GetCharacterMovement()->MaxWalkSpeed = 0.0f;
 
 	//몽타주 애니메이션
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
@@ -422,16 +431,17 @@ void APlayerTrainer::ReleaseSkillMode(UAnimMontage* TargetMontage, bool IsProper
 	// skill 종료.
 	UseSkill = false;
 
-	// 입력 다시 켜기
-	if (APlayerController* PC = Cast<APlayerController>(GetController()))
-	{
-		EnableInput(PC);
-	}
+	//// 입력 다시 켜기
+	//if (APlayerController* PC = Cast<APlayerController>(GetController()))
+	//{
+	//	EnableInput(PC);
+	//}
 
 	 // 걷기 모드로 복귀.
     if (UCharacterMovementComponent* MoveComp = GetCharacterMovement())
     {
         MoveComp->SetMovementMode(EMovementMode::MOVE_Walking);
+		MoveComp->MaxWalkSpeed = 700.0f;
     }
 }
 
