@@ -25,6 +25,7 @@ public:
 
 	virtual float GetAIPatrolRadius() = 0;
 	virtual float GetAIDetectRange() = 0;
+	virtual float GetAITurnSpeed() = 0;
 	virtual UObject* GetPokemon() = 0;
 	virtual void AISummonPokemon() = 0;
 	virtual void AICommandSkills() = 0;

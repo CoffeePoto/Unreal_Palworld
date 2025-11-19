@@ -40,6 +40,6 @@ protected:
 	TObjectPtr<class APokemonBase> CurrentPokemon;
 
 	//배열 안에서 포켓몬을 선택하기 위한 변수
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Possess)
-	uint8 SelectedPokemon;
+	UPROPERTY(EditAnywhere)
+	int8 SelectedPokemon;
 };

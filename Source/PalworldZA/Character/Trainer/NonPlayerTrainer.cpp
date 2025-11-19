@@ -39,6 +39,37 @@ ANonPlayerTrainer::ANonPlayerTrainer()
 	//}
 }
 
+void ANonPlayerTrainer::BeginPlay()
+{
+	Super::BeginPlay();
+
+	for (int i = 0; i < 3; ++i)
+	{
+		FActorSpawnParameters SpawnParams;
+
+		// 파라미터 값 세팅
+		SpawnParams.Owner = this;
+		SpawnParams.Instigator = GetInstigator();
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+		// 포켓몬 스폰 
+		CurrentPokemon = GetWorld()->SpawnActor<APokemonBase>(
+			PokemonClassArray[i],
+			this->GetActorLocation(),
+			GetActorRotation(),
+			SpawnParams
+		);
+
+		if (CurrentPokemon)
+		{
+			CurrentPokemon->SetTrainer(this);
+			CurrentPokemon->Deactive();
+
+			Pokemons.Add(CurrentPokemon);
+		}
+	}
+}
+
 float ANonPlayerTrainer::GetAIPatrolRadius()
 {
 	return 800.0f;
@@ -49,10 +80,16 @@ float ANonPlayerTrainer::GetAIDetectRange()
 	return 400.0f;
 }
 
+float ANonPlayerTrainer::GetAITurnSpeed()
+{
+	return 2.0f;
+}
+
 UObject* ANonPlayerTrainer::GetPokemon()
 {
 	if (Pokemons.IsEmpty()) return nullptr;
-	UObject* PokemonObject = Cast<UObject>(Pokemons[SelectedPokemon]);
+	//UObject* PokemonObject = Cast<UObject>(Pokemons[SelectedPokemon]);
+	UObject* PokemonObject = Cast<UObject>(CurrentPokemon);
 	if (PokemonObject)
 	{
 		return PokemonObject;

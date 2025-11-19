@@ -45,7 +45,7 @@ public:
 private:
 	//델리게이트 바인딩을 위한 함수
 	void HitDelegateEntrance();
-	void DeadDelegateEntrance();
+	//void DeadDelegateEntrance();
 
 protected:
 	//Camera Section

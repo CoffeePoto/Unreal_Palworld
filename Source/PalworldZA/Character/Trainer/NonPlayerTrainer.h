@@ -21,8 +21,12 @@ public:
 	ANonPlayerTrainer();
 
 protected:
+	virtual void BeginPlay() override;
+
+protected:
 	virtual float GetAIPatrolRadius() override;
 	virtual float GetAIDetectRange() override;
+	virtual float GetAITurnSpeed() override;
 	virtual UObject* GetPokemon() override;
 	virtual void AISummonPokemon() override;
 	virtual void AICommandSkills() override;

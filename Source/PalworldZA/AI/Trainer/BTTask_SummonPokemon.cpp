@@ -30,8 +30,8 @@ EBTNodeResult::Type UBTTask_SummonPokemon::ExecuteTask(
 		return EBTNodeResult::Failed;
 	}
 
-	OwnerComp.GetBlackboardComponent()->SetValueAsObject(BBKEY_MYPOKEMON, AIPawn->GetPokemon());
 	AIPawn->AISummonPokemon();
+	OwnerComp.GetBlackboardComponent()->SetValueAsObject(BBKEY_MYPOKEMON, AIPawn->GetPokemon());
 
 	return EBTNodeResult::Type();
 }
