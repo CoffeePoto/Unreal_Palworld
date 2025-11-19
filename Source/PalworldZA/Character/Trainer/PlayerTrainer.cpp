@@ -14,9 +14,11 @@
 #include "UI/PokemonSlot.h"
 #include "UI/PokemonStat.h"
 
-#include "Character/Pokemon/AttackTestPokemon.h"
 #include "Character/Pokemon/PokemonBase.h"
 #include "Interface/PokemonInterface/CommandReceiver.h"
+//안넣고 싶었지만 타게팅을 위해서
+//#include "Character/Trainer/NonPlayerTrainer.h"
+#include "Interface/TrainerInterface/NPTrainerAIInterface.h"
 
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
@@ -216,7 +218,18 @@ void APlayerTrainer::FocusOn()
 		}
 		else
 		{
-			UE_LOG(LogTemp, Log, TEXT("캐스팅 실패"));
+			UE_LOG(LogTemp, Log, TEXT("트레이너 충돌"));
+			//충돌 결과를 Interface로 캐스팅
+			INPTrainerAIInterface* OpponentPlayer = Cast<INPTrainerAIInterface>(HitTarget.GetActor());
+			if (OpponentPlayer)
+			{
+				APokemonBase* NPCPokemon = Cast<APokemonBase>(OpponentPlayer->GetPokemon());
+				if (NPCPokemon)
+				{
+					UE_LOG(LogTemp, Log, TEXT("NPC 트레이너 소유 포켓몬 주시"));
+					CurrentPokemon->SetTarget(NPCPokemon);
+				}
+			}
 		}
 	}
 
