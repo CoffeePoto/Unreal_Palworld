@@ -76,14 +76,15 @@ void UPokemonBillboardComponent::TickComponent(float DeltaTime, ELevelTick TickT
 	LocationBillboard();
 	CheackOwner();
 
-	//if (IsNeedViewer)
-	//{
-		UpdateBuff();
+	UpdateBuff();
+
+	if (IsNeedViewer)
+	{
 		UpdateHp();
 		UpdateType();
 		UpdateWild();
 		UpdateName();
-	//}
+	}
 }
 
 void UPokemonBillboardComponent::LocationBillboard()

@@ -14,9 +14,9 @@ void UPokemonBillboard::SetHpBar(float Percent)
 
 void UPokemonBillboard::SetPlayerPokemonView()
 {
-    //PB_HpBar->SetVisibility(ESlateVisibility::Hidden);
+    PB_HpBar->SetVisibility(ESlateVisibility::Hidden);
     //WBP_Buff->SetVisibility(ESlateVisibility::Hidden);
-    //WBP_Data->SetVisibility(ESlateVisibility::Hidden);
+    WBP_Data->SetVisibility(ESlateVisibility::Hidden);
     WBP_Skill->IsTrainer(true);
 }
 
