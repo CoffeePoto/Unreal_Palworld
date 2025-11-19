@@ -17,8 +17,19 @@ class PALWORLDZA_API ABrokenProp : public APokemonBase
 public:
 	void BeginPlay() override;
 
+	// 대미지 처리 함수 오버라이드.
+	virtual float TakeDamage(
+		float DamageAmount,
+		struct FDamageEvent const& DamageEvent,
+		class AController* EventInstigator,
+		AActor* DamageCauser) override;
+
 protected:
 
 	virtual void PokemonDown() override;
+
+protected:
+	UPROPERTY()
+	TObjectPtr<class UGeometryCollectionComponent> GeometryComponent;
 	
 };

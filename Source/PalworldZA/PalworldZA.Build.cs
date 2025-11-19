@@ -19,8 +19,11 @@ public class PalworldZA : ModuleRules
 			"SlateCore",
 			"NavigationSystem", 
 			"AIModule", 
-			"GameplayTasks"
-		});
+			"GameplayTasks",
+            "GeometryCollectionEngine",
+			"Chaos",
+			"ChaosSolverEngine"
+        });
 
         PublicIncludePaths.AddRange(new string[] {
             "PalworldZA"
