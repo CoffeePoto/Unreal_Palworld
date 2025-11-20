@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Data/Pokemon/PokemonEnum.h"
 #include "PokemonHUD.generated.h"
 
 /**
@@ -17,6 +18,11 @@ class PALWORLDZA_API UPokemonHUD : public UUserWidget
 public:
 	void SetSlotThumbnail(uint8 Index, const FString newPokemonName);
 	void SelectUI(uint8 Index);
+
+	void SetSkillSetting(uint8 Index, FString SkillName, float CoolTime, EPokemonType SkillType);
+	void StartSkillCoolDown(uint8 Index, float RemainingCoolTime);
+	void ShowSkillUI();
+	void HideSkillUI();
 
 	FORCEINLINE class UPokemonSlot* GetUISlot() { return UISlot; }
 	FORCEINLINE class UPokemonStat* GetStatUI() { return PokemonInfo; }
@@ -33,4 +39,7 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<class UPokemonStat> PokemonInfo;
+
+	UPROPERTY()
+	TArray<TObjectPtr<class USkillSetting>> SkillInfos;
 };

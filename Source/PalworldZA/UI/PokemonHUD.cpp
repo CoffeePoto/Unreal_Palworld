@@ -5,6 +5,7 @@
 #include "Components/HorizontalBox.h"
 #include "UI/PokemonSlot.h"
 #include "UI/PokemonStat.h"
+#include "UI/SkillSetting.h"
 
 
 void UPokemonHUD::NativeConstruct()
@@ -17,6 +18,16 @@ void UPokemonHUD::NativeConstruct()
 	ensureAlways(UISlot);
 	PokemonInfo = Cast<UPokemonStat>(GetWidgetFromName(TEXT("PokemonStat")));
 	ensureAlways(PokemonInfo);
+	for (int i = 0; i < 4; ++i)
+	{
+		FString SkillIndex = FString::Printf(TEXT("Skill%d"), i + 1);
+		USkillSetting* IndiviaulSkillSlot = Cast<USkillSetting>(GetWidgetFromName(FName(*SkillIndex)));
+		if (IndiviaulSkillSlot)
+		{
+			IndiviaulSkillSlot->SetVisibility(ESlateVisibility::Hidden);
+			SkillInfos.Add(IndiviaulSkillSlot);
+		}
+	}
 }
 
 void UPokemonHUD::SetSlotThumbnail(uint8 Index, const FString newPokemonName)
@@ -37,5 +48,33 @@ void UPokemonHUD::SelectUI(uint8 Index)
 	if (UISlot)
 	{
 		UISlot->Select();
+	}
+}
+
+void UPokemonHUD::SetSkillSetting(uint8 Index, FString SkillName, float CoolTime, EPokemonType SkillType)
+{
+	SkillInfos[Index]->SetSkillName(SkillName);
+	SkillInfos[Index]->SetCoolTime(CoolTime);
+	SkillInfos[Index]->SetTypeImage(SkillType);
+}
+
+void UPokemonHUD::StartSkillCoolDown(uint8 Index, float RemainingCoolTime)
+{
+	SkillInfos[Index]->SetCoolTime(RemainingCoolTime);
+}
+
+void UPokemonHUD::ShowSkillUI()
+{
+	for (int i = 0; i < 4; ++i)
+	{
+		SkillInfos[i]->SetVisibility(ESlateVisibility::Visible);
+	}
+}
+
+void UPokemonHUD::HideSkillUI()
+{
+	for (int i = 0; i < 4; ++i)
+	{
+		SkillInfos[i]->SetVisibility(ESlateVisibility::Hidden);
 	}
 }

@@ -18,6 +18,7 @@
 #include "Interface/PokemonInterface/CommandReceiver.h"
 //안넣고 싶었지만 타게팅을 위해서
 #include "Interface/TrainerInterface/NPTrainerAIInterface.h"
+#include "Interface/PokemonInterface/PokemonDataGetter.h"
 
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
@@ -372,6 +373,25 @@ void APlayerTrainer::SelectPokemonorSkill(const FInputActionValue& value)
 			UE_LOG(LogTemp, Log, TEXT("Skill Mode : %d"), intIndex);
 			//Pokemons[SelectedPokemon]->UsingSkill(intIndex);
 			CommandSkills(intIndex);
+			//UI에 쿨타임 계산
+			FEndPokemonSkill::FDelegate StartSkillCool;
+			StartSkillCool.BindLambda(
+				[this, intIndex]()
+				{
+					TArray<FCurrentPokemonSkillData> SkillArray;
+					IPokemonDataGetter* SkillDataGetter = Cast<IPokemonDataGetter>(CurrentPokemon);
+					if (SkillDataGetter)
+					{
+						SkillDataGetter->GetSkillData(SkillArray);
+						PokemonUI->StartSkillCoolDown(intIndex, SkillArray[intIndex].CoolDown);
+					}
+				}
+			);
+			ICommandReceiver* Commander = Cast<ICommandReceiver>(CurrentPokemon);
+			if (!Commander) return;
+			Commander->BindEndPokemonSkill(StartSkillCool);
+
+
 			// 걷다가 멈추고 skill
 			GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 
@@ -561,14 +581,40 @@ void APlayerTrainer::Throw()
 	PokemonInfo->UpdateCurrentHp(CurrentPokemon->GetPokemonHp());
 	PokemonInfo->SetTypeImage(CurrentPokemon->GetPokemonDefaultStat().Type1, CurrentPokemon->GetPokemonDefaultStat().Type2);
 
+	//스킬 정보 UI에 반영
+	TArray<FCurrentPokemonSkillData> SkillArray;
+	IPokemonDataGetter* SkillDataGetter = Cast<IPokemonDataGetter>(CurrentPokemon);
+	if (SkillDataGetter)
+	{
+		SkillDataGetter->GetSkillData(SkillArray);
+	}
+	for (int i = 0; i < 4; ++i)
+	{
+		PokemonUI->SetSkillSetting(i, SkillArray[i].SkillName, SkillArray[i].CoolDown, SkillArray[i].Type);
+	}
+	PokemonUI->ShowSkillUI();
+
 	//델리게이트 연결
 	ICommandReceiver* Commander = Cast<ICommandReceiver>(CurrentPokemon);
+	if (!Commander) return;
+	//피격 시 체력을 깎기 위해 연결한 델리게이트
 	FHitPokemon::FDelegate HitEventDelegate;
 	HitEventDelegate.BindUObject(this,&APlayerTrainer::HitDelegateEntrance);
 	FDelegateHandle Handle = Commander->BindHitPokemon(HitEventDelegate);
+
+	//사망 시 UI 변경을 위해 연결한 델리게이트
 	FOnPokemonDown DownEventDelegate;
-	DownEventDelegate.BindLambda([PokemonInfo]() { PokemonInfo->ShowDeadEvent(); });
+	DownEventDelegate.BindLambda(
+		[this]()
+		{
+			//PokemonInfo->ShowDeadEvent(); 
+			PokemonUI->GetStatUI()->ShowDeadEvent();
+			PokemonUI->HideSkillUI();
+			
+		}
+	);
 	Commander->BindOnPokemonDown(DownEventDelegate);
+	
 
 	// 애니메이션 part
 	// 이미 던지기 진행 중이면 종료.
