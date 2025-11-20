@@ -165,25 +165,16 @@ void APlayerTrainer::FocusOn()
 {
 	if (CurrentPokemon == nullptr) return;
 
-	const float DetectRange = 1000.0f;
+	const float DetectRange = 2000.0f;
 
-	// 수직 FOV
-	float VFOV = Camera->FieldOfView;
-
-	// 가로 세로 비율 (16 : 9) 
-	float Aspect = Camera->AspectRatio;
-
-	// 끝 거리 에서의 화면 세로 절반 길이
-	float HalfHeight = DetectRange * FMath::Tan(FMath::DegreesToRadians(VFOV * 0.5f));
-
-	// 끝 거리 에서의 화면 가로 절반 길이
-	float HalfWidth = HalfHeight * Aspect;
-
-	// 박스 반지름
-	FVector HalfSize(HalfWidth, HalfHeight, HalfHeight * 0.5f);
+	FVector HalfSize(
+		DetectRange * 0.5f,  // 앞뒤 길이
+		300.f,               // 좌우 범위 (좁게)
+		600.f                // 위아래 범위 (좁게)
+	);
 
 	// 시작 위치
-	FVector Start = Camera->GetComponentLocation();
+	FVector Start = Camera->GetComponentLocation() + Camera->GetForwardVector() * 30.f;
 
 	// 종료 위치
 	FVector End = Start + Camera->GetForwardVector() * DetectRange;
