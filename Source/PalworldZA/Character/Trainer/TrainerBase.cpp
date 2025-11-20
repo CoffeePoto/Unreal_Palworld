@@ -38,7 +38,7 @@ void ATrainerBase::SummonPokemon()
 	FVector SummonLocation = GetActorLocation() + FVector(
 		GetActorForwardVector().X * 300.0f,
 		GetActorForwardVector().Y * 300.0f,
-		0.0f);
+		50.0f);
 	
 	//유효성 검사
 	if (Pokemons.IsValidIndex(SelectedPokemon))
