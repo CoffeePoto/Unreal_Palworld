@@ -2,6 +2,7 @@
 
 
 #include "Skill/Pokemon/SkillBase.h"
+#include "Kismet/GameplayStatics.h"
 #include "Character/Pokemon/PokemonBase.h"
 #include "Data/Pokemon/PokemonStatData.h"
 
@@ -18,6 +19,7 @@ void ASkillBase::InitializeSkill(APokemonBase* InUser)
 
 void ASkillBase::ExecuteSkill()
 {
+
 }
 
 void ASkillBase::OnEndSkill()

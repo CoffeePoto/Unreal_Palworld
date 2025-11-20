@@ -257,6 +257,10 @@ protected: // Has 변수
 	UPROPERTY(EditAnywhere, Category = "Effect")
 	UParticleSystem* ShowUpEffect;
 
+	// 포켓몬 등장시 발생할 울음소리 사운드.
+	UPROPERTY(EditAnywhere, Category = "Audio")
+	USoundBase* CryingSound;
+
 protected: // 파라미터 변수
 
 	// 포켓몬 기절 이벤트
