@@ -64,5 +64,9 @@ protected:
 
 	UPROPERTY()
 	FPokemonSkillData Data;
+
+	// 스킬 사운드.
+	UPROPERTY(EditAnywhere, Category = "Audio")
+	USoundBase* SkillSound;
 	
 };

@@ -519,6 +519,10 @@ bool APokemonBase::SetActive(FVector Location)
 		true // AutoDestroy
 	);
 
+	if (CryingSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, CryingSound, GetActorLocation());
+	}
 
 	// 캐릭터 가시화
 	SetActorHiddenInGame(false);
