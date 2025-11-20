@@ -7,6 +7,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Engine/OverlapResult.h"
 #include "DrawDebugHelpers.h"
+#include "Interface/PokemonInterface/CommandReceiver.h"
 #include "character/Pokemon/PokemonBase.h"
 
 // 이 서비스의 역할:
@@ -126,6 +127,10 @@ void UBTService_DetectTrainer::TickNode(UBehaviorTreeComponent& OwnerComp, uint8
 			// 10. 여기까지 통과했다면 "적 포켓몬"으로 간주
 			//     블랙보드에 타겟 포켓몬으로 설정
 			OwnerComp.GetBlackboardComponent()->SetValueAsObject(BBKEY_TARGETPOKEMON, Pokemon);
+			ICommandReceiver* Controller = Cast<ICommandReceiver>(MyPokemon);
+			if (Controller) { Controller->SetTarget(Pokemon); }
+
+			
 
 			// 11. 디버그 표시 (초록색: 적 포켓몬을 성공적으로 탐지)
 			DrawDebugSphere(World, PawnLocation, DetectRange, 16, FColor::Green, false, 0.2f);

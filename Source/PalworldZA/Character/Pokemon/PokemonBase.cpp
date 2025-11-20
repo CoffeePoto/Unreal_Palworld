@@ -353,13 +353,18 @@ void APokemonBase::PokemonDown()
 
 void APokemonBase::PokemonDownEventFunc()
 {
+	ActionState = EPokemonAction::Down;
+	Deactive();
 
 	if (PokemonDownEvents.IsBound())
 	{
 		PokemonDownEvents.Execute();
 	}
 
-	Deactive();
+	if (!Trainer)
+	{
+		Destroy();
+	}
 }
 
 void APokemonBase::HitInnerEvent(APawn* Attacker)
@@ -373,6 +378,11 @@ void APokemonBase::HitInnerEvent(APawn* Attacker)
 void APokemonBase::ExecuteSkill()
 {
 	if (ActionState == EPokemonAction::Down) { return; }
+	if (!CurrentSkillTarget)
+	{
+		ActionState = EPokemonAction::NonCommand;
+		return;
+	}
 
 	// 스킬 소환
 	SpawnedSkill = SpawnSkill(SelectSkillNumber);
@@ -449,7 +459,7 @@ float APokemonBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 
 	// 최종 데미지 계산
 	CurrentHP = FMath::Max(CurrentHP - FinalDMG, ZERO);
-	if (CurrentHP == ZERO) { PokemonDown(); }
+	if (CurrentHP <= ZERO) { PokemonDown(); }
 
 	UE_LOG(LogTemp, Log, TEXT("맞은 데미지: %f"), FinalDMG);
 	DamageCauserArray.Add(DamageCauser);
@@ -462,6 +472,7 @@ float APokemonBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 bool APokemonBase::UsingSkill(uint8 SkillNumber)
 {
 	if (ActionState != EPokemonAction::NonCommand) { return false; }
+	if (CurrentHP <= ZERO) { return false; }
 	if (!CurrentSkillTarget) { return false; }
 	if (!PokemonSkills.IsValidIndex(SkillNumber)) { return false; }
 	if (PokemonSkills[SkillNumber].CoolDown > ZERO) { return false; }
@@ -560,11 +571,6 @@ bool APokemonBase::Deactive()
 		{
 			Brain->StopLogic(TEXT("Pokemon Deactive"));
 		}
-	}
-
-	if (!Trainer)
-	{
-		Destroy();
 	}
 
 	IsActive = false;
