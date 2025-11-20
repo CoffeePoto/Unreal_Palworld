@@ -164,22 +164,34 @@ void APlayerTrainer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 void APlayerTrainer::FocusOn()
 {
 	if (CurrentPokemon == nullptr) return;
-	//키입력 F가 입력되고 있으면 FocusOn 함수 호출
-	//Test
-	UE_LOG(LogTemp, Log, TEXT("FocusOn 함수 호출"));
 
-	const float DetectRange = 800.0f;
-	const float DetectRadius = 150.0f;
+	const float DetectRange = 1000.0f;
 
-	FHitResult HitTarget;
-	FVector Start = GetActorLocation()
-		+ GetActorForwardVector() 
-		* GetCapsuleComponent()->GetScaledCapsuleRadius();
+	// 수직 FOV
+	float VFOV = Camera->FieldOfView;
 
-	FVector End = Start + GetActorForwardVector() * DetectRange;//감지거리 hardcoding
+	// 가로 세로 비율 (16 : 9) 
+	float Aspect = Camera->AspectRatio;
 
-	//FVector Start = Camera->GetComponentLocation() + FVector(0.0f, 0.0f, 40.0f);
-	//FVector End = Start + Camera->GetForwardVector() * DetectRange;
+	// 끝 거리 에서의 화면 세로 절반 길이
+	float HalfHeight = DetectRange * FMath::Tan(FMath::DegreesToRadians(VFOV * 0.5f));
+
+	// 끝 거리 에서의 화면 가로 절반 길이
+	float HalfWidth = HalfHeight * Aspect;
+
+	// 박스 반지름
+	FVector HalfSize(HalfWidth, HalfHeight, HalfHeight * 0.5f);
+
+	// 시작 위치
+	FVector Start = Camera->GetComponentLocation();
+
+	// 종료 위치
+	FVector End = Start + Camera->GetForwardVector() * DetectRange;
+
+	// 카메라 방향 (쿼터니엄)
+	FQuat Rot = Camera->GetComponentRotation().Quaternion();
+
+	TArray<FHitResult> HitResults;
 
 	FCollisionQueryParams Params(
 		SCENE_QUERY_STAT(TrainerDetect),
@@ -187,56 +199,34 @@ void APlayerTrainer::FocusOn()
 		this
 	);
 
-	bool HitDetected = GetWorld()->SweepSingleByChannel
-	(
-		HitTarget,
+	bool HitDetected = GetWorld()->SweepMultiByChannel(
+		HitResults,
 		Start,
 		End,
-		FQuat::Identity,
-		ECollisionChannel::ECC_GameTraceChannel1,// == pokemon trace channel
-		FCollisionShape::MakeSphere(DetectRadius),
+		Rot,
+		ECC_GameTraceChannel1,
+		FCollisionShape::MakeBox(HalfSize),
 		Params
 	);
 
-	//충돌 발생
-	if (HitDetected)
+	if (!HitDetected) { return; }
+
+	for (FHitResult& HitResult : HitResults)
 	{
-		UE_LOG(LogTemp, Log, TEXT("충돌 확인"));
-		//충돌 결과를 포켓몬으로 캐스팅
-		APokemonBase* TargetPokemon = Cast<APokemonBase>(HitTarget.GetActor());
-		if (TargetPokemon)
+		APokemonBase* TargetPokemon = Cast<APokemonBase>(HitResult.GetActor());
+
+		if (!TargetPokemon) { continue; }
+
+		const APawn* Trainer = TargetPokemon->GetTrainer();
+		if (Trainer && Trainer->GetController() == UGameplayStatics::GetPlayerController(this, 0))
 		{
-			const APawn* Trainer = TargetPokemon->GetTrainer();
-			{
-				if (Trainer)
-				{
-					if (Trainer->GetController() == UGameplayStatics::GetPlayerController(this, 0)) return;
-					else
-					{
-						UE_LOG(LogTemp, Log, TEXT("NPC포켓몬 탐색 성공"));
-						CurrentPokemon->SetTarget(TargetPokemon);
-					}
-				}
-				else
-				{
-					UE_LOG(LogTemp, Log, TEXT("포켓몬 탐색 성공"));
-					Pokemons[SelectedPokemon]->SetTarget(TargetPokemon);
-				}
-			}
+			continue;
 		}
 		else
 		{
-			UE_LOG(LogTemp, Log, TEXT("트레이너 충돌"));
-			//충돌 결과를 Interface로 캐스팅
-			INPTrainerAIInterface* OpponentPlayer = Cast<INPTrainerAIInterface>(HitTarget.GetActor());
-			if (OpponentPlayer)
-			{
-				if (OpponentPlayer->GetPokemon() == nullptr) return;
-				APokemonBase* NPCPokemon = Cast<APokemonBase>(OpponentPlayer->GetPokemon());
-				if (!NPCPokemon) return;
-				UE_LOG(LogTemp, Log, TEXT("NPC 트레이너 소유 포켓몬 주시"));
-				CurrentPokemon->SetTarget(NPCPokemon);
-			}
+			UE_LOG(LogTemp, Log, TEXT("NPC포켓몬 탐색 성공"));
+			CurrentPokemon->SetTarget(TargetPokemon);
+			break;
 		}
 	}
 
@@ -253,19 +243,126 @@ void APlayerTrainer::FocusOn()
 	FColor DrawColor = HitDetected ? FColor::Green : FColor::Red;
 
 	// 충돌 디버그 (시각적 도구 활용).
-	DrawDebugCapsule(
+	DrawDebugBox(
 		GetWorld(),
-		CapsuleOrigin,
-		CapsuleHalfHeight,
-		DetectRadius,
-		//FRotationMatrix::MakeFromZ(Camera->GetForwardVector()).ToQuat(),
-		FRotationMatrix::MakeFromZ(GetActorForwardVector()).ToQuat(),
-		DrawColor,
+		Start + Camera->GetForwardVector() * (DetectRange * 0.5f), // 중앙
+		HalfSize,
+		Rot,
+		FColor::Green,
 		false,
-		5.0f
-	); 
+		3.0f
+	);
 #endif
+	return;
+
 }
+
+
+
+
+// if (CurrentPokemon == nullptr) return;
+//
+//	//키입력 F가 입력되고 있으면 FocusOn 함수 호출
+//	//Test
+//	UE_LOG(LogTemp, Log, TEXT("FocusOn 함수 호출"));
+//
+//	const float DetectRange = 800.0f;
+//	const float DetectRadius = 150.0f;
+//
+//	FHitResult HitTarget;
+//	FVector Start = GetActorLocation()
+//		+ GetActorForwardVector() 
+//		* GetCapsuleComponent()->GetScaledCapsuleRadius();
+//
+//	FVector End = Start + GetActorForwardVector() * DetectRange;//감지거리 hardcoding
+//
+//	//FVector Start = Camera->GetComponentLocation() + FVector(0.0f, 0.0f, 40.0f);
+//	//FVector End = Start + Camera->GetForwardVector() * DetectRange;
+//
+//	FCollisionQueryParams Params(
+//		SCENE_QUERY_STAT(TrainerDetect),
+//		false,
+//		this
+//	);
+//
+//	bool HitDetected = GetWorld()->SweepSingleByChannel
+//	(
+//		HitTarget,
+//		Start,
+//		End,
+//		FQuat::Identity,
+//		ECollisionChannel::ECC_GameTraceChannel1,// == pokemon trace channel
+//		FCollisionShape::MakeSphere(DetectRadius),
+//		Params
+//	);
+//
+//	//충돌 발생
+//	if (HitDetected)
+//	{
+//		UE_LOG(LogTemp, Log, TEXT("충돌 확인"));
+//		//충돌 결과를 포켓몬으로 캐스팅
+//		APokemonBase* TargetPokemon = Cast<APokemonBase>(HitTarget.GetActor());
+//		if (TargetPokemon)
+//		{
+//			const APawn* Trainer = TargetPokemon->GetTrainer();
+//			{
+//				if (Trainer)
+//				{
+//					if (Trainer->GetController() == UGameplayStatics::GetPlayerController(this, 0)) return;
+//					else
+//					{
+//						UE_LOG(LogTemp, Log, TEXT("NPC포켓몬 탐색 성공"));
+//						CurrentPokemon->SetTarget(TargetPokemon);
+//					}
+//				}
+//				else
+//				{
+//					UE_LOG(LogTemp, Log, TEXT("포켓몬 탐색 성공"));
+//					Pokemons[SelectedPokemon]->SetTarget(TargetPokemon);
+//				}
+//			}
+//		}
+//		else
+//		{
+//			UE_LOG(LogTemp, Log, TEXT("트레이너 충돌"));
+//			//충돌 결과를 Interface로 캐스팅
+//			INPTrainerAIInterface* OpponentPlayer = Cast<INPTrainerAIInterface>(HitTarget.GetActor());
+//			if (OpponentPlayer)
+//			{
+//				if (OpponentPlayer->GetPokemon() == nullptr) return;
+//				APokemonBase* NPCPokemon = Cast<APokemonBase>(OpponentPlayer->GetPokemon());
+//				if (!NPCPokemon) return;
+//				UE_LOG(LogTemp, Log, TEXT("NPC 트레이너 소유 포켓몬 주시"));
+//				CurrentPokemon->SetTarget(NPCPokemon);
+//			}
+//		}
+//	}
+//
+//	// 디버그 모드일 때만 그리도록.
+//#if ENABLE_DRAW_DEBUG
+//
+//	// 캡슐의 중심 위치.
+//	FVector CapsuleOrigin = Start + (End - Start) * 0.5f;
+//
+//	// 캡슐 높이의 절반 값.
+//	float CapsuleHalfHeight = DetectRange * 0.5f;
+//
+//	// 색상 (그리기 색상).
+//	FColor DrawColor = HitDetected ? FColor::Green : FColor::Red;
+//
+//	// 충돌 디버그 (시각적 도구 활용).
+//	DrawDebugCapsule(
+//		GetWorld(),
+//		CapsuleOrigin,
+//		CapsuleHalfHeight,
+//		DetectRadius,
+//		//FRotationMatrix::MakeFromZ(Camera->GetForwardVector()).ToQuat(),
+//		FRotationMatrix::MakeFromZ(GetActorForwardVector()).ToQuat(),
+//		DrawColor,
+//		false,
+//		5.0f
+//	); 
+//#endif
 
 void APlayerTrainer::FocusEnd()
 {

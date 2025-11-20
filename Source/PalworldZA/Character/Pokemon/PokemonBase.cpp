@@ -213,7 +213,6 @@ void APokemonBase::DamageCauserQueueDequeue(float DeltaTime)
 		DamageCauserArray[DamageCauserIndex] = nullptr;
 		++DamageCauserIndex;
 		CurrentDCDCycleTime = ZERO;
-		UE_LOG(LogTemp, Log, TEXT("큐 나감"));
 		return;
 	}
 }
