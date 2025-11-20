@@ -70,7 +70,7 @@ void ABrokenProp::PokemonDown()
 		DeactiveTimer,
 		this,
 		&ABrokenProp::PokemonDownEventFunc,
-		10.0f,
+		7.0f,
 		false
 	);
 }

@@ -19,6 +19,9 @@ public:
 
 	UPROPERTY()
 	float CoolDown;
+
+	UPROPERTY()
+	EPokemonType Type;
 };
 
 UINTERFACE(MinimalAPI)

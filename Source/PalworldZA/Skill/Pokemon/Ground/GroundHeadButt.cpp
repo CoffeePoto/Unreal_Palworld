@@ -84,7 +84,7 @@ void AGroundHeadButt::OnSkillOverlap(UPrimitiveComponent* OverlappedComp, AActor
 }
 
 void AGroundHeadButt::ActivateCollision()
-{
+{	
 	if (HitCollision)
 	{
 		HitCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);

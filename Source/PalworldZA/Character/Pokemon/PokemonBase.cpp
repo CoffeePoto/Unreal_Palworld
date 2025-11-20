@@ -60,6 +60,7 @@ void APokemonBase::GetSkillData(TArray<FCurrentPokemonSkillData>& OutArray) cons
 		FCurrentPokemonSkillData Data;
 		Data.SkillName = Skill.Skill->Data.Name;  
 		Data.CoolDown = Skill.CoolDown;
+		Data.Type = Skill.Skill->Data.Type;
 
 		OutArray.Add(MoveTemp(Data));
 	}
