@@ -55,6 +55,9 @@ protected:
 	// 소유자 확인후 노출 정보 업데이트
 	void CheackOwner();
 
+	// 타겟 업데이트
+	void UpdateTarget();
+
 protected:
 	
 	UPROPERTY()

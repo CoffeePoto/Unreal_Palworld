@@ -85,6 +85,10 @@ void UPokemonBillboardComponent::TickComponent(float DeltaTime, ELevelTick TickT
 		UpdateWild();
 		UpdateName();
 	}
+	else 
+	{
+		UpdateTarget();
+	}
 }
 
 void UPokemonBillboardComponent::LocationBillboard()
@@ -152,6 +156,21 @@ void UPokemonBillboardComponent::UpdateWild()
 	if (!Getter) { return; }
 
 	Billboard->GetDataBB()->UpdateWilde(Getter->GetTrainer() == nullptr);
+}
+
+void UPokemonBillboardComponent::UpdateTarget()
+{
+	IPokemonDataGetter* Getter = Cast<IPokemonDataGetter>(Pokemon);
+	if (!Getter) { return; }
+
+	if (Getter->GetTarget())
+	{
+		Billboard->SetTarget(true);
+	}
+	else
+	{
+		Billboard->SetTarget(false);
+	}
 }
 
 void UPokemonBillboardComponent::CheackOwner()

@@ -9,6 +9,7 @@
 class UPokemonBuffBillboard;
 class UPokemonDataBillboard;
 class UPokemonSkillBillboard;
+class UPokemonFocusingBillboard;
 
 UCLASS()
 class PALWORLDZA_API UPokemonBillboard : public UUserWidget
@@ -32,6 +33,9 @@ public:
 	// 포켓몬 세팅
 	void SetPokemon(class APokemonBase* Pokemon);
 
+	// 타겟 세팅
+	void SetTarget(bool IsOnTargeting);
+
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 
@@ -47,6 +51,9 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<UPokemonSkillBillboard> WBP_Skill;
+
+	UPROPERTY()
+	TObjectPtr<UPokemonFocusingBillboard> WBP_Foc;
 
 private:
 	float TargetHP = 1.f;

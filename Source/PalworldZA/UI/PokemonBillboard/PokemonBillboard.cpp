@@ -5,6 +5,7 @@
 #include "UI/PokemonBillboard/PokemonBuffBillboard.h"
 #include "UI/PokemonBillboard/PokemonDataBillboard.h"
 #include "UI/PokemonBillboard/PokemonSkillBillboard.h"
+#include "UI/PokemonBillboard/PokemonFocusingBillboard.h"
 #include "Components/ProgressBar.h"
 
 void UPokemonBillboard::SetHpBar(float Percent)
@@ -25,6 +26,7 @@ void UPokemonBillboard::SetNonPlayerPokemonView()
     PB_HpBar->SetVisibility(ESlateVisibility::Visible);
     WBP_Buff->SetVisibility(ESlateVisibility::Visible);
     WBP_Data->SetVisibility(ESlateVisibility::Visible);
+    WBP_Foc->SetVisibility(ESlateVisibility::Hidden);
     WBP_Skill->IsTrainer(false);
 }
 
@@ -32,6 +34,18 @@ void UPokemonBillboard::SetPokemon(APokemonBase* Pokemon)
 {
     WBP_Skill->BindPokemon(Pokemon);
     WBP_Data->SetPokemonSkillEvent(Pokemon);
+}
+
+void UPokemonBillboard::SetTarget(bool IsOnTargeting)
+{
+    if (IsOnTargeting)
+    {
+        WBP_Foc->OnImage();
+    }
+    else
+    {
+        WBP_Foc->OffImage();
+    }
 }
 
 void UPokemonBillboard::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
