@@ -557,10 +557,14 @@ void APlayerTrainer::Throw()
 {
 	//아무것도 없으면 return
 	if (Pokemons.IsEmpty() || SelectedPokemon < 0) return;
+	if (CurrentPokemon && CurrentPokemon->GetIsPokemonDown() && CurrentPokemon->GetIsActive()) return;
+
 	//포켓몬 위치 잡고 소환
 	//이미 소환된 포켓몬과 소환할 포켓몬이 같은 경우 무시
 	if (CurrentPokemon == Pokemons[SelectedPokemon]) return;
 	//이미 소환된 포켓몬을 deactivate
+
+	
 	if (CurrentPokemon)
 	{
 		if (!CurrentPokemon->Deactive())
